@@ -1,6 +1,7 @@
 import {createOrdinaryGame,ordinaryTransition,ordinaryView} from '../../src/game-core/ordinary';
 import {projectEventsForPlayer,projectGameForPlayer,resolveBlindReference} from '../../src/game-core/projection';
 import {createGame,type Action,type Game} from '../../src/engine';
+import {createDeckGame} from '../../src/gameFactory';
 import {beginMagicChallenge,answerMagicChallenge,cancelMagicChallenge,chooseMagicTarget,createChallengeBook} from '../../src/game-core/challenges';
 import {quizWordKey} from '../../src/magicQuiz';
 import {availableCards,blindAttack,singleAttack} from '../../src/trickRules';
@@ -25,7 +26,8 @@ export function applyCommand(room:StoredRoom,p:Seat,c:NetworkCommand,random=serv
   if(room.game)return reject('already_started');
   if(p!==0)return reject('host_only');
   if(!room.players.every(player=>player?.connectionId))return reject('players_not_ready');
-  const game=state.gameMode==='ordinary'?createOrdinaryGame(random):createGame(random);
+  const game=state.wordDeck?createDeckGame(state.wordDeck,random):state.gameMode==='ordinary'?createOrdinaryGame(random):createGame(random);
+  if(state.gameMode==='ordinary')game.magicPool=[];
   return complete(game,([0,1] as const).map(player=>({type:'cards_drawn',player,cards:game.hands[player]})));
  }
  if(!room.game)return reject('game_not_started');

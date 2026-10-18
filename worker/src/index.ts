@@ -5,6 +5,7 @@ import {applyCommand,sessionSnapshot,sessionEvents,serverRandom} from './gameSes
 import {migrateRoom} from './magicSession';
 import type {DomainEvent} from '../../src/game-core/types';
 import type {CommandResult,NetworkCommand} from '../../src/rooms/protocol';
+import {validateDeck,type DeckSnapshot} from '../../src/decks';
 
 export interface Env {ROOMS:DurableObjectNamespace<Room>;FRONTEND_ORIGIN:string;ALLOWED_ORIGINS:string;WAITING_TTL_SECONDS:string;ROOM_TTL_SECONDS:string;EXPIRED_RETENTION_SECONDS:string;NETWORK_GAME_MODE?:'ordinary'|'magic'}
 interface Attachment {seat:Seat|null;id:string;deadline:number;window:number;count:number}
@@ -14,11 +15,11 @@ function policy(env:Env):Policy {
  const ms=(value:string,fallback:number)=>Number.isFinite(Number(value))&&Number(value)>0?Number(value)*1000:fallback;
  return {waitingMs:ms(env.WAITING_TTL_SECONDS,14400000),roomMs:ms(env.ROOM_TTL_SECONDS,86400000),retentionMs:ms(env.EXPIRED_RETENTION_SECONDS,3600000)};
 }
-async function readBody(request:Request) {
+async function readBody(request:Request,limit=2048) {
  if(!request.headers.get('Content-Type')?.startsWith('application/json'))throw new RoomError('json_required',415);
  const reader=request.body?.getReader();if(!reader)throw new RoomError('invalid_body');
  let size=0;const chunks:Uint8Array[]=[];
- while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>2048){await reader.cancel();throw new RoomError('body_too_large',413);}chunks.push(value);}
+ while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit){await reader.cancel();throw new RoomError('body_too_large',413);}chunks.push(value);}
  const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
  let value:unknown;try{value=JSON.parse(new TextDecoder().decode(bytes));}catch{throw new RoomError('invalid_body');}
  return value;
@@ -33,6 +34,20 @@ async function recoveryBody(request:Request){
  if(!record(value)||Object.keys(value).join(',')!=='secret'||typeof value.secret!=='string'||!SECRET.test(value.secret))throw new RoomError('invalid_body');
  return {secret:value.secret};
 }
+async function createBody(request:Request){
+ const value=await readBody(request,128*1024);
+ if(!record(value)||typeof value.joinKey!=='string'||!SECRET.test(value.joinKey))throw new RoomError('invalid_body');
+ const hasDeck=Object.prototype.hasOwnProperty.call(value,'deck');
+ if(!hasDeck&&new TextEncoder().encode(JSON.stringify(value)).length>2048)throw new RoomError('body_too_large',413);
+ if(Object.keys(value).sort().join(',')!==(hasDeck?'deck,joinKey,name':'joinKey,name'))throw new RoomError('invalid_body');
+ let deck:DeckSnapshot|undefined;
+ if(hasDeck){
+  const d=value.deck;
+  if(!record(d)||Object.keys(d).sort().join(',')!=='name,words'||!Array.isArray(d.words)||d.words.length>200||!d.words.every(w=>record(w)&&Object.keys(w).sort().join(',')==='ko,ru'))throw new RoomError('invalid_deck');
+  try{deck=validateDeck(d);}catch{throw new RoomError('invalid_deck');}
+ }
+ return {name:displayName(value.name),joinKey:value.joinKey,...(deck?{deck}:{})};
+}
 export default {
  async fetch(request:Request,env:Env):Promise<Response> {
   const origin=request.headers.get('Origin');
@@ -43,7 +58,7 @@ export default {
   try {
    const url=new URL(request.url);let response:Response;
    if(request.method==='POST'&&url.pathname==='/api/rooms') {
-    const input=await body(request),id=randomSecret();
+    const input=await createBody(request),id=randomSecret();
     response=await env.ROOMS.get(env.ROOMS.idFromName(id)).fetch('https://room/internal/create',{method:'POST',body:JSON.stringify({...input,roomId:id})});
     if(response.ok){const credential=await response.json() as object;response=json({...credential,inviteUrl:`${env.FRONTEND_ORIGIN.replace(/\/$/,'')}/room/${id}`},201);}
    } else {
@@ -132,9 +147,9 @@ export class Room extends DurableObject<Env> {
   const path=new URL(request.url).pathname;
   if(path==='/internal/create') {
    if(this.room)throw new RoomError('room_exists',409);
-   const input=await request.json() as {roomId:string;name:string;joinKey:string};
+   const input=await request.json() as {roomId:string;name:string;joinKey:string;deck?:DeckSnapshot};
    const result=await createRoom(input.roomId,input.name,input.joinKey,Date.now(),this.ttl);
-   this.room=result.room;this.room.gameMode=this.env.NETWORK_GAME_MODE==='ordinary'?'ordinary':'magic';migrateRoom(this.room,serverRandom);await this.save();return json(result.credential,201);
+   this.room=result.room;if(input.deck)this.room.wordDeck=structuredClone(input.deck);this.room.gameMode=this.env.NETWORK_GAME_MODE==='ordinary'?'ordinary':'magic';migrateRoom(this.room,serverRandom);await this.save();return json(result.credential,201);
   }
   const room=await this.active();
   if(path==='/internal/recover'){

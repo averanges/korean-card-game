@@ -1,5 +1,6 @@
 import type {ClientCommand,PlayerView,PlayerEvent} from '../game-core/types';
 import type {PublicQuiz} from '../game-core/challenges';
+import type {DeckInfo} from '../decks';
 export type NetworkCommand=ClientCommand;
 export type Seat=0|1;
 export type OrdinaryCommand=Extract<ClientCommand,{type:'start_game'|'attack'|'defend'|'end'|'take'|'pass'}>;
@@ -7,7 +8,7 @@ export interface PublicChallenge {challengeId:string;magicRef:string;magicKind?:
 export interface GameSnapshot {revision:number;view:PlayerView;challenge?:PublicChallenge;allowed:{attack:string[];defend:{target:number;cardRefs:string[]}[];take:boolean;end:boolean;magic?:string[];pass?:boolean}}
 export interface CommandResult {requestId:string;ok:boolean;revision:number;code?:string}
 export type RoomStatus='waiting'|'ready'|'playing'|'finished'|'expired';
-export interface PublicRoom {roomId:string;status:RoomStatus;players:[{name:string;connected:boolean}|null,{name:string;connected:boolean}|null];createdAt:number;lastActiveAt:number;expiresAt:number;version:number}
+export interface PublicRoom {roomId:string;status:RoomStatus;players:[{name:string;connected:boolean}|null,{name:string;connected:boolean}|null];createdAt:number;lastActiveAt:number;expiresAt:number;version:number;deck?:DeckInfo}
 export interface RoomCredential {roomId:string;seat:Seat;recoverySecret:string}
 export type RoomEventType='room_snapshot'|'player_joined'|'player_left'|'player_reconnected'|'room_ready';
 export type ServerMessage={v:1;type:RoomEventType;room:PublicRoom;self:Seat;game?:GameSnapshot;events?:PlayerEvent[]}|({v:1;type:'command_result'}&CommandResult)|{v:1;type:'error';code:string};

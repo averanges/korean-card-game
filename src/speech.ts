@@ -22,7 +22,10 @@ function loadVoices(synth: SpeechSynthesis): Promise<SpeechSynthesisVoice[]> {
 }
 
 let request = 0;
+let enabled=true;
+export function setSpeechEnabled(value:boolean){enabled=value;if(!value){request++;if(typeof window!=='undefined'&&'speechSynthesis' in window)window.speechSynthesis.cancel();}}
 export async function speakKorean(text: string, report: (message: string) => void) {
+  if(!enabled)return;
   if (!('speechSynthesis' in window)) {
     report('Озвучка недоступна в этом браузере');
     return;

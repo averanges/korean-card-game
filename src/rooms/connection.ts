@@ -1,17 +1,18 @@
 import {record,ROOM_ID,type PublicRoom,type RoomCredential,type GameSnapshot,type NetworkCommand,type CommandResult} from './protocol';
 import type {PlayerEvent} from '../game-core/types';
+import type {DeckSnapshot} from '../decks';
 import {credential as validCredential,saveCredential,getJoinKey,parseRecoveryCode} from './credentials';
 export {loadCredential,storageKey} from './credentials';
 
 export const endpoint=(import.meta.env?.VITE_ROOM_API_BASE as string|undefined)?.replace(/\/$/,'');
 export class RoomAccessError extends Error {constructor(public code:string){super(errors[code]||'Сервер отклонил запрос.');}}
-export const errors:Record<string,string>={room_full:'Оба места уже заняты.',room_not_found:'Комната не найдена.',room_expired:'Время жизни комнаты истекло.',invalid_name:'Введите имя от 1 до 32 символов.',origin_forbidden:'Этот адрес сайта не разрешён в настройках сервера.',unauthorized:'Не удалось восстановить место. Секрет сессии недействителен.'};
-export async function enterRoom(name:string,roomId?:string):Promise<RoomCredential&{inviteUrl?:string}> {
+export const errors:Record<string,string>={invalid_deck:'Проверьте колоду: от 9 до 200 уникальных слов и переводов, название до 60 символов.',room_full:'Оба места уже заняты.',room_not_found:'Комната не найдена.',room_expired:'Время жизни комнаты истекло.',invalid_name:'Введите имя от 1 до 32 символов.',origin_forbidden:'Этот адрес сайта не разрешён в настройках сервера.',unauthorized:'Не удалось восстановить место. Секрет сессии недействителен.'};
+export async function enterRoom(name:string,roomId?:string,deck?:DeckSnapshot):Promise<RoomCredential&{inviteUrl?:string}> {
  if(!endpoint)throw new Error('Адрес сервера комнат ещё не настроен.');
  const joinKey=getJoinKey(roomId);
  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
  try {
-  const response=await fetch(`${endpoint}/api/rooms${roomId?`/${roomId}/join`:''}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,joinKey}),signal:controller.signal,credentials:'omit'});
+  const response=await fetch(`${endpoint}/api/rooms${roomId?`/${roomId}/join`:''}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,joinKey,...(!roomId&&deck?{deck}:{})}),signal:controller.signal,credentials:'omit'});
   const value:unknown=await response.json();
   if(!response.ok)throw new RoomAccessError(record(value)&&typeof value.error==='string'?value.error:'unknown');
   if(!record(value)||typeof value.roomId!=='string'||!ROOM_ID.test(value.roomId)||(value.seat!==0&&value.seat!==1)||typeof value.recoverySecret!=='string'||!ROOM_ID.test(value.recoverySecret))throw new Error('Некорректный ответ сервера.');

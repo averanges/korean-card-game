@@ -1,3 +1,5 @@
+import {GameMenu} from '../GameMenu';
+import {useProfile} from '../ProfileContext';
 import {useEffect,useRef,useState,type CSSProperties} from 'react';
 import {OrdinaryHand} from '../OrdinaryHand';
 import {TurnIndicator} from '../TurnIndicator';
@@ -20,8 +22,11 @@ import {NetworkMagicDialog} from './NetworkMagicDialog';
 import {networkAnimations,networkEffects,magicNotices,visibleNetworkAnimations} from './networkPresentation';
 export type Intent=NetworkCommand extends infer C?C extends NetworkCommand?Omit<C,'requestId'|'expectedRevision'>:never:never;
 export function NetworkTable({snapshot,events,positions,room,connected,busy,error,onCommand,onReconnect,onRecovery}:{snapshot:GameSnapshot;events:PlayerEvent[];positions:CardPosition[];room:PublicRoom;connected:boolean;busy:boolean;error:string;onCommand:(intent:Intent)=>void;onReconnect:()=>void;onRecovery?:()=>void}) {
+ const {profile}=useProfile(); const translations=profile.settings.translations;
  const tableRef=useTableLayout(),view=snapshot.view,self=view.player,opponent=(1-self) as 0|1;
- const [selected,setSelected]=useState<string[]>([]),[translations,setTranslations]=useState(true),[revealed,setRevealed]=useState<string[]>([]),[simple,setSimple]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches),[tts,setTts]=useState('');
+ const [selected,setSelected]=useState<string[]>([]),[revealed,setRevealed]=useState<string[]>([]),[systemReduced,setSystemReduced]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches),[tts,setTts]=useState('');
+ const simple=profile.settings.reducedMotion||systemReduced;
+ useEffect(()=>{const q=matchMedia('(prefers-reduced-motion: reduce)'),change=()=>setSystemReduced(q.matches);q.addEventListener('change',change);return()=>q.removeEventListener('change',change);},[]);
  const motion=useGameAnimations(simple),seen=useRef(snapshot.revision-1),previous=useRef<GameSnapshot>();
  const cards=view.hand.blind?[]:[...view.hand.cards,...(view.locked||[])];
  const challenge=snapshot.challenge,hat=challenge?.phase==='target'&&challenge.target?.kind==='hat'?challenge.target:undefined;
@@ -43,7 +48,7 @@ export function NetworkTable({snapshot,events,positions,room,connected,busy,erro
  const speak=(c:Card)=>void speakKorean(c.word.ko,setTts);
  const face=(card:Card)=><TableCard card={card} cue={motion.entries.find(e=>['card_attack','card_defend','card_throw_in'].includes(e.type)&&e.cards[0]?.id===card.id)} translation={translations||revealed.includes(card.id)?card.word.ru:'•••'} onClick={()=>setRevealed(ids=>ids.includes(card.id)?ids.filter(id=>id!==card.id):[...ids,card.id])} onReveal={()=>setRevealed(ids=>ids.includes(card.id)?ids.filter(id=>id!==card.id):[...ids,card.id])} onSpeak={()=>speak(card)}/>;
  return <AnimationContext.Provider value={motion.entries}><main ref={tableRef} className={'game-table network-table '+(simple?'simple-motion':'full-motion')+(hat?' hat-selecting':'')+(view.inverted&&!simple?' world-inverted':'')}>
-  <header><a className="brand" href="/multiplayer">✧ <span>ХАНГЫЛЬ</span></a><div className="header-actions"><label><input type="checkbox" checked={translations} onChange={e=>setTranslations(e.target.checked)}/> Переводы</label><label><input type="checkbox" checked={simple} onChange={e=>setSimple(e.target.checked)}/> Меньше движения</label>{onRecovery&&<button onClick={onRecovery}>Код восстановления</button>}<a href="/">Игра с ботом</a></div></header>
+  <GameMenu onRecovery={onRecovery} deckLabel={room.deck?`${room.deck.name} · ${room.deck.wordCount} слов в партии`:'Текущая колода'}/>
   <section className="statusbar"><TurnIndicator attacking={attacking} winner={result}/><div className="opponent"><span>♟</span><div><strong>{view.opponent.ordinaryCount} карт{view.opponent.magicCount>0&&<small className="extra-count"> · ✦ {view.opponent.magicCount}</small>}</strong><small>{room.players[opponent]?.name} · {room.players[opponent]?.connected?'в сети':'не в сети'}</small></div></div><MagicStatus trump={view.trump} count={view.deckCount} simple={simple}/></section>
   <div className="bot-hand" aria-label={`У соперника ${view.opponent.ordinaryCount} карт`}>{Array.from({length:Math.min(9,view.opponent.ordinaryCount)},(_,i)=><div className={'back '+(motion.entries.some(e=>e.player===1&&e.type==='cards_drawn')?'bot-card-arrival':'')} key={i} style={{'--i':i,'--n':Math.min(9,view.opponent.ordinaryCount)} as CSSProperties}>✧</div>)}</div>
   <section className="arena"><div className="table-heading"><span>ИГРОВОЙ СТОЛ</span><span>{view.inverted?'◇ Младшие ранги сильнее':'6 → Т · обычная сила рангов'}</span></div><div className="battle">{!view.table.length?<div className="empty"><div>✧</div><h1>{result||'Слова становятся ходами'}</h1><p>{view.result?'Партия завершена':attacking?'Выберите карту или карты одного ранга.':`${room.players[opponent]?.name} выбирает карты для атаки…`}</p></div>:view.table.map((pair,target)=><div className="pair" key={pair.attack.id}>{face(pair.attack)}{pair.defense?<div className="cover">{face(pair.defense)}</div>:<button className={'target '+(chosen.length===1&&snapshot.allowed.defend.some(d=>d.target===target&&d.cardRefs.includes(chosen[0].id))?'allowed':'')} disabled={disabled||chosen.length!==1||!snapshot.allowed.defend.some(d=>d.target===target&&d.cardRefs.includes(chosen[0].id))} onClick={()=>onCommand({type:'defend',target,cardRef:chosen[0].id})}><span>✧</span><small>Отбить</small></button>}</div>)}</div>

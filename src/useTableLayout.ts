@@ -1,10 +1,10 @@
 import {useLayoutEffect,useRef} from 'react';
 
 /** Measure only on layout changes, never on scroll pixels or animation frames. */
-export function useTableLayout(){
+export function useTableLayout(active=true){
  const root=useRef<HTMLElement>(null),request=useRef<()=>void>(()=>{});
  useLayoutEffect(()=>{
-  const table=root.current;if(!table)return;
+   const table=root.current;if(!active||!table)return;
   let frame=0,disposed=false;
   const px=(name:string,value:number)=>{const next=Math.round(value)+'px';if(table.style.getPropertyValue(name)!==next)table.style.setProperty(name,next);};
   const measure=()=>{
@@ -12,7 +12,7 @@ export function useTableLayout(){
    const bounds=table.getBoundingClientRect(),header=table.querySelector<HTMLElement>('header'),hand=table.querySelector<HTMLElement>('.normal-hand');
    if(!header||!hand)return;
    const footer=header.getBoundingClientRect();
-   px('--footer-reserve',bounds.bottom-footer.top+10);
+   px('--footer-reserve',header.classList.contains('game-menu-anchor')?24:bounds.bottom-footer.top+10);
    const turn=table.querySelector<HTMLElement>('.turn-status')?.getBoundingClientRect(),trump=table.querySelector<HTMLElement>('.magic-status')?.getBoundingClientRect();
    if(turn){px('--temporary-top',turn.bottom-bounds.top+7);px('--temporary-left',turn.left-bounds.left);}
    if(trump){px('--permanent-top',trump.bottom-bounds.top+7);px('--permanent-right',bounds.right-trump.right);}
@@ -49,7 +49,7 @@ export function useTableLayout(){
   window.addEventListener('resize',schedule);window.visualViewport?.addEventListener('resize',schedule);
   document.fonts.ready.then(schedule);measure();
   return()=>{disposed=true;request.current=()=>{};cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('resize',schedule);window.visualViewport?.removeEventListener('resize',schedule);};
- },[]);
+ },[active]);
  useLayoutEffect(()=>{request.current();});
  return root;
 }
