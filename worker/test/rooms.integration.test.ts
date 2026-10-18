@@ -7,11 +7,11 @@ import ts from 'typescript';
 // Wrangler includes Miniflare. This suite runs the real Durable Object/WebSocket runtime.
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {randomSecret} from '../src/model';
+import {runtimeModules} from './runtime';
 const origin='http://localhost:5173';
 const root=process.cwd();
 async function modules() {
- const files=[['index.js','src/index.ts'],['model.js','src/model.ts'],['protocol.js','../src/rooms/protocol.ts']];
- return Promise.all(files.map(async([path,file])=>({type:'ESModule' as const,path:join(root,path),contents:ts.transpileModule((await readFile(join(root,file),'utf8')).replaceAll("'../../src/rooms/protocol'","'./protocol.js'").replaceAll("'./model'","'./model.js'"),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText})));
+ return runtimeModules();
 }
 function inbox(ws:any) {
  const messages:any[]=[],waiters:Array<{predicate:(x:any)=>boolean;resolve:(x:any)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>=[];
@@ -20,7 +20,7 @@ function inbox(ws:any) {
 }
 test('real rooms: create, join, auth, two tabs, disconnect, restore and storage restart',async()=>{
  const persist=await mkdtemp(join(tmpdir(),'hangul-rooms-'));
- const options={...convertV4MiniflareOptions({name:'rooms-test',modules:await modules(),modulesRoot:root,compatibilityDate:'2026-10-01',durableObjects:{ROOMS:{className:'Room',useSQLite:true}},durableObjectsPersist:persist,cf:false,bindings:{FRONTEND_ORIGIN:origin,ALLOWED_ORIGINS:origin,WAITING_TTL_SECONDS:'14400',ROOM_TTL_SECONDS:'86400',EXPIRED_RETENTION_SECONDS:'3600'}}),resourcePersistencePath:persist,telemetry:{enabled:false}};
+ const options={...convertV4MiniflareOptions({name:'rooms-test',modules:await modules(),modulesRoot:join(root,'..'),compatibilityDate:'2026-10-01',durableObjects:{ROOMS:{className:'Room',useSQLite:true}},durableObjectsPersist:persist,cf:false,bindings:{FRONTEND_ORIGIN:origin,ALLOWED_ORIGINS:origin,WAITING_TTL_SECONDS:'14400',ROOM_TTL_SECONDS:'86400',EXPIRED_RETENTION_SECONDS:'3600'}}),resourcePersistencePath:persist,telemetry:{enabled:false}};
  let mf=new Miniflare(options);
  const sockets:any[]=[];
  const post=(path:string,value:unknown,requestOrigin=origin)=>mf.dispatchFetch(`https://worker.test${path}`,{method:'POST',headers:{Origin:requestOrigin,'Content-Type':'application/json'},body:JSON.stringify(value)});

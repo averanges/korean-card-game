@@ -1,4 +1,5 @@
-import {record,ROOM_ID,type PublicRoom,type RoomCredential} from './protocol';
+import {record,ROOM_ID,type PublicRoom,type RoomCredential,type GameSnapshot,type NetworkCommand,type CommandResult} from './protocol';
+import type {PlayerEvent} from '../game-core/types';
 
 export const endpoint=(import.meta.env.VITE_ROOM_API_BASE as string|undefined)?.replace(/\/$/,'');
 export const storageKey=(roomId:string)=>`hangul-room:${roomId}`;
@@ -29,7 +30,7 @@ export function readSnapshot(value:unknown,roomId:string):{room:PublicRoom;self:
  return {room:room as unknown as PublicRoom,self:value.self};
 }
 
-export function connectRoom(credential:RoomCredential,onSnapshot:(room:PublicRoom)=>void,onStatus:(status:string)=>void):()=>void {
+export function connectRoom(credential:RoomCredential,onSnapshot:(room:PublicRoom)=>void,onStatus:(status:string)=>void,onGame?:(snapshot:GameSnapshot,events:PlayerEvent[])=>void,onResult?:(result:CommandResult)=>void) {
  let disposed=false,socket:WebSocket|undefined,retry:ReturnType<typeof setTimeout>|undefined,heartbeat:ReturnType<typeof setInterval>|undefined,attempts=0,latest=-1,terminal=false,lastPong=Date.now();
  function open() {
   if(disposed||terminal||!endpoint)return;
@@ -43,7 +44,8 @@ export function connectRoom(credential:RoomCredential,onSnapshot:(room:PublicRoo
    if(event.data==='pong'){lastPong=Date.now();return;}
    let value:unknown;try{value=JSON.parse(event.data);}catch{return;}
    const snapshot=readSnapshot(value,credential.roomId);
-   if(snapshot&&snapshot.self===credential.seat&&snapshot.room.version>=latest){clearTimeout(authTimeout);latest=snapshot.room.version;attempts=0;onSnapshot(snapshot.room);onStatus('Связь установлена');}
+   if(snapshot&&snapshot.self===credential.seat&&snapshot.room.version>=latest){clearTimeout(authTimeout);latest=snapshot.room.version;attempts=0;onSnapshot(snapshot.room);onStatus('Связь установлена');if(record(value)&&record(value.game)&&Number.isSafeInteger(value.game.revision)&&record(value.game.view)&&value.game.view.player===credential.seat)onGame?.(value.game as unknown as GameSnapshot,Array.isArray(value.events)?value.events as PlayerEvent[]:[]);}
+   else if(record(value)&&value.v===1&&value.type==='command_result'&&typeof value.requestId==='string'&&typeof value.ok==='boolean'&&Number.isSafeInteger(value.revision))onResult?.(value as unknown as CommandResult);
    else if(record(value)&&value.type==='error'&&value.code==='unauthorized'){terminal=true;onStatus(errors.unauthorized);}
   };
   current.onclose=event=>{
@@ -56,5 +58,7 @@ export function connectRoom(credential:RoomCredential,onSnapshot:(room:PublicRoo
   };
   current.onerror=()=>{/* The close event owns reconnect, avoiding duplicate retries. */};
  }
- open();return ()=>{disposed=true;clearTimeout(retry);clearInterval(heartbeat);socket?.close(1000,'page_closed');};
+ open();const close=()=>{disposed=true;clearTimeout(retry);clearInterval(heartbeat);socket?.close(1000,'page_closed');};
+ close.sendCommand=(command:NetworkCommand)=>{if(disposed||terminal||socket?.readyState!==WebSocket.OPEN)return false;socket.send(JSON.stringify({v:1,type:'command',command}));return true;};
+ return close;
 }

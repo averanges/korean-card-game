@@ -1,8 +1,12 @@
 import {DurableObject} from 'cloudflare:workers';
 import {ROOM_ID,SECRET,record,parseRoomMessage,type Seat,type RoomEventType} from '../../src/rooms/protocol';
 import {authenticate,createRoom,displayName,joinRoom,publicRoom,randomSecret,RoomError,touch,type Policy,type StoredRoom} from './model';
+import {applyCommand,sessionSnapshot,sessionEvents,serverRandom} from './gameSession';
+import {migrateRoom} from './magicSession';
+import type {DomainEvent} from '../../src/game-core/types';
+import type {CommandResult,NetworkCommand} from '../../src/rooms/protocol';
 
-export interface Env {ROOMS:DurableObjectNamespace<Room>;FRONTEND_ORIGIN:string;ALLOWED_ORIGINS:string;WAITING_TTL_SECONDS:string;ROOM_TTL_SECONDS:string;EXPIRED_RETENTION_SECONDS:string}
+export interface Env {ROOMS:DurableObjectNamespace<Room>;FRONTEND_ORIGIN:string;ALLOWED_ORIGINS:string;WAITING_TTL_SECONDS:string;ROOM_TTL_SECONDS:string;EXPIRED_RETENTION_SECONDS:string;NETWORK_GAME_MODE?:'ordinary'|'magic'}
 interface Attachment {seat:Seat|null;id:string;deadline:number;window:number;count:number}
 const json=(value:unknown,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store'}});
 const failure=(error:unknown)=>error instanceof RoomError?json({error:error.code},error.status):json({error:'internal_error'},500);
@@ -60,7 +64,7 @@ export class Room extends DurableObject<Env> {
    this.room=await ctx.storage.get<StoredRoom>('room');
    if(!this.room)return;
    const live=new Set(ctx.getWebSockets().map(ws=>(ws.deserializeAttachment() as Attachment)?.id));
-   let changed=false;for(const player of this.room.players){if(player?.connectionId&&!live.has(player.connectionId)){player.connectionId=null;changed=true;}}
+   let changed=migrateRoom(this.room,serverRandom);for(const player of this.room.players){if(player?.connectionId&&!live.has(player.connectionId)){player.connectionId=null;changed=true;}}
    if(changed){this.room.version++;await this.save();}
   });
  }
@@ -73,9 +77,33 @@ export class Room extends DurableObject<Env> {
   await this.ctx.storage.setAlarm(Math.max(Date.now()+1,next));
  }
  private send(ws:WebSocket,value:unknown) {try{ws.send(JSON.stringify(value));}catch{/* Close callbacks reconcile presence. */}}
- private broadcast(type:RoomEventType) {
+ private snapshot(ws:WebSocket,p:Seat,type:RoomEventType='room_snapshot',events:DomainEvent[]=[]) {
+  if(this.room)this.send(ws,{v:1,type,room:publicRoom(this.room),self:p,game:sessionSnapshot(this.room,p),events:sessionEvents(events,p,this.room)});
+ }
+ private broadcast(type:RoomEventType,events:DomainEvent[]=[]) {
   if(!this.room)return;
-  for(const ws of this.ctx.getWebSockets()){const a=ws.deserializeAttachment() as Attachment;if(a?.seat!==null&&a&&this.room.players[a.seat]?.connectionId===a.id)this.send(ws,{v:1,type,room:publicRoom(this.room),self:a.seat});}
+  for(const ws of this.ctx.getWebSockets()){const a=ws.deserializeAttachment() as Attachment;if(a?.seat!==null&&a&&this.room.players[a.seat]?.connectionId===a.id)this.snapshot(ws,a.seat,type,events);}
+ }
+ private async command(ws:WebSocket,p:Seat,c:NetworkCommand) {
+  const room=this.room!;
+  const key=`request:${p}:${c.requestId}`;
+  try {
+   const previous=await this.ctx.storage.get<CommandResult>(key);
+   if(previous){this.send(ws,{v:1,type:'command_result',...previous});this.snapshot(ws,p);return;}
+   const next=applyCommand(room,p,c);
+   if(!next.result.ok){this.send(ws,{v:1,type:'command_result',...next.result});this.snapshot(ws,p);return;}
+   const stored=next.state!;touch(stored,Date.now(),this.ttl);
+   let alarm=stored.expiresAt;
+   for(const socket of this.ctx.getWebSockets()){const a=socket.deserializeAttachment() as Attachment;if(a?.seat===null&&a.deadline>0)alarm=Math.min(alarm,a.deadline);}
+   // State and idempotency receipt commit together. Never mutate the live game first.
+   await this.ctx.storage.transaction(async tx=>{await tx.put('room',stored);await tx.put(key,next.result);await tx.setAlarm(Math.max(Date.now()+1,alarm));});
+   this.room=stored;
+   this.send(ws,{v:1,type:'command_result',...next.result});this.broadcast('room_snapshot',next.events);
+  } catch {
+   // A transaction may have failed. Reload committed state before serving another action.
+   this.room=await this.ctx.storage.get<StoredRoom>('room');
+   this.send(ws,{v:1,type:'command_result',requestId:c.requestId,ok:false,revision:this.room?.gameRevision??0,code:'storage_error'});
+  }
  }
  private async active():Promise<StoredRoom> {
   if(!this.room)throw new RoomError('room_not_found',404);
@@ -88,7 +116,7 @@ export class Room extends DurableObject<Env> {
   this.broadcast('room_snapshot');
   for(const ws of this.ctx.getWebSockets())ws.close(4004,'room_expired');
   // Keep a small tombstone; erase recovery material immediately on expiration.
-  this.room.seed='';this.room.players=[null,null];await this.save();
+  this.room.seed='';this.room.players=[null,null];delete this.room.game;delete this.room.challenges;delete this.room.blind;delete this.room.recentQuestions;await this.save();
  }
  async fetch(request:Request):Promise<Response> {return this.serial(async()=>{try{
   const path=new URL(request.url).pathname;
@@ -96,7 +124,7 @@ export class Room extends DurableObject<Env> {
    if(this.room)throw new RoomError('room_exists',409);
    const input=await request.json() as {roomId:string;name:string;joinKey:string};
    const result=await createRoom(input.roomId,input.name,input.joinKey,Date.now(),this.ttl);
-   this.room=result.room;await this.save();return json(result.credential,201);
+   this.room=result.room;this.room.gameMode=this.env.NETWORK_GAME_MODE==='ordinary'?'ordinary':'magic';migrateRoom(this.room,serverRandom);await this.save();return json(result.credential,201);
   }
   const room=await this.active();
   if(path==='/internal/join') {
@@ -137,7 +165,8 @@ export class Room extends DurableObject<Env> {
   } else {
    if(a.seat===null){this.send(ws,{v:1,type:'error',code:'unauthorized'});return;}
    if(room.players[a.seat]?.connectionId!==a.id)return ws.close(4009,'connection_replaced');
-   this.send(ws,{v:1,type:'room_snapshot',room:publicRoom(room),self:a.seat});
+   if(message.type==='command')await this.command(ws,a.seat,message.command);
+   else this.snapshot(ws,a.seat);
   }
  });}
  async webSocketClose(ws:WebSocket,code:number,reason:string,wasClean:boolean):Promise<void> {

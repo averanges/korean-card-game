@@ -4,7 +4,7 @@ export type GameState=Game;
 export interface PublicEffect {id:string;kind:SpellKind;duration:Duration;target?:Player;status?:'pending'|'active'}
 export type HandView={blind:false;cards:Card[]}|{blind:true;cards:{ref:string;hidden:true}[]};
 export interface PlayerView {
- player:Player;hand:HandView;magic:Card[];blockedCount:number;
+ player:Player;hand:HandView;magic:Card[];blockedCount:number;locked?:Card[];
  opponent:{ordinaryCount:number;magicCount:number;blockedCount:number};
  table:Pair[];deckCount:number;trump:number;inverted:boolean;round:number;
  attacker:Player;actors:Player[];phase:'attack'|'defense'|'taking'|'finished';limit:number;
@@ -12,7 +12,7 @@ export interface PlayerView {
 }
 type Envelope={requestId:string;expectedRevision:number};
 export type ClientCommand=Envelope&(
- {type:'attack';cardRefs:string[]}|{type:'defend';cardRef:string;target:number}|
+ {type:'start_game'}|{type:'attack';cardRefs:string[]}|{type:'defend';cardRef:string;target:number}|
  {type:'end'|'take'|'pass'}|{type:'begin_magic';magicRef:string}|
  {type:'answer_quiz';challengeId:string;option:number}|{type:'cancel_quiz';challengeId:string}|
  {type:'choose_trump';challengeId:string;trump:number}|{type:'choose_hat_card';challengeId:string;cardRef:string}

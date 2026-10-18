@@ -15,7 +15,7 @@ export function projectGameForPlayer(g:Game,p:Player,context=createProjectionCon
  const refs=context.references[p];
  if(blind)for(const c of cards)if(!refs.has(c.id)){const ref=context.nextRef();if(!ref||[...context.references[0].values(),...context.references[1].values()].includes(ref))throw Error('Reference factory must produce unique opaque values');refs.set(c.id,ref);}
  return {player:p,hand:blind?{blind:true,cards:cards.map(c=>({ref:refs.get(c.id)!,hidden:true}))}:{blind:false,cards:cards.map(card)},
- magic:g.hands[p].filter(c=>c.spell).map(card),blockedCount:g.hands[p].filter(c=>isLocked(g,c)).length,
+ magic:g.hands[p].filter(c=>c.spell).map(card),blockedCount:g.hands[p].filter(c=>isLocked(g,c)).length,locked:blind?[]:g.hands[p].filter(c=>!c.spell&&isLocked(g,c)).map(card),
  opponent:{ordinaryCount:normalCount(g.hands[opponent]),magicCount:g.hands[opponent].filter(c=>c.spell).length,blockedCount:g.hands[opponent].filter(c=>isLocked(g,c)).length},
  table:g.table.map(pair=>({attack:card(pair.attack),...(pair.defense?{defense:card(pair.defense)}:{})})),deckCount:g.deck.length,trump:g.trump,inverted:g.inverted,round,attacker:g.attacker,
  actors:g.winner?[]:g.taking||!g.table.length||finished(g)?[g.attacker]:[g.attacker,(1-g.attacker) as Player],

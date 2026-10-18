@@ -1,6 +1,10 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useState,useRef} from 'react';
 import {connectRoom,endpoint,enterRoom,loadCredential} from './connection';
-import {ROOM_ID,type PublicRoom,type RoomCredential} from './protocol';
+import {ROOM_ID,type PublicRoom,type RoomCredential,type GameSnapshot,type NetworkCommand} from './protocol';
+import type {PlayerEvent} from '../game-core/types';
+import {NetworkTable,type Intent} from './NetworkTable';
+import {captureBoard} from '../useGameAnimations';
+import type {CardPosition} from '../animationModel';
 import './room.css';
 
 export function RoomLobby() {
@@ -9,11 +13,31 @@ export function RoomLobby() {
  const [credential,setCredential]=useState<RoomCredential|undefined>(()=>pathId&&!invalid?loadCredential(pathId):undefined);
  const [name,setName]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[room,setRoom]=useState<PublicRoom>(),[status,setStatus]=useState(''),[retry,setRetry]=useState(0),[copied,setCopied]=useState(false);
  const invite=credential?`${location.origin}/room/${credential.roomId}`:'';
- useEffect(()=>{if(credential)return connectRoom(credential,setRoom,setStatus);},[credential,retry]);
+ const [game,setGame]=useState<GameSnapshot>(),[events,setEvents]=useState<PlayerEvent[]>([]),[pending,setPending]=useState(false);
+ const [positions,setPositions]=useState<CardPosition[]>([]);
+ const connection=useRef<ReturnType<typeof connectRoom>>(),pendingCommand=useRef<NetworkCommand>();
+ const clearPending=()=>{pendingCommand.current=undefined;setPending(false);};
+ const commandErrors:Record<string,string>={stale_revision:'Стол обновился. Выберите ход снова.',illegal_move:'Этот ход сейчас недопустим.',host_only:'Начать игру может создатель комнаты.',players_not_ready:'Оба игрока должны быть подключены.',storage_error:'Не удалось подтвердить сохранение. Переподключитесь для проверки состояния.',game_finished:'Партия завершена.',already_started:'Партия уже началась.',magic_unavailable:'Магия сейчас недоступна.',challenge_pending:'Завершите открытое задание.',invalid_challenge:'Эта попытка уже завершена или устарела.',invalid_target:'Недопустимая цель. Выберите другую.',answer_committed:'Ответ уже принят. Завершите выбор цели.',invalid_blind_reference:'Закрытые карты обновились. Выберите снова.'};
+ useEffect(()=>{
+  if(!credential)return;
+  const close=connectRoom(credential,setRoom,text=>{setStatus(text);if(text!=='Связь установлена')clearPending();},(next,events)=>{
+   setPositions(captureBoard());setGame(old=>old&&old.revision>next.revision?old:next);setEvents(events);
+   if(pendingCommand.current&&next.revision>pendingCommand.current.expectedRevision)clearPending();
+  },result=>{if(result.requestId===pendingCommand.current?.requestId&&!result.ok){clearPending();setError(commandErrors[result.code||'']||'Сервер отклонил ход.');if(result.code==='storage_error'){setStatus('Восстанавливаем состояние…');setRetry(x=>x+1);}}});
+  connection.current=close;return ()=>{connection.current=undefined;close();};
+ },[credential,retry]);
+ useEffect(()=>{if(!pending)return;const timer=setTimeout(()=>{clearPending();setError('Подтверждение задержалось. Восстанавливаем состояние партии.');setStatus('Восстанавливаем состояние…');setRetry(x=>x+1);},12000);return()=>clearTimeout(timer);},[pending]);
+ function command(intent:Intent){
+  if(pendingCommand.current||status!=='Связь установлена')return;
+  const value={...intent,requestId:crypto.randomUUID(),expectedRevision:game?.revision??0} as NetworkCommand;
+  pendingCommand.current=value;setPending(true);setError('');
+  if(!connection.current?.sendCommand(value)){clearPending();setError('Нет соединения. Подключитесь снова.');}
+ }
  async function submit(event:React.FormEvent) {
   event.preventDefault();if(busy)return;setBusy(true);setError('');
   try{const result=await enterRoom(name,pathId);history.replaceState(null,'',`/room/${result.roomId}`);setCredential(result);}catch(error){setError(error instanceof Error?error.message:'Не удалось подключиться.');}finally{setBusy(false);}
  }
+ if(game&&room)return <NetworkTable snapshot={game} events={events} positions={positions} room={room} connected={status==='Связь установлена'} busy={pending} error={error} onCommand={command} onReconnect={()=>{clearPending();setRetry(x=>x+1);}}/>;
  return <main className="room-lobby"><section className="room-panel" aria-labelledby="room-heading">
   <a className="room-back" href="/">← Игра с ботом</a><div className="room-star" aria-hidden="true">✧</div>
   <h1 id="room-heading">{credential?'Приватная комната':pathId?'Приглашение в комнату':'Комната по ссылке'}</h1>
@@ -27,7 +51,8 @@ export function RoomLobby() {
    <p className="room-connection" role="status">{status}</p>
    <ol className="room-players">{([0,1] as const).map(seat=><li key={seat}><span className={'room-dot '+(room?.players[seat]?.connected?'online':'')}/><span>{room?.players[seat]?.name||'Ожидаем игрока'} {credential.seat===seat?'(вы)':''}</span><small>{room?.players[seat]?room.players[seat]!.connected?'В сети':'Не в сети':'Свободное место'}</small></li>)}</ol>
    <h2>{room?.status==='expired'?'Комната закрыта':room?.status==='ready'?'Комната готова':'Ожидание соперника'}</h2>
-   <p>{room?.status==='ready'?'Оба игрока подключились. Сетевая партия появится на следующем этапе.':'Место сохраняется при кратковременной потере связи и обновлении этой вкладки.'}</p>
+   <p>{room?.status==='ready'?(credential.seat===0?'Оба игрока подключились. Можно начинать партию.':'Ожидаем, когда создатель начнёт партию.'):'Место сохраняется при кратковременной потере связи и обновлении этой вкладки.'}</p>
+   {credential.seat===0&&<button disabled={room?.status!=='ready'||pending||status!=='Связь установлена'} onClick={()=>command({type:'start_game'})}>{pending?'Подтверждаем…':'Начать игру'}</button>}
    <button onClick={()=>setRetry(x=>x+1)} disabled={status==='Связь установлена'||status.includes('другой вкладке')||room?.status==='expired'}>Подключиться снова</button>
    {error&&<p role="alert">{error}</p>}
   </>}

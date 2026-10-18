@@ -56,5 +56,5 @@ export function useGameAnimations(simple:boolean){
     return()=>{clearTimeout(timer);document.removeEventListener('visibilitychange',visibility);};
   },[entries]);
   useEffect(()=>{if(simple)setEntries([]);},[simple]);
-  return {entries,start,transition};
+  return {entries,start,transition,enqueue};
 }

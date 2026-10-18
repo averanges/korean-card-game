@@ -1,9 +1,14 @@
 import type {PublicRoom, Seat} from '../../src/rooms/protocol';
+import type {Game} from '../../src/engine';
+import type {ChallengeBook} from '../../src/game-core/challenges';
+import type {BlindState} from './magicSession';
 
 interface Player {name:string; secretHash:string; joinHash:string; connectionId:string|null}
 export interface StoredRoom {
  roomId:string; seed:string; players:[Player|null,Player|null];
  createdAt:number;lastActiveAt:number;expiresAt:number;version:number;expired:boolean;
+ schemaVersion?:2|3;game?:Game;gameRevision?:number;
+ gameMode?:'ordinary'|'magic';challenges?:ChallengeBook;blind?:BlindState;recentQuestions?:[string[],string[]];
 }
 export interface Policy {waitingMs:number;roomMs:number;retentionMs:number}
 export class RoomError extends Error {constructor(public code:string,public status=400){super(code);}}
@@ -30,7 +35,7 @@ export function touch(room:StoredRoom,now:number,policy:Policy):void {
  room.lastActiveAt=now;room.expiresAt=now+(room.players[1]?policy.roomMs:policy.waitingMs);room.version++;
 }
 export function publicRoom(room:StoredRoom):PublicRoom {
- return {roomId:room.roomId,status:room.expired?'expired':room.players.every(p=>p?.connectionId)?'ready':'waiting',
+ return {roomId:room.roomId,status:room.expired?'expired':room.game?(room.game.winner?'finished':'playing'):room.players.every(p=>p?.connectionId)?'ready':'waiting',
  players:room.players.map(p=>p?{name:p.name,connected:p.connectionId!==null}:null) as PublicRoom['players'],
  createdAt:room.createdAt,lastActiveAt:room.lastActiveAt,expiresAt:room.expiresAt,version:room.version};
 }

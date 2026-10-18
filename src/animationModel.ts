@@ -17,7 +17,7 @@ export const intensityDuration={minor:250,major:900,legendary:2400};
 export const legendaryTimings={receive:1600,answer:850,wrongAnswer:1200,burn:1100,indicatorStart:900,indicator:1000,counter:850,notice:5200};
 export type AnimationType='card_attack'|'card_defend'|'card_throw_in'|'cards_drawn'|'magic_received'|'magic_activated'|'magic_failed'|'magic_expired'|'round_defended'|'cards_taken';
 export interface CardPosition {card:Card;x:number;y:number;width:number;height:number;rotation:number}
-export interface GameAnimationEvent {type:AnimationType;player:Player;cards:Card[];delay:number;duration:number;magicId?:string;trump?:number;previousTrump?:number;previousDeck?:number;nextDeck?:number;compact?:boolean;correctAnswer?:string;positions?:CardPosition[];targetPlayer?:Player;exchange?:{oldCard:Card;newCard:Card}}
+export interface GameAnimationEvent {type:AnimationType;player:Player;cards:Card[];delay:number;duration:number;magicId?:string;effectId?:string;count?:number;trump?:number;previousTrump?:number;previousDeck?:number;nextDeck?:number;compact?:boolean;correctAnswer?:string;positions?:CardPosition[];targetPlayer?:Player;exchange?:{oldCard:Card;newCard?:Card}}
 export interface AnimationEntry extends GameAnimationEvent {id:string;created:number;ends:number}
 
 export function initialDrawEvents(g:Game):GameAnimationEvent[]{
