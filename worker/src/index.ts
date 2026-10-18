@@ -14,15 +14,24 @@ function policy(env:Env):Policy {
  const ms=(value:string,fallback:number)=>Number.isFinite(Number(value))&&Number(value)>0?Number(value)*1000:fallback;
  return {waitingMs:ms(env.WAITING_TTL_SECONDS,14400000),roomMs:ms(env.ROOM_TTL_SECONDS,86400000),retentionMs:ms(env.EXPIRED_RETENTION_SECONDS,3600000)};
 }
-async function body(request:Request) {
+async function readBody(request:Request) {
  if(!request.headers.get('Content-Type')?.startsWith('application/json'))throw new RoomError('json_required',415);
  const reader=request.body?.getReader();if(!reader)throw new RoomError('invalid_body');
  let size=0;const chunks:Uint8Array[]=[];
  while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>2048){await reader.cancel();throw new RoomError('body_too_large',413);}chunks.push(value);}
  const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
  let value:unknown;try{value=JSON.parse(new TextDecoder().decode(bytes));}catch{throw new RoomError('invalid_body');}
+ return value;
+}
+async function body(request:Request) {
+ const value=await readBody(request);
  if(!record(value)||Object.keys(value).sort().join(',')!=='joinKey,name'||typeof value.joinKey!=='string'||!SECRET.test(value.joinKey))throw new RoomError('invalid_body');
  return {name:displayName(value.name),joinKey:value.joinKey};
+}
+async function recoveryBody(request:Request){
+ const value=await readBody(request);
+ if(!record(value)||Object.keys(value).join(',')!=='secret'||typeof value.secret!=='string'||!SECRET.test(value.secret))throw new RoomError('invalid_body');
+ return {secret:value.secret};
 }
 export default {
  async fetch(request:Request,env:Env):Promise<Response> {
@@ -38,10 +47,11 @@ export default {
     response=await env.ROOMS.get(env.ROOMS.idFromName(id)).fetch('https://room/internal/create',{method:'POST',body:JSON.stringify({...input,roomId:id})});
     if(response.ok){const credential=await response.json() as object;response=json({...credential,inviteUrl:`${env.FRONTEND_ORIGIN.replace(/\/$/,'')}/room/${id}`},201);}
    } else {
-    const match=/^\/api\/rooms\/([^/]+)\/(join|ws)$/.exec(url.pathname);
+    const match=/^\/api\/rooms\/([^/]+)\/(join|recover|ws)$/.exec(url.pathname);
     if(!match||!ROOM_ID.test(match[1]))throw new RoomError('not_found',404);
     const stub=env.ROOMS.get(env.ROOMS.idFromName(match[1]));
     if(match[2]==='join'&&request.method==='POST')response=await stub.fetch('https://room/internal/join',{method:'POST',body:JSON.stringify(await body(request))});
+    else if(match[2]==='recover'&&request.method==='POST')response=await stub.fetch('https://room/internal/recover',{method:'POST',body:JSON.stringify(await recoveryBody(request))});
     else if(match[2]==='ws'&&request.method==='GET'&&request.headers.get('Upgrade')?.toLowerCase()==='websocket') {
      // Credentials are sent in the first frame, never in a URL or an access log.
      return await stub.fetch(new Request('https://room/internal/ws',request));
@@ -127,6 +137,13 @@ export class Room extends DurableObject<Env> {
    this.room=result.room;this.room.gameMode=this.env.NETWORK_GAME_MODE==='ordinary'?'ordinary':'magic';migrateRoom(this.room,serverRandom);await this.save();return json(result.credential,201);
   }
   const room=await this.active();
+  if(path==='/internal/recover'){
+   const {secret}=await request.json() as {secret:string};
+   const seat=await authenticate(room,secret);
+   if(seat===undefined)throw new RoomError('unauthorized',401);
+   // Verification changes neither presence nor game state. WebSocket auth performs replacement.
+   return json({roomId:room.roomId,seat,recoverySecret:secret});
+  }
   if(path==='/internal/join') {
    const input=await request.json() as {name:string;joinKey:string};
    const version=room.version;
