@@ -8,6 +8,7 @@ import {applyCommand,sessionSnapshot} from '../src/gameSession';
 import {migrateRoom} from '../src/magicSession';
 import type {NetworkCommand} from '../../src/rooms/protocol';
 import {createGame} from '../../src/engine';
+import {basicDeck,snapshotDeck} from '../../src/decks';
 const origin='https://game.example';
 const dictionary=(n:number)=>({name:`Слова темы ${n}`,words:Array.from({length:n},(_,i)=>({ko:`새로운${i}`,ru:`новое слово ${i}`}))});
 function inbox(ws:any){const messages:any[]=[],waiters:any[]=[];ws.addEventListener('message',(e:any)=>{if(e.data==='pong')return;const value=JSON.parse(e.data),i=waiters.findIndex(w=>w.predicate(value));if(i<0)messages.push(value);else{const [w]=waiters.splice(i,1);clearTimeout(w.timer);w.resolve(value);}});return (predicate:(v:any)=>boolean)=>new Promise<any>((resolve,reject)=>{const i=messages.findIndex(predicate);if(i>=0)return resolve(messages.splice(i,1)[0]);const w={predicate,resolve,timer:setTimeout(()=>{const i=waiters.indexOf(w);if(i>=0)waiters.splice(i,1);reject(Error('deck snapshot timeout'));},6000)};waiters.push(w);});}
@@ -16,6 +17,7 @@ test('custom dictionary: real DO validates create-only payload, shares cards saf
  const sockets:any[]=[],post=(path:string,value:unknown)=>mf.dispatchFetch(`https://worker.test/api/rooms${path}`,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify(value)});
  async function connect(c:any){const response=await mf.dispatchFetch(`https://worker.test/api/rooms/${c.roomId}/ws`,{headers:{Origin:origin,Upgrade:'websocket'}});assert.equal(response.status,101);const ws=response.webSocket!,next=inbox(ws);ws.accept();sockets.push(ws);ws.send(JSON.stringify({v:1,type:'authenticate',secret:c.recoverySecret}));return {ws,next};}
  try{
+  const basic=await post('',{name:'Гостьавав',joinKey:randomSecret(),deck:snapshotDeck(basicDeck)});assert.equal(basic.status,201,'current Worker accepts the default deck used by the menu');
   for(const deck of [dictionary(8),dictionary(201),{...dictionary(9),words:[...dictionary(9).words,dictionary(9).words[0]]},{...dictionary(9),words:dictionary(9).words.map(w=>({...w,ru:'одинаково'}))},{...dictionary(9),cards:[]},{...dictionary(9),name:'x'.repeat(61)}])assert.equal((await post('',{name:'A',joinKey:randomSecret(),deck})).status,400);
   assert.equal((await post('',{name:'A',joinKey:randomSecret(),deck:dictionary(9),cards:[]})).status,400);
   assert.equal((await post('',{name:'A',joinKey:randomSecret(),deck:{...dictionary(9),name:'x'.repeat(140000)}})).status,413);
