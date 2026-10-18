@@ -1,8 +1,9 @@
+import {botAction} from './bot';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {makeMagicQuiz,quizAnswer} from './magicQuiz';
 import {chooseBotMagic,evaluateMagic} from './botMagic';
-import {createGame,reduceGame,botAction,type Card} from './engine';
+import {createGame,reduceGame,type Card} from './engine';
 import {words} from './words';
 const card=(id:string,rank=0,suit=0,spell?:string):Card=>({id,rank,suit,spell,word:words[0]});
 test('both quiz directions use only unique in-party answers and avoid recent words',()=>{

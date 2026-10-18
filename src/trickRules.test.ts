@@ -1,6 +1,7 @@
+import {botAction} from './bot';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createGame,reduceGame,botAction,normalCount,type Card,type Action} from './engine';
+import {createGame,reduceGame,normalCount,type Card,type Action} from './engine';
 import {availableCards,blindAttack,hatTargets,isLocked,magicUnavailable} from './trickRules';
 import {animationEvents} from './animationModel';
 const c=(id:string,rank=0,suit=0,spell?:string):Card=>({id,rank,suit,spell,word:{ko:'사과',ru:'яблоко'}});

@@ -62,15 +62,15 @@ const evaluators:Record<string,Evaluator>={
   return {utility:urgency*(behind*.9+(opponent<=2?2:0)+Math.min(2,g.discard.length/12))-(average>9?1:0)};
  }
 };
-export function evaluateMagic(g:Game,card:Card):Evaluation {
+export function evaluateMagic(g:Game,card:Card,usedThisRound=false):Evaluation {
  // A new round opens with an ordinary attack. No casting while waiting or drawing.
  if(!canUseMagic(g,1)||!g.table.length||g.attacker!==1&&!g.table.some(p=>!p.defense))return {utility:0};
  if(g.attacker===1&&g.table.some(p=>!p.defense))return {utility:0};
- if(g.botMagicUsed||magicUnavailable(g,1,card.spell||''))return {utility:0};
+ if(usedThisRound||magicUnavailable(g,1,card.spell||''))return {utility:0};
  return evaluators[card.spell||'']?.(g)??{utility:0};
 }
-export function chooseBotMagic(g:Game,random=Math.random):Action|undefined {
- const candidates=g.hands[1].filter(c=>c.spell).map(card=>({card,...evaluateMagic(g,card)})).filter(c=>c.utility>=botMagicSettings.minimumUtility);
+export function chooseBotMagic(g:Game,random=Math.random,usedThisRound=false):Action|undefined {
+ const candidates=g.hands[1].filter(c=>c.spell).map(card=>({card,...evaluateMagic(g,card,usedThisRound)})).filter(c=>c.utility>=botMagicSettings.minimumUtility);
  if(!candidates.length)return;
  const dictionary=gameDictionary(g),question=dictionary.findIndex((_,i)=>quizAnswer(dictionary,i)!==undefined);
  if(question<0||random()>botMagicSettings.activationProbability)return;

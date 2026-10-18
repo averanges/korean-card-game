@@ -1,0 +1,78 @@
+ .gitignore                         |   40 [32m+[m
+ .nvmrc                             |    1 [32m+[m
+ ANIMATIONS.md                      |   78 [32m++[m
+ ASSETS.md                          |   20 [32m+[m
+ DEPLOYMENT.md                      |   43 [32m+[m
+ MAGIC_LOGIC.md                     |   49 [32m++[m
+ NEW_MAGIC_CARDS.md                 |   65 [32m++[m
+ README.md                          |   48 [32m++[m
+ animation-mobile.html              |    1 [32m+[m
+ animation-preview.html             |    1 [32m+[m
+ hand-fixture.html                  |    1 [32m+[m
+ hand-preview.html                  |    1 [32m+[m
+ index.html                         |    1 [32m+[m
+ layout-fixture.html                |    1 [32m+[m
+ layout-preview.html                |    1 [32m+[m
+ package-lock.json                  | 1521 [32m++++++++++++++++++++++++++++++++++++[m
+ package.json                       |   22 [32m+[m
+ public/assets/approved-header.png  |  Bin [31m0[m -> [32m2654001[m bytes
+ public/assets/button-reference.png |  Bin [31m0[m -> [32m2045365[m bytes
+ public/assets/card-back.png        |  Bin [31m0[m -> [32m2683161[m bytes
+ public/assets/card-frame.png       |  Bin [31m0[m -> [32m1942660[m bytes
+ public/assets/card-reference.png   |  Bin [31m0[m -> [32m1930836[m bytes
+ public/assets/ghost-thief.png      |  Bin [31m0[m -> [32m2739011[m bytes
+ public/assets/header-panel.svg     |    1 [32m+[m
+ public/assets/magic-cards.png      |  Bin [31m0[m -> [32m2927501[m bytes
+ public/assets/magicians-hat.png    |  Bin [31m0[m -> [32m2820081[m bytes
+ public/assets/monkey-prank.png     |  Bin [31m0[m -> [32m2455573[m bytes
+ public/assets/ornate-panel.svg     |    1 [32m+[m
+ public/assets/table.png            |  Bin [31m0[m -> [32m2180319[m bytes
+ public/assets/trick-gift.png       |  Bin [31m0[m -> [32m2891550[m bytes
+ public/assets/trump-medallion.svg  |    8 [32m+[m
+ scripts/build.mjs                  |   12 [32m+[m
+ src/AnimationPreview.tsx           |   35 [32m+[m
+ src/BoardImpact.tsx                |   25 [32m+[m
+ src/EffectIndicators.tsx           |   18 [32m+[m
+ src/GameAnimationLayer.tsx         |   60 [32m++[m
+ src/MagicBurn.tsx                  |   10 [32m+[m
+ src/MagicHand.tsx                  |   24 [32m+[m
+ src/MagicStatus.tsx                |   26 [32m+[m
+ src/OrdinaryHand.tsx               |   38 [32m+[m
+ src/SuitJewel.tsx                  |   56 [32m++[m
+ src/TableFixture.tsx               |   51 [32m++[m
+ src/TrickAnimation.tsx             |   15 [32m+[m
+ src/TrumpChoice.tsx                |   36 [32m+[m
+ src/TurnIndicator.tsx              |   16 [32m+[m
+ src/animationModel.test.ts         |   13 [32m+[m
+ src/animationModel.ts              |   58 [32m++[m
+ src/animations.css                 |   13 [32m+[m
+ src/boardImpacts.css               |   21 [32m+[m
+ src/botMagic.ts                    |   79 [32m++[m
+ src/effects.ts                     |    6 [32m+[m
+ src/engine.test.ts                 |   20 [32m+[m
+ src/engine.ts                      |   55 [32m++[m
+ src/hand.css                       |   16 [32m+[m
+ src/handFixture.tsx                |   17 [32m+[m
+ src/handModel.test.ts              |    9 [32m+[m
+ src/handModel.ts                   |   39 [32m+[m
+ src/legendary.css                  |  100 [32m+++[m
+ src/magicDrops.test.ts             |   29 [32m+[m
+ src/magicDrops.ts                  |   20 [32m+[m
+ src/magicLogic.test.ts             |   53 [32m++[m
+ src/magicQuiz.ts                   |   27 [32m+[m
+ src/main.tsx                       |   86 [32m++[m
+ src/speech.ts                      |   47 [32m++[m
+ src/spells.ts                      |   11 [32m+[m
+ src/style.css                      |   40 [32m+[m
+ src/tableLayout.css                |  118 [32m+++[m
+ src/trickRules.test.ts             |   44 [32m++[m
+ src/trickRules.ts                  |   36 [32m+[m
+ src/tricks.css                     |   52 [32m++[m
+ src/trumpChoice.css                |   22 [32m+[m
+ src/useGameAnimations.ts           |   60 [32m++[m
+ src/useHandScroll.ts               |   61 [32m++[m
+ src/useTableLayout.ts              |   55 [32m++[m
+ src/words.ts                       |    2 [32m+[m
+ tsconfig.json                      |   21 [32m+[m
+ vite.config.mjs                    |   12 [32m+[m
+ 77 files changed, 3568 insertions(+)
