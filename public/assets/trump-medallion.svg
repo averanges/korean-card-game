@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 134" fill="none">
+<defs><radialGradient id="ivory"><stop stop-color="#fff6df"/><stop offset=".65" stop-color="#f5dfd2"/><stop offset="1" stop-color="#c098b8"/></radialGradient><linearGradient id="gold" x1="15" y1="12" x2="100" y2="120" gradientUnits="userSpaceOnUse"><stop stop-color="#fff3be"/><stop offset=".23" stop-color="#e7b575"/><stop offset=".46" stop-color="#a66941"/><stop offset=".66" stop-color="#ffe0a0"/><stop offset="1" stop-color="#bf874b"/></linearGradient><linearGradient id="gem" x2="1" y2="1"><stop stop-color="#f9deff"/><stop offset=".5" stop-color="#ae78d4"/><stop offset="1" stop-color="#513375"/></linearGradient></defs>
+<ellipse cx="60" cy="67" rx="49" ry="54" fill="#21152e" stroke="url(#gold)" stroke-width="3"/>
+<ellipse cx="60" cy="67" rx="44" ry="49" fill="url(#ivory)" stroke="#edc18b" stroke-width="2"/>
+<path d="M31 27 25 36 29 38M87 29 94 38 90 41M24 93 31 104 36 102M91 96 85 106 80 103" stroke="#795584" stroke-width="3"/>
+<path d="M60 3Q63 23 76 25Q63 28 60 43Q57 28 44 25Q57 23 60 3ZM60 91Q64 108 77 111Q63 114 60 131Q57 114 43 111Q57 108 60 91ZM4 67Q16 64 19 53Q22 64 33 67Q22 70 19 81Q16 70 4 67ZM87 67Q99 64 102 53Q105 64 116 67Q105 70 102 81Q99 70 87 67Z" fill="url(#gem)" stroke="url(#gold)" stroke-width="2"/>
+<path d="m60 16 2 9-2 10-2-10ZM60 102l2 9-2 10-2-10Z" fill="#fff0d2" opacity=".8"/>
+</svg>

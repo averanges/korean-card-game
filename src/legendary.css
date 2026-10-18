@@ -1,0 +1,100 @@
+/* Legendary presentation: existing artwork, finite CSS/SVG layers only. */
+.legendary-receipt.draw-flight{animation-name:legendary-receive;animation-timing-function:cubic-bezier(.22,.65,.3,1)}
+.legendary-receipt .flight-flip{animation-name:legendary-reveal}
+.legendary-receipt .flight-front{box-shadow:0 0 10px var(--accent),0 0 23px var(--accent);border-radius:7%}
+@keyframes legendary-receive{0%{opacity:0;transform:translate(0,12px) scale(.85)}6%{opacity:1}27%,69%{opacity:1;transform:translate(var(--center-dx),var(--center-dy)) scale(var(--center-scale))}98%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(var(--landing-scale))}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(var(--landing-scale))}}
+@keyframes legendary-reveal{0%,27%{transform:rotateY(0)}44%,100%{transform:rotateY(180deg)}}
+.magic-hand .magic-mini.card-arrival,.magic-gallery .magic-mini.card-arrival{animation:legendary-arrival var(--arrival-duration) linear var(--arrival-delay) both!important}
+@keyframes legendary-arrival{0%,99%{opacity:0}100%{opacity:1}}
+.receiving-magic .magic-stack{animation:receive-hand-glow 850ms ease-out var(--hand-glow-delay,0ms) both}
+@keyframes receive-hand-glow{0%,65%,100%{box-shadow:4px 4px 0 #533864,6px 6px 0 #ba9263}85%{box-shadow:0 0 18px #c5a1ff,4px 4px 0 #533864,6px 6px 0 #ba9263}}
+.magic-status .trump-swap,.magic-status .current-suit{position:relative;display:grid;place-items:center;width:100%;height:100%;font:inherit;color:inherit}
+.magic-status .trump-swap>span{position:absolute;inset:0;display:grid;place-items:center;backface-visibility:hidden}
+.magic-status .old-suit{animation:trump-old 1000ms ease-in var(--indicator-delay) both}
+.magic-status .new-suit{animation:trump-new 1000ms ease-out var(--indicator-delay) both}
+@keyframes trump-old{0%{opacity:1;transform:scale(1) rotateY(0)}30%{opacity:1;transform:scale(1.13) rotateY(0);text-shadow:0 0 12px #f5bf52}55%,100%{opacity:0;transform:scale(1) rotateY(90deg)}}
+@keyframes trump-new{0%,45%{opacity:0;transform:rotateY(-90deg) scale(.85)}75%{opacity:1;transform:rotateY(0) scale(1.16);text-shadow:0 0 13px #ffd67b}100%{opacity:1;transform:rotateY(0) scale(1);text-shadow:none}}
+.magic-status.counting-deck .deck-value{color:#c9fff5;text-shadow:0 0 9px #58cbbc;animation:deck-count-flash 850ms ease-out var(--count-delay,0ms) both;font-variant-numeric:tabular-nums}
+@keyframes deck-count-flash{0%,100%{text-shadow:none}45%{text-shadow:0 0 12px #66edda}}
+.effect-thumbnail.spell-mirror{border-color:#c5a0ee}
+.effect-infinity{position:absolute;right:-3px;bottom:-3px;padding:0 3px;border:1px solid #9e7cc4;border-radius:4px;background:#251a3e;color:#e0ccfa;font:12px Georgia}
+.mirror-confirmation{position:fixed;top:29%;right:4%;max-width:min(290px,88vw);padding:9px 13px;border:1px solid #b392d9;border-radius:7px;background:#28213df2;color:#ecdeff;font:13px/1.4 Georgia;pointer-events:none;z-index:30;animation:mirror-notice 4200ms ease-out var(--notice-delay) both}
+@keyframes mirror-notice{0%{opacity:0;transform:translateY(-4px)}6%,90%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
+.burn-decoration{position:absolute;inset:0;pointer-events:none;border-radius:inherit}
+.burn-edges{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 25px 9px #171020,inset 0 0 6px 3px #9472b8;animation:burn-edges var(--burn-duration,1100ms) linear var(--burn-delay,0ms) both}
+.burn-spark{position:absolute;left:var(--spark-x);top:70%;width:4px;height:9px;background:#cfb3ed;clip-path:polygon(50% 0,100% 65%,45% 100%,0 45%);animation:burn-spark var(--burn-duration,1100ms) ease-out var(--burn-delay,0ms) both}
+@keyframes burn-edges{0%{opacity:0}15%{opacity:.9}32%{opacity:.55}45%{opacity:1}100%{opacity:0}}
+@keyframes burn-spark{0%,20%{opacity:0;transform:translate(0,0) rotate(0)}35%{opacity:1}100%{opacity:0;transform:translate(var(--spark-dx),-65px) rotate(var(--spark-turn))}}
+.activation-card.burning-card{box-shadow:none;filter:none;background:none;position:relative}
+.burn-face{width:100%;height:100%;border-radius:inherit}
+.activation-card .burn-face{position:absolute;inset:0;background-image:url('/assets/magic-cards.png');background-size:306% 106%;background-position:inherit;box-shadow:0 0 15px #b197d5}
+.burning-card .burn-face,.failed-magic .burn-face{animation:legendary-burn var(--burn-duration,1100ms) linear var(--burn-delay,0ms) both}
+@keyframes legendary-burn{0%{opacity:1;filter:brightness(1);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}15%{opacity:1;filter:brightness(.5) saturate(.55);clip-path:polygon(2% 3%,96% 2%,99% 97%,1% 99%)}40%{opacity:.95;filter:brightness(.4) saturate(.3);clip-path:polygon(12% 15%,29% 8%,48% 14%,73% 7%,88% 16%,82% 42%,93% 64%,80% 86%,59% 92%,40% 84%,18% 91%,9% 63%,16% 42%)}75%{opacity:.6;filter:brightness(.3) saturate(.2);clip-path:polygon(35% 35%,47% 29%,65% 37%,59% 49%,69% 63%,53% 70%,35% 63%,40% 50%)}100%{opacity:0;filter:brightness(.2);clip-path:polygon(49% 49%,51% 49%,51% 51%,49% 51%)}}
+.game-animation-layer .failed-magic{animation:none;opacity:1;aspect-ratio:.65;height:auto;border-radius:7%}
+.quiz-options button.result-correct{opacity:1;background:#c7dfbb!important;border-color:#558d5a;box-shadow:inset 0 0 0 2px #f6fff1;color:#234726}
+.quiz-options button.result-wrong{opacity:1;background:#e9b6b9!important;border-color:#ae4a5e;box-shadow:inset 0 0 0 2px #fff0ec;color:#79263c}
+.quiz-options button:disabled{cursor:default}
+/* The central illustration hands over to each spell's distinct field effect. */
+.magic-burst .legendary-card{animation-name:legendary-activation}
+@keyframes legendary-activation{0%{opacity:0;transform:translate(-50%,-50%) scale(.88)}12%,30%{opacity:1;transform:translate(-50%,-50%) scale(1)}43%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.05)}}
+.burst-mirror-wave .magic-table-wave{border-width:3px;border-color:#d9c9fa;box-shadow:0 0 18px #b2a9ef,inset 0 0 14px #d4c7f0;animation-name:mirror-field-wave}
+@keyframes mirror-field-wave{0%,29%{opacity:0;transform:scale(.2,.4)}39%{opacity:.8}82%{opacity:.4;transform:scale(1.5,1.1)}100%{opacity:0;transform:scale(1.7,1.25)}}
+.magic-burst .reverse-time .hourglass-sand{animation:hourglass-backward 1600ms ease-in-out calc(var(--delay) + 700ms) both}
+@keyframes hourglass-backward{0%{opacity:0;transform:translateY(7px)}15%{opacity:1}75%{opacity:1;transform:translateY(-7px)}100%{opacity:0;transform:translateY(-10px)}}
+.magic-burst .returning-silhouette{top:35px;left:32px;animation:hourglass-orbit 1450ms ease-out calc(var(--delay) + 750ms + var(--i)*65ms) both}
+@keyframes hourglass-orbit{0%{opacity:0;transform:rotate(-80deg) translateX(80px) rotate(50deg) scale(.7)}20%{opacity:.65}80%{opacity:.4}100%{opacity:0;transform:rotate(170deg) translateX(60px) rotate(-130deg) scale(.5)}}
+.simple-motion .magic-mini.card-arrival{animation:none!important;opacity:1!important}
+.simple-motion .mirror-confirmation{animation:mirror-notice-simple 4200ms both;--notice-delay:0ms}
+@keyframes mirror-notice-simple{0%,90%{opacity:1}100%{opacity:0}}
+.simple-motion .burning-card .burn-face,.simple-motion .failed-magic .burn-face{animation:burn-simple 120ms linear var(--burn-delay,0ms) both}
+.simple-motion .burn-decoration{display:none}
+@keyframes burn-simple{from{opacity:1}to{opacity:0}}
+@media(max-width:650px){.mirror-confirmation{top:33%;font-size:11px;max-width:230px}.burn-spark{width:3px;height:7px}}
+@media(prefers-reduced-motion:reduce){.legendary-receipt{display:none}.magic-mini.card-arrival{animation:none!important;opacity:1!important}.burn-decoration{display:none}.burning-card .burn-face,.failed-magic .burn-face{animation:burn-simple 1ms var(--burn-delay,0ms) both}.trump-swap .old-suit{display:none}.trump-swap .new-suit{animation:none}.mirror-confirmation{animation:mirror-notice-simple 4200ms both}.receiving-magic .magic-stack,.counting-deck .deck-value{animation:none}}
+
+.receiving-first .stack-art{visibility:hidden}.receiving-first .magic-stack{background:#33213f url('/assets/card-back.png') center/114% 110%}.simple-motion .receiving-first .stack-art{visibility:visible}.simple-motion.rank-flash .corner,.simple-motion.flash-trump .trump,.simple-motion.flash-deck .deck-glyph{animation:none!important}
+
+.legendary-preview-status{left:auto!important;right:3%!important;top:70px!important;width:260px;z-index:10}.legendary-preview-status .magic-status{position:relative;top:0}@media(max-width:650px){.legendary-preview-status{width:170px;top:145px!important}}
+
+.magic-status.counting-deck .deck-glyph{animation:returned-deck-glow 850ms ease-out var(--count-delay,0ms) both}@keyframes returned-deck-glow{0%,100%{box-shadow:2px 1px 0 #5d364b,3px 2px 0 #d7b07c}45%{box-shadow:0 0 15px #69decf,2px 1px 0 #5d364b,3px 2px 0 #d7b07c}}
+
+/* Slower legendary reactions stay separate from attack/defense timings. */
+.full-motion.rank-flash .corner,.full-motion.rank-flash .animation-rank{animation:rank-flash 1400ms ease-out var(--mirror-delay,900ms) both}
+.full-motion.flash-trump .trump{animation:none}
+.magic-status .trump-swap:before{content:'';position:absolute;inset:-7%;border:2px solid #ffe8ab;border-radius:50%;box-shadow:0 0 16px 4px #ffcf6977,inset 0 0 14px #f9c56866;pointer-events:none;animation:fate-medallion-flare 1500ms ease-out var(--indicator-delay) both}
+.magic-status .trump-swap:after{content:'✦';position:absolute;right:-10%;top:-12%;font-size:25px;color:#fff3c8;pointer-events:none;animation:fate-medallion-star 1300ms ease-out var(--indicator-delay) both}
+.magic-status .new-suit{animation-name:trump-new-bright}
+@keyframes trump-new-bright{0%,42%{opacity:0;transform:rotateY(-90deg) scale(.8)}65%{opacity:1;transform:rotateY(0) scale(1.3);text-shadow:0 0 6px #fff4c3,0 0 23px #ffc342}84%{opacity:1;transform:rotateY(0) scale(1.12);text-shadow:0 0 15px #f5b543}100%{opacity:1;transform:rotateY(0) scale(1);text-shadow:none}}
+@keyframes fate-medallion-flare{0%{opacity:0;transform:scale(.85)}25%,48%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:scale(1.24)}}
+@keyframes fate-medallion-star{0%{opacity:0;transform:rotate(-30deg) scale(.5)}35%,55%{opacity:1;transform:rotate(0) scale(1.2)}100%{opacity:0;transform:rotate(30deg) scale(.7)}}
+.magic-confirmations{position:fixed;top:29%;right:4%;max-width:min(310px,88vw);display:flex;flex-direction:column;gap:8px;z-index:30;pointer-events:none}
+.magic-confirmations .mirror-confirmation{position:relative;top:auto;right:auto;max-width:100%;margin:0}
+.fate-confirmation{border-color:#eac784;background:linear-gradient(130deg,#382d30f7,#231d38f7);color:#ffe6b4}
+.fate-confirmation strong{font-size:22px;color:#fff2d2;text-shadow:0 0 9px #f2bc60}
+.fate-confirmation small{display:block;margin-top:5px;font:12px/1.5 Georgia;color:#ead8b7}
+.trump-choice-overlay{z-index:90;background:#0b102ca3;padding:22px}
+.trump-choice{width:min(510px,94vw);padding:44px 30px 24px;text-align:center}
+.trump-choice .choice-success{font-size:21px;margin:15px 0 9px;color:#5e396d}
+.trump-choice>p:not(.choice-success){font-size:15px}
+.trump-options{display:flex;justify-content:center;gap:16px;margin:22px 0}
+.trump-options .suit-option{width:115px;min-height:128px;padding:12px 8px;color:#38204d;background:linear-gradient(#fff5df,#e9d5dc);border:1px solid #b78d58;box-shadow:inset 0 0 0 3px #fcf0d9;border-radius:12px}
+.suit-option>span{display:block;font:64px/1 Georgia}.suit-option>small{display:block;margin-top:7px;font:15px Georgia}
+.trump-options .red-suit{color:#a43153}
+.trump-options .chosen-suit{outline:2px solid #b381dc;outline-offset:3px;box-shadow:0 0 17px #ac77d588,inset 0 0 0 3px #fff3e4;background:linear-gradient(#fbf0ff,#d8b9ee)}
+.choice-cancel{display:block;margin:15px auto 0;padding:8px 15px;color:#573968;background:transparent;font:14px Georgia;border-color:#b89576}
+.simple-motion .trump-swap:before,.simple-motion .trump-swap:after{display:none}
+@media(max-width:650px){.magic-confirmations{top:33%;max-width:235px}.trump-choice{padding:36px 17px 20px}.trump-options{gap:10px}.trump-options .suit-option{width:90px;min-height:109px}.suit-option>span{font-size:52px}.suit-option>small{font-size:13px}.trump-choice .choice-success{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.trump-swap:before,.trump-swap:after{display:none}.full-motion.rank-flash .corner,.full-motion.rank-flash .animation-rank{animation:none}}
+
+/* Deliberate, bright local signal when the trump actually changes. */
+.magic-status .trump-swap{isolation:isolate}
+.magic-status .trump-pulse{position:absolute;left:-80%;top:-80%;width:260%;height:260%;overflow:visible;pointer-events:none;z-index:-1}
+.trump-pulse .pulse-core,.trump-pulse .pulse-halo,.trump-pulse .pulse-wave,.trump-pulse .pulse-rays{transform-origin:100px 100px;animation-duration:1800ms;animation-delay:var(--indicator-delay);animation-timing-function:ease-out;animation-fill-mode:both}
+.trump-pulse .pulse-core{animation-name:trump-impact-core}.trump-pulse .pulse-halo{animation-name:trump-impact-halo}.trump-pulse .pulse-wave{animation-name:trump-impact-wave}.trump-pulse .pulse-rays{animation-name:trump-impact-rays}
+.magic-status.fate-changing .trump{animation:trump-medallion-illuminate 1800ms ease-out var(--indicator-delay) both}
+@keyframes trump-impact-core{0%,14%{opacity:0;transform:scale(.6)}28%,43%{opacity:1;transform:scale(1.08)}70%{opacity:.65;transform:scale(1.2)}100%{opacity:0;transform:scale(1.4)}}
+@keyframes trump-impact-halo{0%,20%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(.85)}65%{opacity:.8}100%{opacity:0;transform:scale(1.8)}}
+@keyframes trump-impact-wave{0%,34%{opacity:0;transform:scale(.8)}42%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes trump-impact-rays{0%,18%{opacity:0;transform:scale(.5) rotate(-8deg)}30%,45%{opacity:1;transform:scale(1) rotate(0)}100%{opacity:0;transform:scale(1.15) rotate(8deg)}}
+@keyframes trump-medallion-illuminate{0%,12%{filter:brightness(1) drop-shadow(0 3px 4px #170d2780)}28%,43%{filter:brightness(1.8) drop-shadow(0 0 12px #fff3bc) drop-shadow(0 0 25px #fbc45c)}70%{filter:brightness(1.2) drop-shadow(0 0 17px #f5c966)}100%{filter:brightness(1) drop-shadow(0 3px 4px #170d2780)}}
+@media(prefers-reduced-motion:reduce){.trump-pulse{display:none}.magic-status.fate-changing .trump{animation:none!important}}
