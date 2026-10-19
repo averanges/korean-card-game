@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,reduceGame,drawToSix,normalCount,canAttack,beats,type Game} from './engine';
-import {createLearningState,sealedCards,isStudyLocked,reduceLearning,learningSettings,unlockView} from './learning';
+import {createLearningState,sealedCards,isStudyLocked,reduceLearning,learningSettings,unlockView,sealDraw} from './learning';
 import {projectGameForPlayer,projectEventsForPlayer} from './game-core/projection';
 import {createChallengeBook,beginMagicChallenge,answerMagicChallenge,cancelMagicChallenge,publicQuiz} from './game-core/challenges';
 import {isGhostLocked,isLocked,hatTargets} from './trickRules';
@@ -16,10 +16,10 @@ function correct(g:Game,random=()=>0,p:0|1=0){const q=g.learning!.attempts[p]!;r
 const total=(g:Game)=>[...g.deck,...g.hands.flat(),...g.discard,...g.table.flatMap(p=>p.defense?[p.attack,p.defense]:[p.attack])].filter(c=>!c.spell);
 test('study locks: initial deal open; refill 1/3/6 keeps exactly 36 physical cards, no magic on draw',()=>{
  for(const n of [1,3,6]){const g=drawn(n);assert.equal(sealedCards(g,0).length,n);assert.equal(normalCount(g.hands[0]),6);assert.equal(g.magicPool!.length,11);assert.equal(total(g).length,36);assert.equal(new Set(total(g).map(c=>c.id)).size,36);}
- assert.equal(sealedCards(createGame(),0).length,0);assert.equal(learningSettings.LOCK_CHANCE,.4);assert.equal(learningSettings.MAGIC_REWARD_CHANCE,.25);
+ assert.equal(sealedCards(createGame(),0).length,0);assert.equal(learningSettings.LOCK_CHANCE,.6);assert.equal(learningSettings.MAGIC_REWARD_CHANCE,.5);
 });
-test('independent draw rolls include both sides of the 40% boundary',()=>{
- const draws=[.399,0,0,0,0,.4,.2,0,0,0,0],g=drawn(3,()=>draws.shift()??.9);assert.equal(sealedCards(g,0).length,2);
+test('independent draw rolls include both sides of the 60% boundary',()=>{
+ const draws=[.599,0,0,0,0,.6,.2,0,0,0,0],g=drawn(3,()=>draws.shift()??.9);assert.equal(sealedCards(g,0).length,2);
 });
 test('sealed physical card cannot attack, defend, be exchanged, or enable pass',()=>{
  const g=drawn(6),c=g.hands[0][0];g.attacker=0;assert.ok(isStudyLocked(g,c));assert.equal(canAttack(g,c),false);assert.equal(beats(c,{...c,rank:-1},g),false);assert.equal(hatTargets(g,0).length,0);assert.equal(reduceGame(g,{type:'attack',player:0,ids:[c.id]}),g);assert.equal(reduceGame(g,{type:'pass',player:0}),g);
@@ -35,9 +35,34 @@ test('reading allows unlimited errors, reveals feedback, shuffles and resumes th
  for(let i=0;i<7;i++){const q=g.learning!.attempts[0]!,wrong=q.quiz.options.findIndex(x=>x!==q.quiz.correct);g=reduceLearning(g,{type:'unlock_answer',player:0,challengeId:id,option:wrong});assert.equal(unlockView(g,0)!.correct,q.quiz.correct);const previous=[...q.quiz.options];g=reduceLearning(g,{type:'unlock_close',player:0,challengeId:id});g=reduceLearning(g,{type:'unlock_begin',player:0,ref});assert.equal(g.learning!.attempts[0]!.id,id);g=reduceLearning(g,{type:'unlock_continue',player:0,challengeId:id},()=>.999);assert.notDeepEqual(g.learning!.attempts[0]!.quiz.options,previous);}
  const before=total(g).map(c=>c.id).sort(),deck=g.deck.length;g=correct(g,()=>.9);assert.equal(g.learning!.seals[g.learning!.attempts[0]!.cardId].errors,7);assert.equal(unlockView(g,0)!.firstCorrect,false);assert.equal(sealedCards(g,0).length,0);assert.equal(g.deck.length,deck);assert.deepEqual(total(g).map(c=>c.id).sort(),before);
 });
-test('reward check is once per physical card; 0/25%/pool exhaustion do not alter normal cards',()=>{
- for(const random of [()=>0,()=>.249,()=>.25,()=>1]){let g=begin(drawn(1));const before=g.magicPool!.length;g=correct(g,random);assert.equal(g.magicPool!.length,before-(random()<.25?1:0));const next=correct(g,()=>0);assert.equal(next,g);assert.equal(normalCount(g.hands[0]),6);}
+test('reward check is once per physical card; 0/50%/pool exhaustion do not alter normal cards',()=>{
+ for(const random of [()=>0,()=>.499,()=>.5,()=>1]){let g=begin(drawn(1));const before=g.magicPool!.length;g=correct(g,random);assert.equal(g.magicPool!.length,before-(random()<.5?1:0));const next=correct(g,()=>0);assert.equal(next,g);assert.equal(normalCount(g.hands[0]),6);}
  let g=begin(drawn(1));g.magicPool=[];g=correct(g,()=>0);assert.equal(sealedCards(g,0).length,0);assert.equal(g.hands[0].filter(c=>c.spell).length,0);
+});
+test('pity guarantees third first-opening, resets on award, isolates players and counts neither errors nor repeat openings',()=>{
+ let g=drawn(6);g.discard.push(...g.hands[1].splice(0,3));drawToSix(g,1,()=>0);
+ for(const p of [0,1] as const){
+  for(let i=0;i<2;i++){g=begin(g,p);const q=g.learning!.attempts[p]!;g=reduceLearning(g,{type:'unlock_answer',player:p,challengeId:q.id,option:q.quiz.options.findIndex(o=>o!==q.quiz.correct)},()=>.99);assert.equal(g.learning!.rewardMisses![p],i);g=reduceLearning(g,{type:'unlock_continue',player:p,challengeId:q.id});g=correct(g,()=>.99,p);assert.equal(g.learning!.rewardMisses![p],i+1);assert.equal(correct(g,()=>0,p),g);}
+ }
+ assert.deepEqual(g.learning!.rewardMisses,[2,2]);const before=g.magicPool!.length;
+ g=correct(begin(g),()=>.99);assert.equal(g.magicPool!.length,before-1);assert.deepEqual(g.learning!.rewardMisses,[0,2]);
+ g=correct(begin(g,1),()=>.99,1);assert.deepEqual(g.learning!.rewardMisses,[0,0]);
+ g=correct(begin(g),()=>.99);assert.equal(g.learning!.rewardMisses![0],1);g=correct(begin(g),()=>0);assert.equal(g.learning!.rewardMisses![0],0);
+});
+test('pity never exceeds finite pool, survives serialization and lazy-migrates old learning state',()=>{
+ let g=drawn(6);delete g.learning!.rewardMisses;g=correct(begin(g),()=>.99);assert.deepEqual(g.learning!.rewardMisses,[1,0]);
+ g=correct(begin(g),()=>.99);g=JSON.parse(JSON.stringify(g));g.magicPool=g.magicPool!.slice(0,1);g=correct(begin(g),()=>.99);assert.equal(g.magicPool!.length,0);assert.equal(g.learning!.rewardMisses![0],0);
+ for(let i=0;i<3;i++)g=correct(begin(g),()=>.99);assert.equal(g.magicPool!.length,0);assert.equal(g.hands[0].filter(c=>c.spell).length,1);assert.equal(g.learning!.rewardMisses![0],2);
+});
+test('bot uses the same third-opening guarantee',()=>{
+ let g=createGame(()=>.4);g.discard.push(...g.hands[1].splice(0,3));drawToSix(g,1,()=>0);const before=g.magicPool!.length;
+ for(let i=0;i<3;i++){const a=botAction(g)!;assert.equal(a.type,'unlock_bot');g=reduceGame(g,a,()=>.99);}
+ assert.equal(g.magicPool!.length,before-1);assert.deepEqual(g.learning!.rewardMisses,[0,0]);
+});
+test('resealing and transferring an already opened physical card cannot change either streak or award again',()=>{
+ let g=correct(begin(drawn(1)),()=>.99);const id=g.learning!.attempts[0]!.cardId,card=g.hands[0].find(c=>c.id===id)!;
+ sealDraw(g,card,()=>0);g=correct(begin(g),()=>0);assert.deepEqual(g.learning!.rewardMisses,[1,0]);assert.equal(g.magicPool!.length,11);
+ g.hands[0]=g.hands[0].filter(c=>c.id!==id);g.hands[1].push(card);sealDraw(g,card,()=>0);g=correct(begin(g,1),()=>0,1);assert.deepEqual(g.learning!.rewardMisses,[1,0]);assert.equal(g.magicPool!.length,11);
 });
 test('unlock is owner-bound, works while waiting, never removes Ghost, and bot opens all locks without deadlock',()=>{
  let g=drawn(3);const ref=sealedCards(g,0)[0].ref;assert.equal(reduceLearning(g,{type:'unlock_begin',player:1,ref}),g);g.attacker=1;g=begin(g);const c=g.learning!.attempts[0]!.cardId;g.effects.push({id:'ghost',kind:'ghost_thief',name:'Ghost',description:'',duration:{type:'event',event:'ghost-release',label:''},modifier:{},lockedCardId:c,target:0});g=correct(g);assert.equal(isStudyLocked(g,g.hands[0].find(x=>x.id===c)!),false);assert.ok(isGhostLocked(g,g.hands[0].find(x=>x.id===c)!));assert.ok(isLocked(g,g.hands[0].find(x=>x.id===c)!));

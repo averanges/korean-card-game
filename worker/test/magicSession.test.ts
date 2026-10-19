@@ -17,7 +17,7 @@ function open(r:StoredRoom,p:Seat,id:string){const next=send(r,p,{type:'begin_ma
 function answer(r:StoredRoom,p:Seat,correct=true){const c=r.challenges!.attempts[p]!;const option=c.quiz.options.findIndex(o=>correct?o===c.quiz.correct:o!==c.quiz.correct);return send(r,p,{type:'answer_quiz',challengeId:c.id,option});}
 test('new magic deal keeps 36 ordinary cards, 11 physical extras; refill seals normals; only unlocking can exhaust the finite reward pool',async()=>{
  const r=await fixture();assert.deepEqual(r.game!.hands.map(h=>h.length),[6,6]);assert.equal(r.game!.magicPool!.length,11);
- const initial=r.game!.magicPool!.map(c=>c.id);assert.equal(new Set(initial).size,11);assert.equal(learningSettings.MAGIC_REWARD_CHANCE,.25);
+ const initial=r.game!.magicPool!.map(c=>c.id);assert.equal(new Set(initial).size,11);assert.equal(learningSettings.MAGIC_REWARD_CHANCE,.5);
  // Repeated real engine refills can exhaust the physical pool, never exceed it.
  for(let round=0;round<12;round++){
   r.game!.attacker=0;r.game!.table=[{attack:card('attack-'+round,0),defense:card('defense-'+round,1)}];

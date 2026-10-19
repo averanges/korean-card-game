@@ -1,4 +1,5 @@
 import {SealedCard} from './SealedCard';
+import {createPortal} from 'react-dom';
 import {spellNames} from './spells';
 import {MagicBurn} from './MagicBurn';
 import {TrickAnimation} from './TrickAnimation';
@@ -11,6 +12,17 @@ export function AnimationCard({card,magicId}:{card?:Card;magicId?:string}){
   const spell=card?.spell||magicId;return <div className={'animation-card '+(spell?'animation-art spell-'+spell:!card?'network-card-back':'')}>
     {card&&!spell&&<><span className={'animation-rank '+([1,2].includes(card.suit)?'red':'')}>{ranks[card.rank]}<small>{suits[card.suit]}</small></span><span className="animation-word" lang="ko">{card.word.ko}</span></>}
   </div>;
+}
+function Unseal({entry}:{entry:AnimationEntry}){
+ const [position,setPosition]=useState<CSSProperties>();
+ useLayoutEffect(()=>{
+  const node=Array.from(document.querySelectorAll<HTMLElement>('[data-unseal-card-id]')).reverse().find(el=>el.dataset.unsealCardId===entry.cards[0]?.id&&el.getBoundingClientRect().width);
+  if(!node)return;
+  const rect=node.getBoundingClientRect(),matrix=new DOMMatrix(getComputedStyle(node).transform),angle=Math.atan2(matrix.b,matrix.a)*180/Math.PI;
+  setPosition({left:rect.x+(rect.width-node.offsetWidth)/2,top:rect.y+(rect.height-node.offsetHeight)/2,width:node.offsetWidth,height:node.offsetHeight,transform:`rotate(${angle}deg)`});
+ },[entry.id]);
+ if(!position)return null;
+ return createPortal(<div className="unseal-effect" aria-hidden="true" style={{...position,'--duration':entry.duration+'ms','--delay':entry.delay+'ms'} as CSSProperties}><div className="unseal-cover"><SealedCard ko={entry.cards[0].word.ko}/></div><svg className="unseal-gold" viewBox="0 0 100 150" fill="none"><g className="unseal-chain unseal-chain-left"><path d="M12 21 48 57 18 90"/></g><g className="unseal-chain unseal-chain-right"><path d="M88 21 52 57 82 90"/></g><g className="unseal-lock"><path d="M42 53V45a8 8 0 0 1 16 0v8M39 53h22v22H39z"/><path d="M50 61v7"/></g></svg><div className="unseal-lock-flash"/><div className="unseal-frame"/></div>,document.body);
 }
 function Flight({entry}:{entry:AnimationEntry}){
   const card=entry.player===0?entry.cards[0]:undefined;
@@ -55,7 +67,7 @@ export function GameAnimationLayer({entries,simple,suppressFailure=false,network
     {entries.map(entry=>{
       if(entry.type==='cards_drawn'||entry.type==='magic_received')return (entry.player===0||network)&&!simple?<Flight key={entry.id} entry={entry}/>:null;
       if(entry.type==='round_defended'||entry.type==='cards_taken')return <div key={entry.id} className={'round-ghosts '+entry.type} style={{'--duration':`${simple?100:entry.duration}ms`} as CSSProperties}>{entry.positions?.map((p,i)=>{const center=entry.positions!.reduce((sum,p)=>sum+p.x,0)/entry.positions!.length;return <div className="round-ghost" key={p.card.id} style={{left:p.x,top:p.y,width:p.width,height:p.height,'--gdx':`${(center-p.x)*.12}px`,'--rotation':`${p.rotation}deg`,'--stagger':`${Math.min(i*12,70)}ms`} as CSSProperties}><AnimationCard card={p.card}/></div>;})}</div>;
-      if(entry.type==='card_unlocked'){const source=entry.source;if(entry.player!==0||!entry.cards[0]||!source||simple)return null;return <div key={entry.id} className="unseal-effect" style={{left:source.x,top:source.y,width:source.width,height:source.height,'--duration':entry.duration+'ms','--delay':entry.delay+'ms'} as CSSProperties}><AnimationCard card={entry.cards[0]}/><div className="unseal-cover"><SealedCard ko={entry.cards[0].word.ko}/></div></div>;}
+      if(entry.type==='card_unlocked')return entry.player===0&&entry.cards[0]&&!simple?<Unseal key={entry.id} entry={entry}/>:null;
       if(entry.type==='magic_expired')return simple?null:<TrickAnimation key={entry.id} entry={entry}/>;
       if(entry.type==='magic_activated')return simple?<div key={entry.id} className="simple-magic-flash"/>:<MagicBurst key={entry.id} entry={entry}/>;
       if(entry.type==='magic_failed')return suppressFailure&&(!network||entry.player===0)?null:<div key={entry.id} className="failed-magic" style={{'--duration':`${simple?120:entry.duration}ms`,'--delay':entry.delay+'ms','--burn-duration':`${simple?120:entry.duration}ms`,'--burn-delay':entry.delay+'ms'} as CSSProperties}><div className="burn-face"><AnimationCard card={entry.cards[0]} magicId={entry.magicId}/></div><MagicBurn delay={entry.delay} duration={simple?120:entry.duration}/></div>;

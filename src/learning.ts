@@ -2,14 +2,14 @@ import type {Card,Game,Player} from './engine';
 import {awardMagic} from './magicDrops';
 import {quizAnswer,type MagicQuiz} from './magicQuiz';
 
-export const learningSettings={LOCK_CHANCE:.40,MAGIC_REWARD_CHANCE:.25,LISTENING_ATTEMPTS:3};
+export const learningSettings={LOCK_CHANCE:.60,MAGIC_REWARD_CHANCE:.50,LISTENING_ATTEMPTS:3};
 export interface LearningSeal {ref:string;locked:boolean;rewardChecked:boolean;errors:number;firstCorrect?:boolean;unlocked:boolean}
 export interface UnlockAttempt {id:string;cardId:string;ref:string;quiz:MagicQuiz;phase:'question'|'feedback'|'success';closed:boolean;picked?:string}
-export interface LearningState {version:1;serial:number;seals:Record<string,LearningSeal>;attempts:[UnlockAttempt|undefined,UnlockAttempt|undefined]}
+export interface LearningState {version:1;serial:number;seals:Record<string,LearningSeal>;attempts:[UnlockAttempt|undefined,UnlockAttempt|undefined];rewardMisses?:[number,number]}
 export interface SealedCardView {ref:string;ko:string}
 export interface UnlockView {id:string;ref:string;ko:string;options:string[];phase:UnlockAttempt['phase'];closed:boolean;picked?:string;correct?:string;errors:number;firstCorrect?:boolean}
 export type LearningAction={type:'unlock_begin';player:Player;ref:string}|{type:'unlock_answer';player:Player;challengeId:string;option:number}|{type:'unlock_continue'|'unlock_close';player:Player;challengeId:string}|{type:'unlock_bot';player:Player;ref:string};
-export const createLearningState=():LearningState=>({version:1,serial:0,seals:{},attempts:[undefined,undefined]});
+export const createLearningState=():LearningState=>({version:1,serial:0,seals:{},attempts:[undefined,undefined],rewardMisses:[0,0]});
 export const isStudyLocked=(g:Game,c:Card)=>!!g.learning?.seals[c.id]?.locked;
 export function sealedCards(g:Game,p:Player):SealedCardView[]{return g.hands[p].filter(c=>!c.spell&&isStudyLocked(g,c)).map(c=>({ref:g.learning!.seals[c.id].ref,ko:c.word.ko}));}
 const token=(state:LearningState,random:()=>number)=>'study-'+(++state.serial)+'-'+Array.from({length:4},()=>Math.floor(random()*4294967296).toString(36)).join('-');
@@ -30,7 +30,13 @@ export function sealDraw(g:Game,c:Card,random=Math.random){
 function unlock(g:Game,p:Player,c:Card,random:()=>number){
  const seal=g.learning!.seals[c.id];if(!seal.locked)return;
  seal.locked=false;seal.unlocked=true;
- if(!seal.rewardChecked){seal.rewardChecked=true;if(random()<learningSettings.MAGIC_REWARD_CHANCE)awardMagic(g,p,random);}
+ if(!seal.rewardChecked){
+  seal.rewardChecked=true;
+  // Missing counters in existing saves start at zero; only first physical openings count.
+  const misses=g.learning!.rewardMisses??=[0,0],before=g.hands[p].length;
+  if(misses[p]>=2||random()<learningSettings.MAGIC_REWARD_CHANCE)awardMagic(g,p,random);
+  misses[p]=g.hands[p].length>before?0:Math.min(2,misses[p]+1);
+ }
 }
 /** Same pure reducer for local play and the Durable Object transaction. */
 export function reduceLearning(state:Game,action:LearningAction,random=Math.random):Game {

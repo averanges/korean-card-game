@@ -1,0 +1,67 @@
+ docs/STAGE6_REPORT.md                 | 100 [32m++++++++++++++++++++++++++++++++++[m
+ docs/stage6/earned-magic-center.png   | Bin [31m0[m -> [32m408956[m bytes
+ docs/stage6/listening-1440.png        | Bin [31m0[m -> [32m1108344[m bytes
+ docs/stage6/listening-320.png         | Bin [31m0[m -> [32m230536[m bytes
+ docs/stage6/listening-390.png         | Bin [31m0[m -> [32m334820[m bytes
+ docs/stage6/reading-320.png           | Bin [31m0[m -> [32m124714[m bytes
+ docs/stage6/reading-360.png           | Bin [31m0[m -> [32m157075[m bytes
+ docs/stage6/reading-390.png           | Bin [31m0[m -> [32m184915[m bytes
+ docs/stage6/reading-430.png           | Bin [31m0[m -> [32m228534[m bytes
+ docs/stage6/reading-feedback.png      | Bin [31m0[m -> [32m189884[m bytes
+ docs/stage6/sealed-hand-1440.png      | Bin [31m0[m -> [32m1476650[m bytes
+ docs/stage6/sealed-hand-320.png       | Bin [31m0[m -> [32m267133[m bytes
+ docs/stage6/sealed-hand-390.png       | Bin [31m0[m -> [32m376062[m bytes
+ docs/stage6/sealed-overview-390.png   | Bin [31m0[m -> [32m250805[m bytes
+ docs/stage6/solo-audio-restored.png   | Bin [31m0[m -> [32m336593[m bytes
+ docs/stage6/solo-checks.json          |  11 [32m++++[m
+ docs/stage6/solo-reading-restored.png | Bin [31m0[m -> [32m183222[m bytes
+ docs/stage6/ui-checks.json            |  15 [32m+++++[m
+ public/assets/sealed-card.webp        | Bin [31m0[m -> [32m97208[m bytes
+ scripts/check-learning-build.mjs      |   7 [32m+++[m
+ scripts/check-learning-solo.mjs       |  54 [32m++++++++++++++++++[m
+ scripts/check-learning-ui.mjs         |  83 [32m++++++++++++++++++++++++++++[m
+ src/AudioQuestion.tsx                 |   8 [32m+++[m
+ src/GameAnimationLayer.tsx            |  13 [32m+++[m[31m--[m
+ src/GameMenu.tsx                      |   2 [32m+[m[31m-[m
+ src/MobileHand.tsx                    |  12 [32m++[m[31m--[m
+ src/OrdinaryHand.tsx                  |  15 [32m+++[m[31m--[m
+ src/SealedCard.tsx                    |   2 [32m+[m
+ src/UnlockDialog.tsx                  |   8 [32m+++[m
+ src/animationModel.test.ts            |   2 [32m+[m[31m-[m
+ src/animationModel.ts                 |  17 [32m+++[m[31m---[m
+ src/bot.ts                            |   3 [32m+[m[31m-[m
+ src/engine.test.ts                    |   3 [32m+[m[31m-[m
+ src/engine.ts                         |  14 [32m++[m[31m---[m
+ src/game-core/challenges.ts           |  31 [32m+++++++[m[31m----[m
+ src/game-core/ordinary.ts             |   2 [32m+[m[31m-[m
+ src/game-core/projection.ts           |  14 [32m+++[m[31m--[m
+ src/game-core/types.ts                |   9 [32m+[m[31m--[m
+ src/learning.css                      |  10 [32m++++[m
+ src/learning.test.ts                  |  54 [32m++++++++++++++++++[m
+ src/learning.ts                       |  64 [32m++++++++++++++++++++++[m
+ src/magicDrops.test.ts                |  36 [32m+++++[m[31m-------[m
+ src/magicDrops.ts                     |  16 [32m++[m[31m----[m
+ src/main.tsx                          |  61 [32m+++++++++++++[m[31m--------[m
+ src/mobile/MobileFan.tsx              |  13 [32m+++[m[31m--[m
+ src/multiplayerPreparation.test.ts    |   2 [32m+[m[31m-[m
+ src/rooms/BlindHand.tsx               |  12 [32m++[m[31m--[m
+ src/rooms/NetworkMagicDialog.tsx      |   4 [32m+[m[31m-[m
+ src/rooms/NetworkTable.tsx            |   4 [32m+[m[31m-[m
+ src/rooms/RoomLobby.tsx               |   2 [32m+[m[31m-[m
+ src/rooms/networkPresentation.ts      |  11 [32m++[m[31m--[m
+ src/rooms/protocol.ts                 |   5 [32m+[m[31m-[m
+ src/soloSession.test.ts               |  17 [32m++++++[m
+ src/soloSession.ts                    |  20 [32m+++++++[m
+ src/speech.test.ts                    |   7 [32m+++[m
+ src/speech.ts                         |  22 [32m+++++[m[31m---[m
+ src/trickRules.ts                     |   4 [32m+[m[31m-[m
+ src/useGameAnimations.ts              |   4 [32m+[m[31m-[m
+ worker/src/gameSession.ts             |  21 [32m++++[m[31m---[m
+ worker/src/magicSession.ts            |  10 [32m+++[m[31m-[m
+ worker/test/decks.integration.test.ts |   2 [32m+[m[31m-[m
+ worker/test/game.integration.test.ts  |   5 [32m+[m[31m-[m
+ worker/test/learningSession.test.ts   |  33 [32m+++++++++++[m
+ worker/test/magic.integration.test.ts |   4 [32m+[m[31m-[m
+ worker/test/magicMigration.test.ts    |   4 [32m+[m[31m-[m
+ worker/test/magicSession.test.ts      |  10 [32m++[m[31m--[m
+ 66 files changed, 720 insertions(+), 162 deletions(-)

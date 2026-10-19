@@ -19,6 +19,17 @@ test('learning commands bind ref to owner, validate answers, preserve physical c
 test('serialized room restores unlimited reading failures, same attempt, stats and no reward duplication',async()=>{
  let r=await fixture(),ref=sealedCards(r.game!,0)[0].ref;send(r,0,{type:'begin_unlock',cardRef:ref});const q=r.game!.learning!.attempts[0]!;send(r,0,{type:'answer_unlock',challengeId:q.id,option:q.quiz.options.findIndex(o=>o!==q.quiz.correct)});send(r,0,{type:'close_unlock',challengeId:q.id});r=JSON.parse(JSON.stringify(r));assert.ok(send(r,0,{type:'begin_unlock',cardRef:ref}).result.ok);assert.equal(sessionSnapshot(r,0)!.view.unlock!.errors,1);assert.equal(sessionSnapshot(r,0)!.view.unlock!.id,q.id);assert.equal(sessionSnapshot(r,0)!.view.unlock!.firstCorrect,false);assert.ok(send(r,0,{type:'continue_unlock',challengeId:q.id}).result.ok);
 });
+test('reconnected room preserves per-player pity and awards third opening atomically only once',async()=>{
+ let r=await fixture();
+ for(let i=0;i<3;i++){
+  const ref=sealedCards(r.game!,0)[0].ref;assert.ok(send(r,0,{type:'begin_unlock',cardRef:ref}).result.ok);const q=r.game!.learning!.attempts[0]!;
+  const command={type:'answer_unlock',challengeId:q.id,option:q.quiz.options.indexOf(q.quiz.correct)};
+  assert.ok(send(r,0,command,()=>.99).result.ok);assert.deepEqual(r.game!.learning!.rewardMisses,[i<2?i+1:0,0]);
+  r=JSON.parse(JSON.stringify(r));migrateRoom(r,()=>.99);sessionSnapshot(r,0);
+  assert.equal(send(r,0,command,()=>0).result.ok,false);
+ }
+ assert.equal(r.game!.magicPool!.length,10);assert.equal(r.game!.hands[0].filter(c=>c.spell).length,1);
+});
 test('normal draw and ghost-expiry wire events never leak sealed rank, suit, Russian or physical ID',async()=>{
  const r=await fixture(),cards=r.game!.hands[0].filter(c=>r.game!.learning!.seals[c.id]?.locked),view=sessionSnapshot(r,0)!.view;
  for(const c of cards){assert.ok(!view.hand.cards.some(x=>'id' in x&&x.id===c.id));assert.ok(!view.locked!.some(x=>x.id===c.id));}

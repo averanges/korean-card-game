@@ -15,3 +15,13 @@ test('solo active listening and errors survive serialization, without replaying 
 test('blocked storage and malformed save are handled without crashing the game',()=>{
  assert.equal(writeSoloSession('me',{} as SoloSession,{setItem(){throw Error('blocked');}}),false);assert.equal(readSoloSession('me',{getItem(){throw Error('blocked');}}),undefined);for(const text of ['{','{}','{"version":1,"game":{"hands":[]}}'])assert.equal(readSoloSession('me',{getItem:()=>text}),undefined);
 });
+test('solo refresh retains both pity counters and third-opening guarantee',()=>{
+ let g=createGame(()=>.4);g.discard.push(...g.hands[0].splice(0,3));drawToSix(g,0,()=>0);const db=storage();
+ for(let i=0;i<3;i++){
+  g=reduceLearning(g,{type:'unlock_begin',player:0,ref:sealedCards(g,0)[0].ref});const q=g.learning!.attempts[0]!;
+  g=reduceLearning(g,{type:'unlock_answer',player:0,challengeId:q.id,option:q.quiz.options.indexOf(q.quiz.correct)},()=>.99);
+  assert.ok(writeSoloSession('pity',{version:1,game:g,book:createChallengeBook(),memory:{},recent:[]},db));g=readSoloSession('pity',db)!.game;
+  assert.deepEqual(g.learning!.rewardMisses,[i<2?i+1:0,0]);
+ }
+ assert.equal(g.magicPool!.length,10);
+});

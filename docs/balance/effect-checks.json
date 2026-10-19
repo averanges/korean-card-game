@@ -1,0 +1,115 @@
+{
+  "results": [
+    {
+      "label": "fan",
+      "samples": [
+        {
+          "time": 270,
+          "x": 128.1186981201172,
+          "y": 708.777099609375,
+          "width": 80.23135375976562,
+          "height": 118.82080078125,
+          "transform": "matrix(0.999945, -0.0104718, 0.0104718, 0.999945, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 700,
+          "x": 128.1186981201172,
+          "y": 708.777099609375,
+          "width": 80.23135375976562,
+          "height": 118.82080078125,
+          "transform": "matrix(0.999945, -0.0104718, 0.0104718, 0.999945, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 900,
+          "x": 128.1186981201172,
+          "y": 708.777099609375,
+          "width": 80.23135375976562,
+          "height": 118.82080078125,
+          "transform": "matrix(0.999945, -0.0104718, 0.0104718, 0.999945, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        }
+      ]
+    },
+    {
+      "label": "desktop",
+      "samples": [
+        {
+          "time": 270,
+          "x": 560.2910766601562,
+          "y": 647.914306640625,
+          "width": 137.4490966796875,
+          "height": 200.60888671875,
+          "transform": "matrix(0.99961, -0.0279216, 0.0279216, 0.99961, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 700,
+          "x": 560.2910766601562,
+          "y": 647.914306640625,
+          "width": 137.4490966796875,
+          "height": 200.60888671875,
+          "transform": "matrix(0.99961, -0.0279216, 0.0279216, 0.99961, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 900,
+          "x": 560.2910766601562,
+          "y": 647.914306640625,
+          "width": 137.4490966796875,
+          "height": 200.60888671875,
+          "transform": "matrix(0.99961, -0.0279216, 0.0279216, 0.99961, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        }
+      ]
+    },
+    {
+      "label": "overview",
+      "samples": [
+        {
+          "time": 270,
+          "x": 259,
+          "y": 485.140625,
+          "width": 108,
+          "height": 161,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 700,
+          "x": 259,
+          "y": 485.140625,
+          "width": 108,
+          "height": 161,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 900,
+          "x": 259,
+          "y": 485.140625,
+          "width": 108,
+          "height": 161,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "duration": "1s",
+          "pointerEvents": "none"
+        }
+      ]
+    },
+    {
+      "label": "reduced",
+      "plainReveal": true
+    }
+  ],
+  "errors": [],
+  "fixture": "Engine-generated post-refill solo state, answered through actual UI"
+}
