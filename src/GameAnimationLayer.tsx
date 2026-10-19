@@ -17,7 +17,7 @@ function Flight({entry}:{entry:AnimationEntry}){
     const frame=requestAnimationFrame(()=>{
       const candidates=Array.from(document.querySelectorAll<HTMLElement>(card?.spell?'[data-magic-card-id]':'[data-card-id]'));
       let target=card?candidates.find(el=>(card?.spell?el.dataset.magicCardId:el.dataset.cardId)===card?.id&&el.offsetWidth>0):undefined;
-      target??=document.querySelector<HTMLElement>(entry.player===1?'.bot-hand':card?.spell?'.magic-stack':'.normal-hand-viewport')||undefined;
+      target??=document.querySelector<HTMLElement>(entry.player===1?'.bot-hand,.mobile-opponent':card?.spell?'.magic-stack':'.normal-hand-viewport')||undefined;
       if(!target)return;
       let rect=target.getBoundingClientRect();
       if(rect.width===0)rect=(document.querySelector<HTMLElement>('.magic-hand')||target).getBoundingClientRect();

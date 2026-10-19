@@ -27,7 +27,7 @@
 @keyframes burn-spark{0%,20%{opacity:0;transform:translate(0,0) rotate(0)}35%{opacity:1}100%{opacity:0;transform:translate(var(--spark-dx),-65px) rotate(var(--spark-turn))}}
 .activation-card.burning-card{box-shadow:none;filter:none;background:none;position:relative}
 .burn-face{width:100%;height:100%;border-radius:inherit}
-.activation-card .burn-face{position:absolute;inset:0;background-image:url('/assets/magic-cards.png');background-size:306% 106%;background-position:inherit;box-shadow:0 0 15px #b197d5}
+.activation-card .burn-face{position:absolute;inset:0;background-image:url('/assets/magic-cards.webp');background-size:306% 106%;background-position:inherit;box-shadow:0 0 15px #b197d5}
 .burning-card .burn-face,.failed-magic .burn-face{animation:legendary-burn var(--burn-duration,1100ms) linear var(--burn-delay,0ms) both}
 @keyframes legendary-burn{0%{opacity:1;filter:brightness(1);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}15%{opacity:1;filter:brightness(.5) saturate(.55);clip-path:polygon(2% 3%,96% 2%,99% 97%,1% 99%)}40%{opacity:.95;filter:brightness(.4) saturate(.3);clip-path:polygon(12% 15%,29% 8%,48% 14%,73% 7%,88% 16%,82% 42%,93% 64%,80% 86%,59% 92%,40% 84%,18% 91%,9% 63%,16% 42%)}75%{opacity:.6;filter:brightness(.3) saturate(.2);clip-path:polygon(35% 35%,47% 29%,65% 37%,59% 49%,69% 63%,53% 70%,35% 63%,40% 50%)}100%{opacity:0;filter:brightness(.2);clip-path:polygon(49% 49%,51% 49%,51% 51%,49% 51%)}}
 .game-animation-layer .failed-magic{animation:none;opacity:1;aspect-ratio:.65;height:auto;border-radius:7%}
@@ -52,7 +52,7 @@
 @media(max-width:650px){.mirror-confirmation{top:33%;font-size:11px;max-width:230px}.burn-spark{width:3px;height:7px}}
 @media(prefers-reduced-motion:reduce){.legendary-receipt{display:none}.magic-mini.card-arrival{animation:none!important;opacity:1!important}.burn-decoration{display:none}.burning-card .burn-face,.failed-magic .burn-face{animation:burn-simple 1ms var(--burn-delay,0ms) both}.trump-swap .old-suit{display:none}.trump-swap .new-suit{animation:none}.mirror-confirmation{animation:mirror-notice-simple 4200ms both}.receiving-magic .magic-stack,.counting-deck .deck-value{animation:none}}
 
-.receiving-first .stack-art{visibility:hidden}.receiving-first .magic-stack{background:#33213f url('/assets/card-back.png') center/114% 110%}.simple-motion .receiving-first .stack-art{visibility:visible}.simple-motion.rank-flash .corner,.simple-motion.flash-trump .trump,.simple-motion.flash-deck .deck-glyph{animation:none!important}
+.receiving-first .stack-art{visibility:hidden}.receiving-first .magic-stack{background:#33213f url('/assets/card-back.webp') center/114% 110%}.simple-motion .receiving-first .stack-art{visibility:visible}.simple-motion.rank-flash .corner,.simple-motion.flash-trump .trump,.simple-motion.flash-deck .deck-glyph{animation:none!important}
 
 .legendary-preview-status{left:auto!important;right:3%!important;top:70px!important;width:260px;z-index:10}.legendary-preview-status .magic-status{position:relative;top:0}@media(max-width:650px){.legendary-preview-status{width:170px;top:145px!important}}
 

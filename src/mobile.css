@@ -1,0 +1,71 @@
+/* The same cards, commands and effects use smaller, independently scrolling zones. */
+:root{--table-art:url('/assets/table.webp')}
+.magic-stack-label{display:none}
+.magic-gallery-item{flex:0 0 130px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;min-width:0}
+.magic-gallery-item strong{font:15px/1.3 Georgia;color:#f5dec0}
+.magic-gallery-item small{font:12px/1.4 Arial;color:#d1bedf;overflow-wrap:anywhere}
+.word-detail{overflow-wrap:anywhere;text-align:center}.word-detail strong{font:26px/1.5 'Malgun Gothic',Arial}.word-detail p{font:20px/1.5 Georgia}
+.normal-hand .card.long-word{container-type:inline-size}
+@media(min-width:601px) and (min-height:501px){.normal-hand .long-word .face{padding:26% 10% 14%}.normal-hand .long-word .korean{font-size:clamp(12px,calc(140cqw / var(--ko-length)),22px);line-height:1.2;margin:0;overflow-wrap:anywhere}.normal-hand .long-word .translation{font-size:clamp(10px,calc(220cqw / var(--ru-length)),16px);line-height:1.2;margin:5px 0 0;overflow-wrap:anywhere}}
+.compact-layout .hand-caption{position:absolute;left:4px;top:-33px;color:#efddc7;font:12px Georgia;max-width:calc(100% - 130px)}.compact-layout:has(.ghost-pass,.hat-selection-message) .hand-caption{display:none}
+@media(max-width:600px),(max-width:1000px) and (max-height:500px){
+ :root{--table-art:url('/assets/table-mobile.webp')}
+ .game-table.compact-layout{height:100dvh;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:86px 38px minmax(80px,1fr) 54px 44px 190px;grid-template-areas:'hud' 'effects' 'field' 'actions' 'utility' 'hand';gap:4px;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));overflow:hidden;isolation:isolate}
+ .compact-layout>header.game-menu-anchor{left:12px;right:auto;top:max(10px,env(safe-area-inset-top));bottom:auto;z-index:45}
+ .compact-layout .game-menu-toggle{width:44px;min-height:44px;padding:8px;font-size:18px}.compact-layout .game-menu-toggle span{display:none}
+ .mobile-hud{grid-area:hud;display:grid;grid-template-columns:minmax(0,1fr) 100px;grid-template-rows:42px 40px;gap:4px 8px;padding:0 0 0 52px;min-width:0;z-index:5}
+ .mobile-phase{grid-column:1;grid-row:1;display:flex;flex-direction:column;justify-content:center;border:1px solid #c8a66e;border-radius:5px 12px 12px 5px;padding:3px 9px;background:linear-gradient(#20172fee,#5a162fcc);box-shadow:inset 0 0 0 2px #ab897733;min-width:0}
+ .mobile-phase.defending{background:linear-gradient(#20172fee,#23457bcc)}
+ .mobile-phase strong{font:13px/1.2 Georgia;color:#ffedce;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-phase span{font:12px/1.2 Georgia;color:#ecd4ff}
+ .mobile-opponent{grid-row:2;grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;min-width:0;font:12px/1.2 Georgia;padding:2px 5px;color:#f0ddc4;background:#171c3699;border-radius:6px}
+ .mobile-opponent strong{font-weight:400;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-opponent small{font:10px Arial;color:#d2b8e2;flex-basis:100%}
+ .compact-layout .mobile-hud .magic-status{grid-column:2;grid-row:1;position:relative;inset:auto;width:100px;height:42px;min-height:0;padding:0 7px 0 39px;border:1px solid #c8a66e;border-radius:10px;background:#20182fe8;filter:none;box-shadow:inset 0 0 0 2px #b39b7733;display:flex;align-items:center}
+ .compact-layout .mobile-hud .magic-status:after{display:none}.compact-layout .mobile-hud .trump{width:38px;height:40px;top:0;left:0;font-size:31px;background-size:100% 100%;border:0;box-shadow:none}.compact-layout .mobile-hud .trump:after{display:none}
+ .compact-layout .mobile-hud .magic-status strong{font-size:22px!important;height:36px;gap:0;line-height:1}.compact-layout .mobile-hud .deck-glyph{display:none}.compact-layout .mobile-hud .deck-value{padding:0;min-width:0}
+ .compact-layout .effect-zones{grid-area:effects;position:relative;inset:auto;height:38px;display:flex;justify-content:space-between;align-items:center;gap:8px;z-index:10}
+ .compact-layout .effect-zone.temporary,.compact-layout .effect-zone.permanent{position:relative;inset:auto;max-width:49%;width:auto;min-width:0;height:38px}.compact-layout .effect-zone.permanent{margin-left:auto}
+ .compact-layout .effect-icons{padding:0;gap:5px;height:38px}.compact-layout .effect-thumbnail{width:36px;height:36px}.compact-layout .effect-item{min-width:44px;height:38px;display:flex;align-items:center;justify-content:center}.compact-layout .effect-count,.compact-layout .effect-infinity{font-size:10px}
+ .compact-layout>.arena{display:contents}.compact-layout .table-heading{display:none}
+ .game-table.compact-layout .arena .battle{grid-area:field;position:relative;inset:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-items:center;align-items:start;align-content:start;width:100%;height:100%;min-height:0;overflow:auto;overscroll-behavior:contain;gap:14px 8px;padding:10px 6px;--cw:clamp(68px,21vw,92px);--ch:calc(var(--cw)*1.49);border-top:1px solid #c5a77955;border-bottom:1px solid #c5a77955}
+ .game-table.compact-layout .battle .pair{width:calc(var(--cw)*1.5);height:calc(var(--ch)*1.23);min-height:calc(var(--ch)*1.23)}
+ .compact-layout .pair>.card{transform:none}.compact-layout .cover{left:calc(var(--cw)*.37);top:calc(var(--ch)*.2);transform:none}
+ .compact-layout .target{left:calc(var(--cw)*.37);top:calc(var(--ch)*.2);min-height:44px;min-width:44px}.compact-layout .target.allowed small{font-size:13px}
+ .compact-layout .battle .empty{grid-column:1/-1;text-align:center;padding:8px}.compact-layout .empty>div{font-size:32px}.compact-layout .empty h1{font-size:18px;margin:5px}.compact-layout .empty p{font-size:13px;line-height:1.4;margin:5px}
+ .game-table.compact-layout .arena .actions{grid-area:actions;position:relative;inset:auto;width:100%;height:54px;display:flex;align-items:center;gap:8px;min-width:0;z-index:15}
+ .game-table.compact-layout .actions button.action-button{flex:1;min-width:0;width:auto;height:52px;min-height:44px;font-size:13px;filter:none;padding:8px 12px}.compact-layout .actions .action-label{white-space:normal;line-height:1.1}
+ .game-table.compact-layout .normal-hand{grid-area:hand;position:relative;inset:auto;width:100%;height:190px;min-width:0;--cw:100px;--ch:149px;z-index:6}
+ .compact-layout .normal-hand-viewport{height:100%;touch-action:pan-x pinch-zoom;scroll-padding:12px}
+ .compact-layout .normal-hand .card.selected,.compact-layout .normal-hand .card.selected:hover{transform:translateY(-22px);box-shadow:0 0 10px #d6af7a88}
+ .compact-layout .normal-hand .hand-item:not(.chosen):hover .card{transform:none}
+ .compact-layout .normal-hand .face{padding:32px 9px 42px;min-width:0;gap:2px}.compact-layout .normal-hand .korean{font-size:17px;line-height:1.15;margin:0;width:100%;max-height:40px;overflow:hidden;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+ .compact-layout .normal-hand .translation{font-size:12px;line-height:1.2;margin:2px 0 0;width:100%;max-height:30px;overflow:hidden;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+ .compact-layout .normal-hand .corner{font-size:17px;top:6%;left:11%}.compact-layout .normal-hand .cardtools{left:6px;right:6px;bottom:5px;opacity:1;gap:0;justify-content:space-between}
+ .compact-layout .cardtools button{min-width:44px;min-height:44px;font-size:13px;padding:4px;background:#f6eedb66}.compact-layout .battle .cardtools{left:0;right:0;gap:0;bottom:0}.compact-layout .battle .cardtools button{font-size:10px;padding:2px;min-width:36px}
+ .compact-layout .hand-scroll-hint{font-size:10px;bottom:0;z-index:320}.compact-layout .normal-hand:before,.compact-layout .normal-hand:after{top:25px;bottom:12px}
+ .game-table.compact-layout .magic-hand{grid-area:utility;position:relative;inset:auto;justify-self:end;align-self:center;width:auto;height:44px;z-index:16}
+ .compact-layout .magic-direct,.compact-layout .magic-stack .stack-art{display:none}
+ .game-table.compact-layout .magic-stack,.game-table.compact-layout .magic-hand.stacked .magic-stack{display:flex;align-items:center;justify-content:center;gap:5px;width:120px;height:44px;min-height:44px;border:1px solid #d8b879;border-radius:12px;background:linear-gradient(#59326c,#261b42);box-shadow:inset 0 0 0 2px #b4987133;margin:0;color:#ffe4bd}
+ .compact-layout .magic-stack-label{display:inline;font:15px Georgia}.compact-layout .magic-stack b{position:static;inset:auto;font:14px Georgia;border:0;background:none;padding:0}
+ .compact-layout .ghost-pass,.compact-layout .blind-instruction,.compact-layout .ghost-hand-count{position:relative;inset:auto;grid-area:utility;align-self:center;justify-self:start;max-width:calc(100% - 128px);margin:0;padding:4px 7px;font:11px/1.3 Georgia;transform:none;z-index:12;overflow-wrap:anywhere}.compact-layout .ghost-pass{min-height:44px}.compact-layout .ghost-hand-count{grid-area:hand;align-self:start;z-index:8;pointer-events:none}
+ .compact-layout .hat-selection-message{position:relative;inset:auto;grid-area:utility;justify-self:start;align-self:center;width:auto;max-width:calc(100% - 128px);padding:3px 6px;transform:none;font-size:11px}.compact-layout .hat-selection-message span{display:none}
+ .compact-layout>.magic-confirmations,.compact-layout>.network-magic-notice{position:absolute;top:145px;right:14px;left:14px;bottom:auto;transform:none;width:auto;max-width:none;max-height:72px;overflow:auto;font:12px/1.4 Georgia;pointer-events:auto;z-index:20}
+ .compact-layout .network-notice{position:relative;inset:auto;grid-area:effects;align-self:center;width:auto;max-width:100%;transform:none;z-index:11;font:11px/1.2 Arial;padding:4px 8px;pointer-events:auto}.compact-layout .network-notice:empty{display:none}.compact-layout .network-notice button{min-height:44px}
+ .magic-picker-backdrop{padding:max(10px,env(safe-area-inset-bottom)) 10px;background:#0a1021ba}.magic-picker{max-height:85dvh;overflow:auto;width:100%;padding:16px}.magic-picker-heading h2{font-size:20px}.magic-picker-heading button{min-height:44px}.magic-gallery{gap:14px;padding:16px 3px;touch-action:pan-x pinch-zoom}.magic-gallery .magic-mini{width:106px;height:160px;animation:none}.magic-gallery-item{flex-basis:126px}
+ .magic-overlay{padding:10px;backdrop-filter:none;align-items:start;overflow:auto;overscroll-behavior:contain}
+ .magic-dialog{display:flex;flex-direction:column;align-items:stretch;width:min(420px,100%);max-height:none;overflow:visible;margin:auto;gap:38px;padding:22px 8px max(20px,env(safe-area-inset-bottom));min-height:0}
+ .magic-dialog>.activation-card{order:-1;width:116px;aspect-ratio:.67;flex:none;align-self:center;margin:0;filter:none;box-shadow:0 0 12px #dd9bf6}
+ .magic-dialog>.quiz-panel{width:100%;min-width:0;padding:30px 18px 16px}.magic-dialog>.effect-column{width:100%;align-self:stretch}.magic-dialog .effect-panel{min-height:0;padding:28px 20px 14px}.magic-dialog .effect-panel p{font-size:15px;line-height:1.5}.magic-dialog .effect-panel h3{font-size:21px}
+ .magic-dialog .quiz-heading{flex-wrap:wrap}.magic-dialog .quiz-heading strong{font-size:27px;overflow-wrap:anywhere}.magic-dialog .quiz-heading button{width:44px;height:44px;flex:none}.magic-dialog .quiz-options button{min-height:44px;font-size:18px;overflow-wrap:anywhere}.magic-dialog .quiz-audio-options button{min-height:44px}.magic-dialog .quiz-check,.magic-dialog .spell-cancel{min-height:48px}
+ .compact-layout .magic-dim,.academy-overlay{backdrop-filter:none}.compact-layout .arena{box-shadow:none}.compact-layout .normal-hand .card{box-shadow:0 4px 5px #04041488}
+ .academy-dialog>header>button{width:44px;height:44px;min-width:44px}.academy-footer button{min-height:44px}.trump-choice{max-height:92dvh;overflow:auto}.trump-choice .choice-dismiss{width:44px;height:44px}
+}
+@media(max-width:600px) and (max-height:700px){.game-table.compact-layout{grid-template-rows:80px 36px minmax(65px,1fr) 50px 44px 180px}.game-table.compact-layout .normal-hand{--cw:94px;--ch:140px;height:180px}.game-table.compact-layout .actions button.action-button{height:48px}.mobile-hud{grid-template-rows:40px 36px}}
+@media(min-width:601px) and (max-width:1000px) and (max-height:500px){
+ .game-table.compact-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:54px 30px minmax(100px,1fr) 50px;grid-template-areas:'hud hud' 'effects effects' 'field hand' 'actions utility';gap:4px 12px}
+ .mobile-hud{grid-template-columns:170px minmax(0,1fr) 100px;grid-template-rows:44px;padding-left:52px;align-items:start}.mobile-opponent{grid-row:1;grid-column:2;height:42px}.compact-layout .mobile-hud .magic-status{grid-column:3}
+ .compact-layout .effect-zones,.compact-layout .effect-zone.temporary,.compact-layout .effect-zone.permanent{height:30px}.compact-layout .effect-thumbnail{width:28px;height:28px}.compact-layout .effect-icons,.compact-layout .effect-item{height:30px}
+ .game-table.compact-layout .normal-hand{align-self:end;--cw:100px;--ch:149px;height:190px}.game-table.compact-layout .arena .battle{--cw:68px;gap:12px}.game-table.compact-layout .arena .actions{height:50px}
+ .compact-layout>.magic-confirmations,.compact-layout>.network-magic-notice{top:92px;max-width:44%;max-height:62px}.compact-layout .network-notice{grid-column:1/-1}.compact-layout .magic-hand{margin-right:8px}.compact-layout .hand-caption{top:auto;bottom:-34px}
+}
+@media(min-width:601px) and (max-width:1000px) and (min-height:501px){.game-table .normal-hand{left:4%;right:19%;--cw:108px;--ch:161px}.game-table .arena .actions{gap:8px}.game-table .actions button.action-button{min-height:48px}}
+@media(prefers-reduced-motion:reduce){.compact-layout .mobile-phase{transition:none}}

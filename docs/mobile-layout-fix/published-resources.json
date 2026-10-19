@@ -1,0 +1,42 @@
+{
+  "url": "https://korean-card-game-multiplayer.pages.dev/",
+  "checkedAt": "2026-10-19T11:28:05.621Z",
+  "status": 200,
+  "headers": {
+    "cacheControl": "public, max-age=0, must-revalidate",
+    "contentType": "text/html; charset=utf-8"
+  },
+  "assets": [
+    {
+      "path": "/assets/index-CaQuA0xu.js",
+      "status": 200,
+      "bytes": 284981,
+      "compact": false,
+      "hud": false,
+      "webp": false
+    },
+    {
+      "path": "/assets/index-DuQLSZaG.css",
+      "status": 200,
+      "bytes": 121057,
+      "compact": false,
+      "hud": false,
+      "webp": false
+    }
+  ],
+  "dom": {
+    "viewport": 390,
+    "meta": "width=device-width, initial-scale=1.0",
+    "classes": "game-table full-motion",
+    "hud": false,
+    "backs": 5,
+    "css": [
+      "https://korean-card-game-multiplayer.pages.dev/assets/index-DuQLSZaG.css"
+    ]
+  },
+  "cacheBypass": {
+    "status": 200,
+    "sameOldAssets": true
+  },
+  "localHtml": "<!doctype html><html lang=\"ru\"><head><meta charset=\"UTF-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\"/><link rel=\"preload\" as=\"image\" href=\"/assets/table-mobile.webp\" media=\"(max-width:600px), (max-width:1000px) and (max-height:500px)\" fetchpriority=\"high\"/><link rel=\"preload\" as=\"image\" href=\"/assets/table.webp\" media=\"(min-width:601px) and (min-height:501px), (min-width:1001px)\" fetchpriority=\"high\"/><title>Хангыль · Карточная практика</title>  <script type=\"module\" crossorigin src=\"/assets/index-2H2PJKSB.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-PwTT0e5G.css\">\n</head><body><div id=\"root\"></div></body></html>\n"
+}

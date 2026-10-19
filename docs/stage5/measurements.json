@@ -1,0 +1,901 @@
+{
+  "before": {
+    "environment": "Headless Chrome, 390x844 DPR3, 4x CPU, 10 Mbps / 40 ms emulation, local static server without compression",
+    "assets": [
+      {
+        "name": "approved-header.png",
+        "bytes": 2654001,
+        "width": 2048,
+        "height": 682,
+        "alpha": true
+      },
+      {
+        "name": "button-reference.png",
+        "bytes": 2045365,
+        "width": 1536,
+        "height": 1024,
+        "alpha": false
+      },
+      {
+        "name": "card-back.png",
+        "bytes": 2683161,
+        "width": 1024,
+        "height": 1536,
+        "alpha": false
+      },
+      {
+        "name": "card-frame.png",
+        "bytes": 1942660,
+        "width": 1024,
+        "height": 1536,
+        "alpha": false
+      },
+      {
+        "name": "card-reference.png",
+        "bytes": 1930836,
+        "width": 1024,
+        "height": 1536,
+        "alpha": false
+      },
+      {
+        "name": "ghost-thief.png",
+        "bytes": 2739011,
+        "width": 1086,
+        "height": 1448,
+        "alpha": false
+      },
+      {
+        "name": "magic-cards.png",
+        "bytes": 2927501,
+        "width": 1536,
+        "height": 1024,
+        "alpha": false
+      },
+      {
+        "name": "magicians-hat.png",
+        "bytes": 2820081,
+        "width": 1086,
+        "height": 1448,
+        "alpha": false
+      },
+      {
+        "name": "monkey-prank.png",
+        "bytes": 2455573,
+        "width": 1086,
+        "height": 1448,
+        "alpha": false
+      },
+      {
+        "name": "table.png",
+        "bytes": 2180319,
+        "width": 1648,
+        "height": 954,
+        "alpha": false
+      },
+      {
+        "name": "trick-gift.png",
+        "bytes": 2891550,
+        "width": 1086,
+        "height": 1448,
+        "alpha": false
+      }
+    ],
+    "results": [
+      {
+        "route": "/",
+        "kind": "cold",
+        "useful": 1719.6999999955297,
+        "tap": null,
+        "resources": [
+          {
+            "url": "/assets/index-pmWlxXRL.js",
+            "bytes": 285743,
+            "transfer": 286043,
+            "duration": 542.3000000044703
+          },
+          {
+            "url": "/assets/index-DuQLSZaG.css",
+            "bytes": 121057,
+            "transfer": 121357,
+            "duration": 332
+          },
+          {
+            "url": "/assets/table.png",
+            "bytes": 2180319,
+            "transfer": 2180619,
+            "duration": 3361.8000000044703
+          },
+          {
+            "url": "/assets/card-back.png",
+            "bytes": 2683161,
+            "transfer": 2683461,
+            "duration": 3657.2999999970198
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 398,
+            "transfer": 698,
+            "duration": 73.20000000298023
+          }
+        ],
+        "requests": 5,
+        "bytes": 5270678,
+        "transfer": 5272178,
+        "fcp": 1664,
+        "lcp": 3828,
+        "longTasks": [],
+        "dom": 641.6000000014901
+      },
+      {
+        "route": "/",
+        "kind": "warm",
+        "useful": 158.5,
+        "tap": null,
+        "resources": [
+          {
+            "url": "/assets/index-pmWlxXRL.js",
+            "bytes": 285743,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/index-DuQLSZaG.css",
+            "bytes": 121057,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/table.png",
+            "bytes": 2180319,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/card-back.png",
+            "bytes": 2683161,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 398,
+            "transfer": 698,
+            "duration": 55.600000001490116
+          }
+        ],
+        "requests": 5,
+        "bytes": 5270678,
+        "transfer": 698,
+        "fcp": 260,
+        "lcp": 260,
+        "longTasks": [],
+        "dom": 101.30000000447035
+      },
+      {
+        "route": "/singleplayer",
+        "kind": "cold",
+        "useful": 1660.5,
+        "tap": 123.30000000447035,
+        "resources": [
+          {
+            "url": "/assets/index-pmWlxXRL.js",
+            "bytes": 285743,
+            "transfer": 286043,
+            "duration": 451.8999999985099
+          },
+          {
+            "url": "/assets/index-DuQLSZaG.css",
+            "bytes": 121057,
+            "transfer": 121357,
+            "duration": 253.80000000447035
+          },
+          {
+            "url": "/assets/table.png",
+            "bytes": 2180319,
+            "transfer": 2180619,
+            "duration": 7683.19999999553
+          },
+          {
+            "url": "/assets/header-panel.svg",
+            "bytes": 907,
+            "transfer": 1207,
+            "duration": 68.89999999850988
+          },
+          {
+            "url": "/assets/approved-header.png",
+            "bytes": 2654001,
+            "transfer": 2654301,
+            "duration": 8676.19999999553
+          },
+          {
+            "url": "/assets/trump-medallion.svg",
+            "bytes": 1402,
+            "transfer": 1702,
+            "duration": 63.899999998509884
+          },
+          {
+            "url": "/assets/card-back.png",
+            "bytes": 2683161,
+            "transfer": 2683461,
+            "duration": 8704.70000000298
+          },
+          {
+            "url": "/assets/button-reference.png",
+            "bytes": 2045365,
+            "transfer": 2045665,
+            "duration": 7748.10000000149
+          },
+          {
+            "url": "/assets/card-frame.png",
+            "bytes": 1942660,
+            "transfer": 1942960,
+            "duration": 7526.19999999553
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 398,
+            "transfer": 698,
+            "duration": 67.89999999850988
+          }
+        ],
+        "requests": 10,
+        "bytes": 11915013,
+        "transfer": 11918013,
+        "fcp": 1628,
+        "lcp": 8192,
+        "longTasks": [
+          329
+        ],
+        "dom": 576.0999999940395
+      },
+      {
+        "route": "/singleplayer",
+        "kind": "warm",
+        "useful": 399,
+        "tap": 30.700000002980232,
+        "resources": [
+          {
+            "url": "/assets/index-pmWlxXRL.js",
+            "bytes": 285743,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/index-DuQLSZaG.css",
+            "bytes": 121057,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/table.png",
+            "bytes": 2180319,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/header-panel.svg",
+            "bytes": 907,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/approved-header.png",
+            "bytes": 2654001,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/trump-medallion.svg",
+            "bytes": 1402,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/card-back.png",
+            "bytes": 2683161,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/button-reference.png",
+            "bytes": 2045365,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/card-frame.png",
+            "bytes": 1942660,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 398,
+            "transfer": 698,
+            "duration": 72
+          }
+        ],
+        "requests": 10,
+        "bytes": 11915013,
+        "transfer": 698,
+        "fcp": 408,
+        "lcp": 408,
+        "longTasks": [
+          90,
+          55
+        ],
+        "dom": 86
+      }
+    ]
+  },
+  "after": {
+    "environment": "Headless Chrome, 390x844 DPR3, 4x CPU, 10 Mbps / 40 ms emulation, local static server without compression",
+    "assets": [
+      {
+        "name": "approved-header.webp",
+        "bytes": 157980,
+        "width": 2048,
+        "height": 682,
+        "alpha": false
+      },
+      {
+        "name": "button-reference.webp",
+        "bytes": 199956,
+        "width": 1536,
+        "height": 1024,
+        "alpha": false
+      },
+      {
+        "name": "card-back.webp",
+        "bytes": 162488,
+        "width": 640,
+        "height": 960,
+        "alpha": false
+      },
+      {
+        "name": "card-frame.webp",
+        "bytes": 86686,
+        "width": 768,
+        "height": 1152,
+        "alpha": false
+      },
+      {
+        "name": "ghost-thief.webp",
+        "bytes": 226944,
+        "width": 768,
+        "height": 1024,
+        "alpha": false
+      },
+      {
+        "name": "magic-cards.webp",
+        "bytes": 440692,
+        "width": 1536,
+        "height": 1024,
+        "alpha": false
+      },
+      {
+        "name": "magicians-hat.webp",
+        "bytes": 231776,
+        "width": 768,
+        "height": 1024,
+        "alpha": false
+      },
+      {
+        "name": "monkey-prank.webp",
+        "bytes": 206934,
+        "width": 768,
+        "height": 1024,
+        "alpha": false
+      },
+      {
+        "name": "table-mobile.webp",
+        "bytes": 59012,
+        "width": 960,
+        "height": 556,
+        "alpha": false
+      },
+      {
+        "name": "table.webp",
+        "bytes": 166364,
+        "width": 1648,
+        "height": 954,
+        "alpha": false
+      },
+      {
+        "name": "trick-gift.webp",
+        "bytes": 263914,
+        "width": 768,
+        "height": 1024,
+        "alpha": false
+      }
+    ],
+    "results": [
+      {
+        "route": "/",
+        "kind": "cold",
+        "useful": 1010.6000000014901,
+        "tap": null,
+        "resources": [
+          {
+            "url": "/assets/table-mobile.webp",
+            "bytes": 59012,
+            "transfer": 59312,
+            "duration": 200.79999999701977
+          },
+          {
+            "url": "/assets/index-2H2PJKSB.js",
+            "bytes": 289274,
+            "transfer": 289574,
+            "duration": 434.3999999985099
+          },
+          {
+            "url": "/assets/index-PwTT0e5G.css",
+            "bytes": 134693,
+            "transfer": 134993,
+            "duration": 313.80000000447035
+          },
+          {
+            "url": "/assets/card-back.webp",
+            "bytes": 162488,
+            "transfer": 162788,
+            "duration": 192.60000000149012
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 721,
+            "transfer": 1021,
+            "duration": 61.399999998509884
+          }
+        ],
+        "requests": 5,
+        "bytes": 646188,
+        "transfer": 647688,
+        "fcp": 1628,
+        "lcp": 1628,
+        "longTasks": [],
+        "dom": 555.4000000059605
+      },
+      {
+        "route": "/",
+        "kind": "warm",
+        "useful": 213.79999999701977,
+        "tap": null,
+        "resources": [
+          {
+            "url": "/assets/table-mobile.webp",
+            "bytes": 59012,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/index-2H2PJKSB.js",
+            "bytes": 289274,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/index-PwTT0e5G.css",
+            "bytes": 134693,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 721,
+            "transfer": 1021,
+            "duration": 59.29999999701977
+          },
+          {
+            "url": "/assets/card-back.webp",
+            "bytes": 162488,
+            "transfer": 0,
+            "duration": 0
+          }
+        ],
+        "requests": 5,
+        "bytes": 646188,
+        "transfer": 1021,
+        "fcp": 204,
+        "lcp": 204,
+        "longTasks": [],
+        "dom": 84.79999999701977
+      },
+      {
+        "route": "/singleplayer",
+        "kind": "cold",
+        "useful": 953.2999999970198,
+        "tap": 127.39999999850988,
+        "resources": [
+          {
+            "url": "/assets/table-mobile.webp",
+            "bytes": 59012,
+            "transfer": 59312,
+            "duration": 155.10000000149012
+          },
+          {
+            "url": "/assets/index-2H2PJKSB.js",
+            "bytes": 289274,
+            "transfer": 289574,
+            "duration": 420
+          },
+          {
+            "url": "/assets/index-PwTT0e5G.css",
+            "bytes": 134693,
+            "transfer": 134993,
+            "duration": 296.3999999985099
+          },
+          {
+            "url": "/assets/trump-medallion.svg",
+            "bytes": 1402,
+            "transfer": 1702,
+            "duration": 61
+          },
+          {
+            "url": "/assets/button-reference.webp",
+            "bytes": 199956,
+            "transfer": 200256,
+            "duration": 294.80000000447035
+          },
+          {
+            "url": "/assets/card-frame.webp",
+            "bytes": 86686,
+            "transfer": 86986,
+            "duration": 204.70000000298023
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 721,
+            "transfer": 1021,
+            "duration": 56.100000001490116
+          },
+          {
+            "url": "/assets/card-back.webp",
+            "bytes": 162488,
+            "transfer": 162788,
+            "duration": 184
+          }
+        ],
+        "requests": 8,
+        "bytes": 934232,
+        "transfer": 936632,
+        "fcp": 1312,
+        "lcp": 1312,
+        "longTasks": [
+          242,
+          72
+        ],
+        "dom": 525.8999999985099
+      },
+      {
+        "route": "/singleplayer",
+        "kind": "warm",
+        "useful": 365.79999999701977,
+        "tap": 42.20000000298023,
+        "resources": [
+          {
+            "url": "/assets/table-mobile.webp",
+            "bytes": 59012,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/index-2H2PJKSB.js",
+            "bytes": 289274,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/index-PwTT0e5G.css",
+            "bytes": 134693,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/trump-medallion.svg",
+            "bytes": 1402,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/button-reference.webp",
+            "bytes": 199956,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/assets/card-frame.webp",
+            "bytes": 86686,
+            "transfer": 0,
+            "duration": 0
+          },
+          {
+            "url": "/favicon.ico",
+            "bytes": 721,
+            "transfer": 1021,
+            "duration": 62.100000001490116
+          },
+          {
+            "url": "/assets/card-back.webp",
+            "bytes": 162488,
+            "transfer": 0,
+            "duration": 0
+          }
+        ],
+        "requests": 8,
+        "bytes": 934232,
+        "transfer": 1021,
+        "fcp": 208,
+        "lcp": 208,
+        "longTasks": [],
+        "dom": 81.5
+      }
+    ]
+  },
+  "frames": {
+    "environment": "Headless Chrome dev animation fixture, 390x844 DPR3 CPU4x, 1500/3000ms sampling windows, no before recording; RAF gaps are not GPU FPS",
+    "rows": [
+      {
+        "index": 0,
+        "samples": 88,
+        "mean": 19.879545454545454,
+        "p95": 33.40000000000009,
+        "over50": 2,
+        "max": 116.79999999999995,
+        "nodes": 100
+      },
+      {
+        "index": 2,
+        "samples": 100,
+        "mean": 16.66,
+        "p95": 16.800000000000182,
+        "over50": 0,
+        "max": 17.199999999999818,
+        "nodes": 124
+      },
+      {
+        "index": 6,
+        "samples": 185,
+        "mean": 17.65135135135135,
+        "p95": 16.800000000000182,
+        "over50": 1,
+        "max": 166.80000000000018,
+        "nodes": 121
+      },
+      {
+        "index": 7,
+        "samples": 185,
+        "mean": 16.75081081081081,
+        "p95": 16.799999999999272,
+        "over50": 0,
+        "max": 33.399999999999636,
+        "nodes": 125
+      },
+      {
+        "index": 8,
+        "samples": 171,
+        "mean": 18.316959064327488,
+        "p95": 16.799999999999272,
+        "over50": 4,
+        "max": 133.20000000000073,
+        "nodes": 148
+      },
+      {
+        "index": 11,
+        "samples": 99,
+        "mean": 16.66060606060604,
+        "p95": 16.799999999999272,
+        "over50": 0,
+        "max": 16.899999999997817,
+        "nodes": 194
+      },
+      {
+        "index": 12,
+        "samples": 94,
+        "mean": 16.659574468085108,
+        "p95": 16.799999999999272,
+        "over50": 0,
+        "max": 16.900000000001455,
+        "nodes": 119
+      },
+      {
+        "index": 14,
+        "samples": 96,
+        "mean": 16.835416666666674,
+        "p95": 16.799999999999272,
+        "over50": 0,
+        "max": 33.20000000000073,
+        "nodes": 120
+      },
+      {
+        "index": 15,
+        "samples": 95,
+        "mean": 16.83684210526316,
+        "p95": 16.799999999999272,
+        "over50": 0,
+        "max": 33.29999999999927,
+        "nodes": 129
+      }
+    ]
+  },
+  "checks": {
+    "reports": [
+      {
+        "width": 320,
+        "count": 6,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 320,
+        "count": 10,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 320,
+        "count": 15,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 320,
+        "count": 20,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 360,
+        "count": 6,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 360,
+        "count": 10,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 360,
+        "count": 15,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 360,
+        "count": 20,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 390,
+        "count": 6,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 390,
+        "count": 10,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 390,
+        "count": 15,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 390,
+        "count": 20,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 430,
+        "count": 6,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 430,
+        "count": 10,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 430,
+        "count": 15,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 430,
+        "count": 20,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 768,
+        "count": 6,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 768,
+        "count": 10,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 768,
+        "count": 15,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 768,
+        "count": 20,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1024,
+        "count": 6,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1024,
+        "count": 10,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1024,
+        "count": 15,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1024,
+        "count": 20,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1440,
+        "count": 6,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1440,
+        "count": 10,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1440,
+        "count": 15,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "width": 1440,
+        "count": 20,
+        "geometry": "pass",
+        "lastCard": "pass"
+      },
+      {
+        "gestures": "normal and blind swipes do not send commands; taps select/deselect or use the established blind attack",
+        "magic": "gallery, unavailable reasons, quiz, fate, hat, ghost passed",
+        "offline": "input locked, question retained, reconnect display passed",
+        "menu": "solo preserved",
+        "orientation": "passed",
+        "reducedMotion": "passed"
+      }
+    ],
+    "errors": []
+  }
+}

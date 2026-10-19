@@ -15,7 +15,11 @@ export function toggleHandSelection(ids: readonly string[], card: Card, cards: r
   return [...ids, card.id];
 }
 
-export function handLayout(count: number, viewport: number, cardWidth: number, cardHeight: number) {
+export function handLayout(count: number, viewport: number, cardWidth: number, cardHeight: number, scrollOnly=false) {
+  if(scrollOnly){
+    const step=cardWidth+10,width=Math.max(viewport,24+cardWidth+step*Math.max(0,count-1));
+    return {mode:'scroll',scroll:width>viewport+1,width,height:cardHeight+40,cardWidth,cardHeight,positions:Array.from({length:count},(_,i)=>({x:12+i*step,y:28,angle:0}))};
+  }
   const compact = count >= 7;
   const scrolling = count >= 11;
   const side = 18, lift = 42;

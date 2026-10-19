@@ -14,7 +14,7 @@ export function captureBoard():CardPosition[]{
   return Array.from(document.querySelectorAll<HTMLElement>('[data-board-card]')).flatMap(el=>{
     const rect=el.getBoundingClientRect(),raw=el.dataset.boardCard;
     if(!raw)return [];
-    try{return [{card:JSON.parse(raw),x:rect.x+(rect.width-el.offsetWidth)/2,y:rect.y+(rect.height-el.offsetHeight)/2,width:el.offsetWidth,height:el.offsetHeight,rotation:el.closest('.cover')?-9:-3}];}catch{return [];}
+    try{return [{card:JSON.parse(raw),x:rect.x+(rect.width-el.offsetWidth)/2,y:rect.y+(rect.height-el.offsetHeight)/2,width:el.offsetWidth,height:el.offsetHeight,rotation:el.closest('.compact-layout')?0:el.closest('.cover')?-9:-3}];}catch{return [];}
   });
 }
 export function useGameAnimations(simple:boolean){
@@ -56,5 +56,6 @@ export function useGameAnimations(simple:boolean){
     return()=>{clearTimeout(timer);document.removeEventListener('visibilitychange',visibility);};
   },[entries]);
   useEffect(()=>{if(simple)setEntries([]);},[simple]);
+  useEffect(()=>{let width=innerWidth,frame=0;const resize=()=>{if(width===innerWidth)return;width=innerWidth;cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>setEntries([]));};window.addEventListener('resize',resize);return()=>{cancelAnimationFrame(frame);window.removeEventListener('resize',resize);};},[]);
   return {entries,start,transition,enqueue};
 }

@@ -1,20 +1,24 @@
 import {record,ROOM_ID,type PublicRoom,type RoomCredential,type GameSnapshot,type NetworkCommand,type CommandResult} from './protocol';
 import type {PlayerEvent} from '../game-core/types';
-import type {DeckSnapshot} from '../decks';
+import {validateDeck,type DeckSnapshot} from '../decks';
 import {credential as validCredential,saveCredential,getJoinKey,parseRecoveryCode} from './credentials';
 export {loadCredential,storageKey} from './credentials';
 
 export const endpoint=(import.meta.env?.VITE_ROOM_API_BASE as string|undefined)?.replace(/\/$/,'');
-export class RoomAccessError extends Error {constructor(public code:string){super(errors[code]||'Сервер отклонил запрос.');}}
-export const errors:Record<string,string>={invalid_deck:'Проверьте колоду: от 9 до 200 уникальных слов и переводов, название до 60 символов.',room_full:'Оба места уже заняты.',room_not_found:'Комната не найдена.',room_expired:'Время жизни комнаты истекло.',invalid_name:'Введите имя от 1 до 32 символов.',origin_forbidden:'Этот адрес сайта не разрешён в настройках сервера.',unauthorized:'Не удалось восстановить место. Секрет сессии недействителен.'};
+export class RoomAccessError extends Error {constructor(public code:string,operation?:'create'|'join'){super(code==='invalid_body'&&operation==='create'?'Сервер не принял формат создания комнаты. Возможно, сайт и сервер комнат разных версий. Обновите Cloudflare Worker вместе с сайтом: текущая версия передаёт выбранную колоду.':errors[code]||'Сервер отклонил запрос.');}}
+export const errors:Record<string,string>={invalid_body:'Сервер не принял формат запроса. Проверьте совместимость версии сайта и сервера комнат.',body_too_large:'Данные колоды превышают допустимый размер запроса.',json_required:'Сервер ожидает запрос в формате JSON.',invalid_deck:'Проверьте колоду: от 9 до 200 уникальных слов и переводов, название до 60 символов.',room_full:'Оба места уже заняты.',room_not_found:'Комната не найдена.',room_expired:'Время жизни комнаты истекло.',invalid_name:'Введите имя от 1 до 32 символов.',origin_forbidden:'Этот адрес сайта не разрешён в настройках сервера.',unauthorized:'Не удалось восстановить место. Секрет сессии недействителен.'};
+export function roomEntryPayload(name:string,joinKey:string,roomId?:string,deck?:DeckSnapshot){
+ // Send only the wire schema, even if the selected local deck also has IDs, dates or UI fields.
+ return {name:name.normalize('NFC').trim(),joinKey,...(!roomId&&deck?{deck:validateDeck(deck)}:{})};
+}
 export async function enterRoom(name:string,roomId?:string,deck?:DeckSnapshot):Promise<RoomCredential&{inviteUrl?:string}> {
  if(!endpoint)throw new Error('Адрес сервера комнат ещё не настроен.');
- const joinKey=getJoinKey(roomId);
+ const payload=roomEntryPayload(name,getJoinKey(roomId),roomId,deck);
  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
  try {
-  const response=await fetch(`${endpoint}/api/rooms${roomId?`/${roomId}/join`:''}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,joinKey,...(!roomId&&deck?{deck}:{})}),signal:controller.signal,credentials:'omit'});
+  const response=await fetch(`${endpoint}/api/rooms${roomId?`/${roomId}/join`:''}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal,credentials:'omit'});
   const value:unknown=await response.json();
-  if(!response.ok)throw new RoomAccessError(record(value)&&typeof value.error==='string'?value.error:'unknown');
+  if(!response.ok)throw new RoomAccessError(record(value)&&typeof value.error==='string'?value.error:'unknown',roomId?'join':'create');
   if(!record(value)||typeof value.roomId!=='string'||!ROOM_ID.test(value.roomId)||(value.seat!==0&&value.seat!==1)||typeof value.recoverySecret!=='string'||!ROOM_ID.test(value.recoverySecret))throw new Error('Некорректный ответ сервера.');
   // Verify storage before navigation, so a refresh can restore this seat.
   saveCredential(value as unknown as RoomCredential);

@@ -1,14 +1,15 @@
+import {compactViewportQuery} from './useCompactViewport';
 import {useLayoutEffect,useRef} from 'react';
 
 /** Measure only on layout changes, never on scroll pixels or animation frames. */
 export function useTableLayout(active=true){
- const root=useRef<HTMLElement>(null),request=useRef<()=>void>(()=>{});
+ const root=useRef<HTMLElement>(null);
  useLayoutEffect(()=>{
    const table=root.current;if(!active||!table)return;
   let frame=0,disposed=false;
   const px=(name:string,value:number)=>{const next=Math.round(value)+'px';if(table.style.getPropertyValue(name)!==next)table.style.setProperty(name,next);};
   const measure=()=>{
-   frame=0;if(disposed)return;
+   frame=0;if(disposed||matchMedia(compactViewportQuery).matches)return;
    const bounds=table.getBoundingClientRect(),header=table.querySelector<HTMLElement>('header'),hand=table.querySelector<HTMLElement>('.normal-hand');
    if(!header||!hand)return;
    const footer=header.getBoundingClientRect();
@@ -43,13 +44,19 @@ export function useTableLayout(active=true){
    }
   };
   const schedule=()=>{if(!frame&&!disposed)frame=requestAnimationFrame(measure);};
-  request.current=schedule;
+
   const observer=new ResizeObserver(schedule);
   for(const el of [table,...Array.from(table.querySelectorAll<HTMLElement>('header,.normal-hand,.statusbar,.bot-hand,.effect-icons,.actions'))])observer.observe(el);
+  const structure=new MutationObserver(records=>{
+   if(!records.some(record=>record.target instanceof Element&&record.target.matches('main,.normal-hand-track,.battle,.pair,.statusbar,.bot-hand,.effect-icons,.actions')))return;
+   for(const el of Array.from(table.querySelectorAll<HTMLElement>('.normal-hand,.actions,.statusbar,.effect-icons')))observer.observe(el);
+   schedule();
+  });
+  structure.observe(table,{childList:true,subtree:true});
   window.addEventListener('resize',schedule);window.visualViewport?.addEventListener('resize',schedule);
   document.fonts.ready.then(schedule);measure();
-  return()=>{disposed=true;request.current=()=>{};cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('resize',schedule);window.visualViewport?.removeEventListener('resize',schedule);};
+  return()=>{disposed=true;structure.disconnect();cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('resize',schedule);window.visualViewport?.removeEventListener('resize',schedule);};
  },[active]);
- useLayoutEffect(()=>{request.current();});
+
  return root;
 }

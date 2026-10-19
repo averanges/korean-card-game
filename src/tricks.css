@@ -1,7 +1,7 @@
-.spell-ghost_thief{--spell-art:url('/assets/ghost-thief.png')}
-.spell-trick_gift{--spell-art:url('/assets/trick-gift.png')}
-.spell-monkey_prank{--spell-art:url('/assets/monkey-prank.png')}
-.spell-magicians_hat{--spell-art:url('/assets/magicians-hat.png')}
+.spell-ghost_thief{--spell-art:url('/assets/ghost-thief.webp')}
+.spell-trick_gift{--spell-art:url('/assets/trick-gift.webp')}
+.spell-monkey_prank{--spell-art:url('/assets/monkey-prank.webp')}
+.spell-magicians_hat{--spell-art:url('/assets/magicians-hat.webp')}
 :is(.hand-spell,.activation-card,.animation-art,.stack-art,.effect-thumbnail,.trick-portrait):is(.spell-ghost_thief,.spell-trick_gift,.spell-monkey_prank,.spell-magicians_hat),.hand-spell:is(.spell-ghost_thief,.spell-trick_gift,.spell-monkey_prank,.spell-magicians_hat):hover:enabled{background-image:var(--spell-art)!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;background-color:#161123}
 .activation-card:is(.spell-ghost_thief,.spell-trick_gift,.spell-monkey_prank,.spell-magicians_hat){aspect-ratio:3/4}
 .activation-card:is(.spell-ghost_thief,.spell-trick_gift,.spell-monkey_prank,.spell-magicians_hat) .burn-face{background:var(--spell-art) center/contain no-repeat}
@@ -15,19 +15,19 @@
 .hat-selection-message strong,.hat-selection-message span{display:block}.hat-selection-message span{font-size:12px;margin-top:6px}
 .ghost-hand-count{left:5%;bottom:var(--arena-bottom);padding:5px 9px;font-size:12px}.ghost-pass{left:50%;top:42%;transform:translateX(-50%);cursor:pointer}
 .hat-picking .hat-ineligible{opacity:.35;filter:saturate(.2)}.hat-picking .hat-eligible{box-shadow:0 0 0 2px #f8cf77,0 0 22px #c08aff}
-.blind-hand .monkey-card{background:#291638 url('/assets/monkey-prank.png') center/contain no-repeat!important;animation:monkey-mask 320ms ease-out both;animation-delay:calc(var(--blind-i)*20ms)}
+.blind-hand .monkey-card{background:#291638 url('/assets/monkey-prank.webp') center/contain no-repeat!important;animation:monkey-mask 320ms ease-out both;animation-delay:calc(var(--blind-i)*20ms)}
 .blind-hand .monkey-card .face{background:none}.blind-hand .hand-item:hover{filter:brightness(1.12)}
 @keyframes monkey-mask{0%{opacity:.3;transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
 .trick-animation{position:fixed;left:50%;top:44%;width:160px;height:170px;margin:-85px 0 0 -80px;opacity:0;animation:trick-stage var(--duration,900ms) ease-out var(--delay,0ms) both;color:#dfb8ff}
 .trick-orbit{position:absolute;inset:18px -18px;border:2px solid #d7b0ff88;border-radius:50%;box-shadow:0 0 22px #c39aff66;transform:rotate(-22deg);animation:trick-orbit var(--duration) ease-out var(--delay) both}
 .little-ghost{position:absolute;left:35px;top:12px;width:95px;height:110px;filter:drop-shadow(0 0 12px #aec5ff);animation:ghost-grab var(--duration) ease-in-out var(--delay) both}
-.trick-card-back{position:absolute;left:52px;top:65px;width:56px;height:82px;background:url('/assets/card-back.png') center/114% 110%;border:1px solid #ddbbff;border-radius:5px;box-shadow:0 0 15px #b7a0ed;animation:trick-card-delivery var(--duration) ease-in-out var(--delay) both}
+.trick-card-back{position:absolute;left:52px;top:65px;width:56px;height:82px;background:url('/assets/card-back.webp') center/114% 110%;border:1px solid #ddbbff;border-radius:5px;box-shadow:0 0 15px #b7a0ed;animation:trick-card-delivery var(--duration) ease-in-out var(--delay) both}
 .trick-ghost_thief .trick-card-back{animation-name:ghost-card-hide}.trick-return .trick-card-back{animation-name:ghost-card-return}
 .gift-box{position:absolute;left:28px;top:64px;width:104px;height:85px;border:2px solid #f3c580;background:linear-gradient(90deg,#8b3b91 42%,#f1bc6d 42% 57%,#8b3b91 57%);border-radius:5px;animation:gift-wobble var(--duration) var(--delay) both}
 .gift-box>span{display:block;text-align:center;color:#ffe29d;font:45px Georgia}.gift-lid{position:absolute;left:-7px;right:-7px;top:-18px;height:25px;background:#6a2b85;border:2px solid #f1c579;text-align:center;color:#ffe5a4;animation:gift-open var(--duration) var(--delay) both}
 .trick-confetti{position:absolute;left:75px;top:70px;width:5px;height:12px;background:#ffe09a;transform:rotate(calc(var(--i)*60deg));animation:trick-confetti var(--duration) var(--delay) both}
 .trick-portrait{position:absolute;left:38px;top:0;width:84px;height:112px;border-radius:8px;box-shadow:0 0 22px #e2a1ff}
-.monkey-fan{position:absolute;top:80px;left:48px}.monkey-fan i{position:absolute;width:52px;height:70px;background:url('/assets/monkey-prank.png') center/contain no-repeat;transform-origin:bottom;transform:rotate(calc((var(--i) - 1)*25deg));animation:monkey-fan var(--duration) var(--delay) both}
+.monkey-fan{position:absolute;top:80px;left:48px}.monkey-fan i{position:absolute;width:52px;height:70px;background:url('/assets/monkey-prank.webp') center/contain no-repeat;transform-origin:bottom;transform:rotate(calc((var(--i) - 1)*25deg));animation:monkey-fan var(--duration) var(--delay) both}
 .hat-illustration{position:absolute;left:14px;top:67px;width:132px;height:100px;filter:drop-shadow(0 0 15px #d6adff);animation:hat-bounce var(--duration) var(--delay) both}
 .hat-illustration svg{width:100%;height:100%}
 .hat-input,.hat-output{position:absolute;left:53px;top:16px;width:56px;height:82px;animation:hat-in var(--duration) var(--delay) both}.hat-output{animation-name:hat-out}.hat-output>.trick-card-back{inset:0;animation:none}
