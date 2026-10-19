@@ -1,3 +1,4 @@
+import {reduceLearning,sealedCards,type LearningAction} from '../../src/learning';
 import {createOrdinaryGame,ordinaryTransition,ordinaryView} from '../../src/game-core/ordinary';
 import {projectEventsForPlayer,projectGameForPlayer,resolveBlindReference} from '../../src/game-core/projection';
 import {createGame,type Action,type Game} from '../../src/engine';
@@ -27,12 +28,18 @@ export function applyCommand(room:StoredRoom,p:Seat,c:NetworkCommand,random=serv
   if(p!==0)return reject('host_only');
   if(!room.players.every(player=>player?.connectionId))return reject('players_not_ready');
   const game=state.wordDeck?createDeckGame(state.wordDeck,random):state.gameMode==='ordinary'?createOrdinaryGame(random):createGame(random);
-  if(state.gameMode==='ordinary')game.magicPool=[];
+  if(state.gameMode==='ordinary'){game.magicPool=[];delete game.learning;}
   return complete(game,([0,1] as const).map(player=>({type:'cards_drawn',player,cards:game.hands[player]})));
  }
  if(!room.game)return reject('game_not_started');
  if(room.game.winner)return reject('game_finished');
- const book=state.challenges!,g=room.game;
+ const book=state.challenges!,g=state.game!;
+ if(['begin_unlock','answer_unlock','continue_unlock','close_unlock'].includes(c.type)){
+  const action:LearningAction=c.type==='begin_unlock'?{type:'unlock_begin',player:p,ref:c.cardRef}:c.type==='answer_unlock'?{type:'unlock_answer',player:p,challengeId:c.challengeId,option:c.option}:c.type==='continue_unlock'?{type:'unlock_continue',player:p,challengeId:c.challengeId}:c.type==='close_unlock'?{type:'unlock_close',player:p,challengeId:c.challengeId}:undefined as never;
+  const game=reduceLearning(g,action,random);if(game===g)return reject('invalid_challenge');
+  const events:DomainEvent[]=[];for(const card of game.hands[p]){const old=g.learning?.seals[card.id];if(old?.locked&&!game.learning?.seals[card.id]?.locked)events.push({type:'card_unlocked',player:p,cards:[card],sourceRef:old.ref});}
+  const sourceRef=events[0]?.sourceRef;events.push(...extraMagicEvents(g,game).map(e=>e.type==='magic_received'?{...e,sourceRef}:e));return complete(game,events);
+ }
  if(c.type==='begin_magic') {
   if(pendingChallenge(state,p))return reject('challenge_pending');
   const card=g.hands[p].find(card=>card.id===c.magicRef);
@@ -66,8 +73,8 @@ export function applyCommand(room:StoredRoom,p:Seat,c:NetworkCommand,random=serv
  }else if(c.type==='defend')action={type:'defend',player:p,id:c.cardRef,target:c.target};
  else if(c.type==='end'||c.type==='take'||c.type==='pass')action={type:c.type,player:p};
  else return reject('illegal_move');
- const next=ordinaryTransition(room.game,action,random);
- if(next.game===room.game)return reject('illegal_move');
+ const next=ordinaryTransition(g,action,random);
+ if(next.game===g)return reject('illegal_move');
  return complete(next.game,[...next.events,...extraMagicEvents(g,next.game)]);
 }
 export function sessionSnapshot(room:StoredRoom,p:Seat):GameSnapshot|undefined {
@@ -76,14 +83,14 @@ export function sessionSnapshot(room:StoredRoom,p:Seat):GameSnapshot|undefined {
  snapshot.view=projectGameForPlayer(g,p,context);
  if(snapshot.view.hand.blind){const byRef=new Map(snapshot.view.hand.cards.map(c=>[c.ref,c]));snapshot.view.hand.cards=(room.blind?.orders[p]??[]).map(id=>byRef.get(context.references[p].get(id)!)!).filter(Boolean);snapshot.allowed.attack=snapshot.view.hand.cards.map(c=>c.ref);}
  if(singleAttack(g,p)&&g.table.length)snapshot.allowed.attack=[];
- snapshot.allowed.pass=!g.winner&&g.attacker===p&&!g.table.length&&!availableCards(g,p).length&&g.hands[p].some(c=>!c.spell);
+ snapshot.allowed.pass=!sealedCards(g,p).length&&!g.winner&&g.attacker===p&&!g.table.length&&!availableCards(g,p).length&&g.hands[p].some(c=>!c.spell);
  snapshot.allowed.magic=g.hands[p].filter(c=>c.spell&&canStartMagic(g,p,c.spell)).map(c=>c.id);
  snapshot.challenge=publicChallenge(room,p);
  if(pendingChallenge(room,p))snapshot.allowed={attack:[],defend:[],take:false,end:false,magic:[],pass:false};
  return snapshot;
 }
-export const sessionEvents=(events:DomainEvent[],p:Seat,room?:StoredRoom):PlayerEvent[]=>projectEventsForPlayer(events,p).map(e=>{
+export const sessionEvents=(events:DomainEvent[],p:Seat,room?:StoredRoom):PlayerEvent[]=>projectEventsForPlayer(events,p,room?.game).map(e=>{
  // A Gift or an expiring lock must not reveal faces while the recipient's hand is blind.
- if(room?.game&&blindAttack(room.game,p)&&['cards_drawn','magic_expired'].includes(e.type)){const {cards,...publicEvent}=e;return publicEvent;}
+ if(room?.game&&blindAttack(room.game,p)&&['cards_drawn','magic_expired','card_unlocked'].includes(e.type)){const {cards,...publicEvent}=e;return publicEvent;}
  return e;
 });

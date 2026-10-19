@@ -1,3 +1,4 @@
+import {words} from '../../src/words';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp,rm} from 'node:fs/promises';
@@ -67,7 +68,9 @@ for(const mode of ['ordinary','magic'] as const)test('real WebSockets complete '
   assert.equal((await players()[attacker].next(v=>v.game?.revision===revision)).game.view.table.length,1);
   while(!snapshots[0].view.result&&steps++<2000){
    // Refresh sockets periodically so this fast test does not trip the production per-socket rate limit.
-   if(steps%12===0){a=await connect(host);b=await connect(guest);}
+   if(steps%6===0){a=await connect(host);b=await connect(guest);}
+   const learner=([0,1] as const).find(p=>snapshots[p].view.sealed?.length);
+   if(learner!==undefined){const seal=snapshots[learner].view.sealed![0];await play(learner,{type:'begin_unlock',cardRef:seal.ref});const q=snapshots[learner].view.unlock!,word=words.find(w=>w.ko===q.ko)!;await play(learner,{type:'answer_unlock',challengeId:q.id,option:q.options.indexOf(word.ru)});await play(learner,{type:'close_unlock',challengeId:q.id});continue;}
    const attack=snapshots[0].view.attacker as 0|1,defense=(1-attack) as 0|1;
    const av=snapshots[attack],dv=snapshots[defense];
    if(!av.view.table.length){await play(attack,{type:'attack',cardRefs:[av.allowed.attack[0]]});continue;}

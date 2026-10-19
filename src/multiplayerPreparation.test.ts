@@ -78,7 +78,7 @@ test('challenges are owner-bound, hide the answer key, resolve once, and do not 
  let independent=beginMagicChallenge(both,createChallengeBook(),0,'m0','q0',[],()=>.3);independent=beginMagicChallenge(both,independent,1,'m1','q1',[],()=>.3);
  assert.ok(independent.attempts.every(c=>c?.phase==='question'));
  const q1=independent.attempts[1]!.quiz,wrongIndex=q1.options.findIndex(x=>x!==q1.correct);
- const failed=answerMagicChallenge(both,independent,1,'q1',wrongIndex);assert.ok(failed.game.magic.includes('m1'));assert.equal(failed.book.attempts[0]?.phase,'question');assert.equal(failed.game.inverted,false);
+ let failed=answerMagicChallenge(both,independent,1,'q1',wrongIndex);for(let i=1;i<3;i++)failed=answerMagicChallenge(failed.game,failed.book,1,'q1',wrongIndex);assert.ok(failed.game.magic.includes('m1'));assert.equal(failed.book.attempts[0]?.phase,'question');assert.equal(failed.game.inverted,false);
 });
 test('local bot memory remains outside the rules and existing animation events can be projected',()=>{
  const g=sample(1);g.hands[1].push(card('mirror',0,0,'mirror'));const memory:BotMemory={};const action:Action={type:'magic',player:1,id:'mirror',question:0,answer:g.dictionary![0].ru};

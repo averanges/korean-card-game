@@ -19,7 +19,7 @@ function client(ws:any){const messages:any[]=[],waiters:any[]=[];
  ws.addEventListener('message',(e:any)=>{if(e.data==='pong')return;const value=JSON.parse(e.data);inspect(value);const i=waiters.findIndex(w=>w.predicate(value));if(i<0)messages.push(value);else{const [w]=waiters.splice(i,1);clearTimeout(w.timer);w.resolve(value);}});
  const next=(predicate:(v:any)=>boolean)=>new Promise<any>((resolve,reject)=>{const i=messages.findIndex(predicate);if(i>=0)return resolve(messages.splice(i,1)[0]);waiters.push({predicate,resolve,timer:setTimeout(()=>reject(Error('magic event timeout')),7000)});});return {ws,next};
 }
-function option(snapshot:GameSnapshot,correct=true){const q=snapshot.challenge!.quiz!;const word=words.find(w=>q.direction==='ko-ru'?w.ko===q.prompt:w.ru===q.prompt)!;const answer=q.direction==='ko-ru'?word.ru:word.ko;const i=q.options.findIndex(o=>correct?o===answer:o!==answer);assert.ok(i>=0);return i;}
+function option(snapshot:GameSnapshot,correct=true){const q=snapshot.challenge!.quiz!;const word=words.find(w=>q.direction==='ko-ru'?w.ko===(q.audioText||q.prompt):w.ru===q.prompt)!;const answer=q.direction==='ko-ru'?word.ru:word.ko;const i=q.options.findIndex(o=>correct?o===answer:o!==answer);assert.ok(i>=0);return i;}
 test('real magic protocol: all seven effects, private quizzes, hibernation, lost ack, target restart and blind references',async()=>{
  const persist=await mkdtemp(join(tmpdir(),'hangul-magic-'));
  const options={...convertV4MiniflareOptions({name:'magic-test',modules:await runtimeModules(true,true),modulesRoot:resolve('..'),cf:false,compatibilityDate:'2026-10-01',durableObjects:{ROOMS:{className:'Room',useSQLite:true}},bindings:{FRONTEND_ORIGIN:origin,ALLOWED_ORIGINS:origin,WAITING_TTL_SECONDS:'14400',ROOM_TTL_SECONDS:'86400',EXPIRED_RETENTION_SECONDS:'3600'}}),resourcePersistencePath:persist,telemetry:{enabled:false}};
@@ -61,7 +61,7 @@ test('real magic protocol: all seven effects, private quizzes, hibernation, lost
   await act(1,{type:'attack',cardRefs:[opaque[0]]});assert.equal(snapshots[1].allowed.attack.length,0);assert.ok(snapshots[0].view.table[0].attack.word.ko);
   assert.equal((await raw(1,{type:'attack',cardRefs:[opaque[1]||opaque[0]],requestId:'no-throw',expectedRevision:revision})).ok,false);
   // Other participant also answers through the server; wrong answer burns its physical extra.
-  const guestGift=await begin(1,'trick_gift');await answer(1,false);assert.equal(snapshots[1].challenge!.outcome,'wrong');assert.equal(snapshots[1].view.magic.some(c=>c.spell==='trick_gift'),false);
+  const guestGift=await begin(1,'trick_gift');await answer(1,false);assert.equal(snapshots[1].challenge!.attemptsLeft,2);await restart();assert.equal(snapshots[1].challenge!.attemptsLeft,2);await answer(1,false);assert.equal(snapshots[1].challenge!.attemptsLeft,1);await answer(1,false);assert.equal(snapshots[1].challenge!.outcome,'wrong');assert.equal(snapshots[1].view.magic.some(c=>c.spell==='trick_gift'),false);
   assert.equal((await raw(1,{type:'answer_quiz',challengeId:guestGift,option:0,requestId:'no-second-try',expectedRevision:revision})).code,'invalid_challenge');
  }finally{for(const ws of sockets)try{ws.close(1000,'done');}catch{}await mf.dispose();await rm(persist,{recursive:true,force:true});}
 });

@@ -34,7 +34,7 @@ test('custom dictionary: real DO validates create-only payload, shares cards saf
   await act(0,{type:'attack',cardRefs:[snapshots[0].allowed.attack[0]]});assert.deepEqual(snapshots[0].view.table,snapshots[1].view.table);
   const spell=snapshots[0].view.magic.find((c:any)=>c.spell==='mirror');await act(0,{type:'begin_magic',magicRef:spell.id});
   const before=structuredClone(snapshots),quiz=snapshots[0].challenge.quiz;assert.equal(snapshots[1].challenge,undefined);
-  const word=deck.words.find(w=>quiz.direction==='ko-ru'?w.ko===quiz.prompt:w.ru===quiz.prompt)!;assert.ok(word);assert.ok(quiz.options.every((o:string)=>deck.words.some(w=>o===w.ko||o===w.ru)));
+  const word=deck.words.find(w=>quiz.direction==='ko-ru'?w.ko===(quiz.audioText||quiz.prompt):w.ru===quiz.prompt)!;assert.ok(word);assert.ok(quiz.options.every((o:string)=>deck.words.some(w=>o===w.ko||o===w.ru)));
   await mf.unsafeEvictDurableObject('deck-test','Room',{name:host.roomId,webSockets:'hibernate'});
   for(const [p,c] of [[0,a],[1,b]] as const){c.ws.send('{"v":1,"type":"get_snapshot"}');const restored=await c.next(v=>v.type==='room_snapshot'&&v.game?.revision===revision);assert.deepEqual(restored.game,before[p]);assert.equal(restored.room.deck.name,deck.name);}
   a.ws.send(JSON.stringify({v:1,type:'command',command:{type:'set_deck',deck,expectedRevision:revision,requestId:'forged'}}));assert.equal((await a.next(v=>v.type==='error')).code,'invalid_message');

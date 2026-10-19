@@ -10,10 +10,10 @@ test('schema 2 game migrates without redeal or enabling magic in an existing ord
  const {room}=await createRoom(randomSecret(),'A',randomSecret(),100,policy);room.schemaVersion=2;room.game=createGame(()=>.4);room.game.magicPool=[];room.gameRevision=7;
  const before=JSON.stringify(room.game);assert.ok(migrateRoom(room,()=>.1));assert.equal(room.schemaVersion,3);assert.equal(room.gameMode,'ordinary');assert.equal(JSON.stringify(room.game),before);assert.equal(room.gameRevision,7);assert.deepEqual(room.challenges!.usedIds,[]);assert.equal(migrateRoom(room,()=>.9),false);
 });
-test('both server quiz directions have four unique options and no public answer key',async()=>{
+test('server listening has four Russian options, audio text, and no written prompt or answer key',async()=>{
  for(const random of [()=>.1,()=>.9]){const {room}=await createRoom(randomSecret(),'A',randomSecret(),100,policy);room.gameMode='magic';room.game=createGame(()=>.4);room.game.attacker=0;room.gameRevision=1;migrateRoom(room,random);const i=room.game.magicPool!.findIndex(c=>c.spell==='mirror'),card=room.game.magicPool!.splice(i,1)[0];room.game.hands[0].push(card);
   const next=applyCommand(room,0,{type:'begin_magic',magicRef:card.id,requestId:'begin',expectedRevision:1},random);assert.ok(next.result.ok);const q=sessionSnapshot(next.state!,0)!.challenge!.quiz!;
-  assert.equal(q.direction,random()<.5?'ko-ru':'ru-ko');assert.equal(q.options.length,4);assert.equal(new Set(q.options).size,4);assert.deepEqual(Object.keys(q).sort(),['challengeId','direction','options','prompt']);
+  assert.equal(q.direction,'ko-ru');assert.equal(q.mode,'listening');assert.equal(q.prompt,'');assert.ok(q.audioText);assert.equal(q.options.length,4);assert.equal(new Set(q.options).size,4);assert.deepEqual(Object.keys(q).sort(),['audioText','challengeId','direction','mode','options','prompt']);
  }
 });
 test('Hat target becomes unavailable atomically when opponent consumes the last eligible deck card',async()=>{

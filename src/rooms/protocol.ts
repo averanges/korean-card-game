@@ -4,7 +4,7 @@ import type {DeckInfo} from '../decks';
 export type NetworkCommand=ClientCommand;
 export type Seat=0|1;
 export type OrdinaryCommand=Extract<ClientCommand,{type:'start_game'|'attack'|'defend'|'end'|'take'|'pass'}>;
-export interface PublicChallenge {challengeId:string;magicRef:string;magicKind?:string;phase:'question'|'target'|'resolved'|'cancelled';outcome?:'correct'|'wrong'|'unavailable';quiz?:PublicQuiz;target?:{kind:'trump';suits:number[]}|{kind:'hat';cardRefs:string[]}}
+export interface PublicChallenge {challengeId:string;magicRef:string;magicKind?:string;phase:'question'|'target'|'resolved'|'cancelled'|'paused';outcome?:'correct'|'wrong'|'unavailable';quiz?:PublicQuiz;attemptsLeft?:number;lastWrong?:string;solution?:{ko:string;ru:string};target?:{kind:'trump';suits:number[]}|{kind:'hat';cardRefs:string[]}}
 export interface GameSnapshot {revision:number;view:PlayerView;challenge?:PublicChallenge;allowed:{attack:string[];defend:{target:number;cardRefs:string[]}[];take:boolean;end:boolean;magic?:string[];pass?:boolean}}
 export interface CommandResult {requestId:string;ok:boolean;revision:number;code?:string}
 export type RoomStatus='waiting'|'ready'|'playing'|'finished'|'expired';
@@ -30,6 +30,9 @@ export function validCommand(c:unknown):c is NetworkCommand {
  if(c.type==='attack')return keys==='cardRefs,expectedRevision,requestId,type'&&Array.isArray(c.cardRefs)&&c.cardRefs.length>0&&c.cardRefs.length<=6&&c.cardRefs.every(x=>typeof x==='string'&&x.length<=80)&&new Set(c.cardRefs).size===c.cardRefs.length;
  if(c.type==='defend')return keys==='cardRef,expectedRevision,requestId,target,type'&&typeof c.cardRef==='string'&&c.cardRef.length<=80&&Number.isInteger(c.target)&&Number(c.target)>=0&&Number(c.target)<6;
  const ref=(value:unknown)=>typeof value==='string'&&/^[A-Za-z0-9_-]{1,80}$/.test(value);
+ if(c.type==='begin_unlock')return keys==='cardRef,expectedRevision,requestId,type'&&ref(c.cardRef);
+ if(c.type==='answer_unlock')return keys==='challengeId,expectedRevision,option,requestId,type'&&ref(c.challengeId)&&Number.isInteger(c.option)&&Number(c.option)>=0&&Number(c.option)<4;
+ if(c.type==='continue_unlock'||c.type==='close_unlock')return keys==='challengeId,expectedRevision,requestId,type'&&ref(c.challengeId);
  if(c.type==='begin_magic')return keys==='expectedRevision,magicRef,requestId,type'&&ref(c.magicRef);
  if(c.type==='cancel_quiz')return keys==='challengeId,expectedRevision,requestId,type'&&ref(c.challengeId);
  if(c.type==='answer_quiz')return keys==='challengeId,expectedRevision,option,requestId,type'&&ref(c.challengeId)&&Number.isInteger(c.option)&&Number(c.option)>=0&&Number(c.option)<4;

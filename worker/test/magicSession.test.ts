@@ -4,7 +4,7 @@ import {createGame,beats,type Card} from '../../src/engine';
 import {createRoom,randomSecret,type StoredRoom} from '../src/model';
 import {applyCommand,sessionSnapshot,sessionEvents} from '../src/gameSession';
 import {refreshBlind,migrateRoom} from '../src/magicSession';
-import {magicDropChance} from '../../src/magicDrops';
+import {learningSettings,sealedCards} from '../../src/learning';
 import {resolveBlindReference} from '../../src/game-core/projection';
 import {restoreProjection} from '../src/magicSession';
 import type {NetworkCommand,Seat} from '../../src/rooms/protocol';
@@ -15,14 +15,14 @@ function give(r:StoredRoom,p:Seat,spell:string){const i=r.game!.magicPool!.findI
 function send(r:StoredRoom,p:Seat,intent:object,random=()=>.4){const next=applyCommand(r,p,{...intent,requestId:randomSecret(),expectedRevision:r.gameRevision} as NetworkCommand,random);if(next.result.ok)Object.assign(r,next.state);return next;}
 function open(r:StoredRoom,p:Seat,id:string){const next=send(r,p,{type:'begin_magic',magicRef:id});assert.ok(next.result.ok,next.result.code);return r.challenges!.attempts[p]!;}
 function answer(r:StoredRoom,p:Seat,correct=true){const c=r.challenges!.attempts[p]!;const option=c.quiz.options.findIndex(o=>correct?o===c.quiz.correct:o!==c.quiz.correct);return send(r,p,{type:'answer_quiz',challengeId:c.id,option});}
-test('new magic deal keeps 36 ordinary cards, 11 physical extras; refill uses unchanged chance and finite pool',async()=>{
+test('new magic deal keeps 36 ordinary cards, 11 physical extras; refill seals normals; only unlocking can exhaust the finite reward pool',async()=>{
  const r=await fixture();assert.deepEqual(r.game!.hands.map(h=>h.length),[6,6]);assert.equal(r.game!.magicPool!.length,11);
- const initial=r.game!.magicPool!.map(c=>c.id);assert.equal(new Set(initial).size,11);assert.equal(magicDropChance(r.game!,0),.22);
+ const initial=r.game!.magicPool!.map(c=>c.id);assert.equal(new Set(initial).size,11);assert.equal(learningSettings.MAGIC_REWARD_CHANCE,.25);
  // Repeated real engine refills can exhaust the physical pool, never exceed it.
  for(let round=0;round<12;round++){
   r.game!.attacker=0;r.game!.table=[{attack:card('attack-'+round,0),defense:card('defense-'+round,1)}];
   for(const p of [0,1] as const){const ordinary=r.game!.hands[p].filter(c=>!c.spell);r.game!.hands[p]=r.game!.hands[p].filter(c=>c.spell);r.game!.deck.push(...ordinary);}
-  const next=send(r,0,{type:'end'},()=>0);assert.ok(next.result.ok);
+  const next=send(r,0,{type:'end'},()=>0);assert.ok(next.result.ok);for(const p of [0,1] as const)for(const seal of sealedCards(r.game!,p)){assert.ok(send(r,p,{type:'begin_unlock',cardRef:seal.ref},()=>0).result.ok);const q=r.game!.learning!.attempts[p]!;assert.ok(send(r,p,{type:'answer_unlock',challengeId:q.id,option:q.quiz.options.indexOf(q.quiz.correct)},()=>0).result.ok);}
  }
  const awarded=r.game!.hands.flat().filter(c=>c.spell).map(c=>c.id);assert.equal(awarded.length,11);assert.equal(new Set(awarded).size,11);assert.deepEqual([...awarded].sort(),initial.sort());assert.equal(r.game!.magicPool!.length,0);
 });
@@ -36,7 +36,7 @@ test('both seats: begin is free, cancel preserves card, wrong answer burns exact
   assert.equal(send(r,p,{type:'attack',cardRefs:[r.game!.hands[p][0].id]}).result.code,'challenge_pending');
   assert.ok(send(r,p,{type:'cancel_quiz',challengeId:attempt.id}).result.ok);assert.ok(r.game!.hands[p].some(c=>c.id===id));
   const next=open(r,p,id);assert.notEqual(next.id,attempt.id);assert.ok(r.challenges!.usedIds.includes(attempt.id));
-  assert.ok(answer(r,p,false).result.ok);assert.ok(!r.game!.hands[p].some(c=>c.id===id));assert.ok(!r.game!.inverted);
+  for(let i=0;i<2;i++){assert.ok(answer(r,p,false).result.ok);assert.ok(r.game!.hands[p].some(c=>c.id===id));assert.equal(sessionSnapshot(r,p)!.challenge!.attemptsLeft,2-i);}assert.ok(answer(r,p,false).result.ok);assert.ok(!r.game!.hands[p].some(c=>c.id===id));assert.ok(!r.game!.inverted);
   assert.equal(send(r,p,{type:'answer_quiz',challengeId:next.id,option:0}).result.code,'invalid_challenge');
  }
 });

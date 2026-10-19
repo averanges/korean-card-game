@@ -1,0 +1,15 @@
+{
+  "coverage": {
+    "reading": true,
+    "readingWrong": true,
+    "readingResume": true,
+    "reward": true,
+    "audio": true,
+    "audioResume": true,
+    "ttsFailure": true,
+    "wrongTwice": true,
+    "thirdSuccess": true
+  },
+  "errors": [],
+  "kind": "Actual production app + actual local Worker, two authenticated WebSockets, no injected snapshots or deals"
+}

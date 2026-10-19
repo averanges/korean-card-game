@@ -29,7 +29,7 @@ export function RoomLobby() {
  useEffect(()=>{
   if(!credential)return;
   const close=connectRoom(credential,setRoom,text=>{setStatus(text);if(text!=='Связь установлена')clearPending();},(next,events)=>{
-   setPositions(captureBoard());setGame(old=>old&&old.revision>next.revision?old:next);setEvents(events);
+   setPositions([...captureBoard(),...events.flatMap(e=>{if(!['card_unlocked','magic_received'].includes(e.type)||!e.sourceRef||!e.cards?.length)return [];const el=Array.from(document.querySelectorAll<HTMLElement>('[data-sealed-ref]')).reverse().find(n=>n.dataset.sealedRef===e.sourceRef&&n.getBoundingClientRect().width);const b=(el||document.querySelector<HTMLElement>('.ux-fan,.normal-hand-viewport'))?.getBoundingClientRect();return b?[{sourceRef:e.sourceRef,card:e.cards[0],x:b.x,y:b.y,width:Math.min(b.width,120),height:Math.min(b.height,180),rotation:0}]:[];})]);setGame(old=>old&&old.revision>next.revision?old:next);setEvents(events);
    if(pendingCommand.current&&next.revision>pendingCommand.current.expectedRevision)clearPending();
   },result=>{if(result.requestId===pendingCommand.current?.requestId&&!result.ok){clearPending();setError(commandErrors[result.code||'']||'Сервер отклонил ход.');if(result.code==='storage_error'){setStatus('Восстанавливаем состояние…');setRetry(x=>x+1);}}},{onAccessIssue:issue=>{
    if(issue==='unauthorized'){forgetCredential(credential);setCredential(undefined);setGame(undefined);setRoom(undefined);setError(errors.unauthorized);}

@@ -1,0 +1,11 @@
+{
+  "coverage": {
+    "reading": true,
+    "readingReload": true,
+    "audio": true,
+    "audioReload": true,
+    "botContinues": true
+  },
+  "errors": [],
+  "kind": "Actual solo app + real bot; observed saved state, never replaced it"
+}

@@ -1,3 +1,5 @@
+import {blindAttack} from './trickRules';
+import {isStudyLocked} from './learning';
 import type {Action,Card,Game,Player} from './engine';
 import {gameDictionary} from './engine';
 import {quizAnswer} from './magicQuiz';
@@ -15,16 +17,16 @@ export const magicAnimations:Record<string,MagicAnimationConfig>={
 };
 export const intensityDuration={minor:250,major:900,legendary:2400};
 export const legendaryTimings={receive:1600,answer:850,wrongAnswer:1200,burn:1100,indicatorStart:900,indicator:1000,counter:850,notice:5200};
-export type AnimationType='card_attack'|'card_defend'|'card_throw_in'|'cards_drawn'|'magic_received'|'magic_activated'|'magic_failed'|'magic_expired'|'round_defended'|'cards_taken';
-export interface CardPosition {card:Card;x:number;y:number;width:number;height:number;rotation:number}
-export interface GameAnimationEvent {type:AnimationType;player:Player;cards:Card[];delay:number;duration:number;magicId?:string;effectId?:string;count?:number;trump?:number;previousTrump?:number;previousDeck?:number;nextDeck?:number;compact?:boolean;correctAnswer?:string;positions?:CardPosition[];targetPlayer?:Player;exchange?:{oldCard:Card;newCard?:Card}}
+export type AnimationType='card_unlocked'|'card_attack'|'card_defend'|'card_throw_in'|'cards_drawn'|'magic_received'|'magic_activated'|'magic_failed'|'magic_expired'|'round_defended'|'cards_taken';
+export interface CardPosition {sourceRef?:string;card:Card;x:number;y:number;width:number;height:number;rotation:number}
+export interface GameAnimationEvent {sourceRef?:string;source?:{x:number;y:number;width:number;height:number};sealed?:{ref:string;ko:string}[];type:AnimationType;player:Player;cards:Card[];delay:number;duration:number;magicId?:string;effectId?:string;count?:number;trump?:number;previousTrump?:number;previousDeck?:number;nextDeck?:number;compact?:boolean;correctAnswer?:string;positions?:CardPosition[];targetPlayer?:Player;exchange?:{oldCard:Card;newCard?:Card}}
 export interface AnimationEntry extends GameAnimationEvent {id:string;created:number;ends:number}
 
 export function initialDrawEvents(g:Game):GameAnimationEvent[]{
-  return ([0,1] as const).flatMap(p=>drawEvents(g.hands[p],p,0));
+  return ([0,1] as const).flatMap(p=>drawEvents(g.hands[p],p,0,g));
 }
-function drawEvents(cards:Card[],player:Player,baseDelay:number):GameAnimationEvent[]{
-  return cards.map((card,i)=>({type:card.spell?'magic_received':'cards_drawn',player,cards:[card],delay:baseDelay+Math.min(i*75,350),duration:player===1?230:card.spell?(magicAnimations[card.spell]?.intensity==='legendary'?legendaryTimings.receive:700):320}));
+function drawEvents(cards:Card[],player:Player,baseDelay:number,g?:Game):GameAnimationEvent[]{
+  return cards.map((card,i)=>({type:card.spell?'magic_received':'cards_drawn',player,cards:g&&(isStudyLocked(g,card)||!card.spell&&blindAttack(g,player))?[]:[card],sealed:g&&isStudyLocked(g,card)?[{ref:g.learning!.seals[card.id].ref,ko:card.word.ko}]:undefined,delay:baseDelay+Math.min(i*75,350),duration:player===1?230:card.spell?(magicAnimations[card.spell]?.intensity==='legendary'?legendaryTimings.receive:700):320}));
 }
 // Only confirmed transitions produce events. The engine does not depend on this module.
 export function animationEvents(before:Game,after:Game,action:Action):GameAnimationEvent[]{
@@ -43,12 +45,13 @@ export function animationEvents(before:Game,after:Game,action:Action):GameAnimat
       events.push({type:correct?'magic_activated':'magic_failed',player:action.player,cards:[c],targetPlayer:(c.spell==='magicians_hat'?action.player:1-action.player) as Player,exchange:c.spell==='magicians_hat'&&correct?{oldCard:before.hands[action.player].find(x=>x.id===action.targetId)!,newCard:after.hands[action.player].find(x=>!before.hands[action.player].some(old=>old.id===x.id))!}:undefined,magicId:c.spell,trump:after.trump,previousTrump:before.trump,previousDeck:before.deck.length,nextDeck:after.deck.length,correctAnswer:quizAnswer(gameDictionary(before),action.question,action.direction),delay:action.player===0?(correct?(c.spell==='fate'&&action.trump!==undefined?140:legendaryTimings.answer):legendaryTimings.wrongAnswer):0,duration:correct?intensityDuration[magicAnimations[c.spell]?.intensity||'minor']:legendaryTimings.burn});
     }
   }
+  for(const player of [0,1] as const)for(const card of after.hands[player]){const seal=before.learning?.seals[card.id];if(seal?.locked&&!isStudyLocked(after,card))events.push({type:'card_unlocked',player,cards:blindAttack(after,player)?[]:[card],sourceRef:seal.ref,delay:650,duration:1000});}
   for(const effect of before.effects.filter(e=>['ghost_thief','monkey_prank'].includes(e.kind)&&!after.effects.some(next=>next.id===e.id))){const card=effect.target===0?after.hands[0].find(c=>c.id===effect.lockedCardId):undefined;events.push({type:'magic_expired',player:effect.target??0,cards:card?[card]:[],magicId:effect.kind,delay:0,duration:650});}
   const deckIds=new Set(before.deck.map(c=>c.id));
   for(const player of [0,1] as const){
     // Cards taken from the table are not new draws; shuffled discard is not a draw either.
     const added=after.hands[player].filter(c=>(deckIds.has(c.id)||c.spell&&before.magicPool?.some(m=>m.id===c.id))&&!before.hands[player].some(old=>old.id===c.id));
-    if(action.type==='magic'&&events.some(e=>e.magicId==='magicians_hat'&&e.type==='magic_activated'))continue;const cast=events.find(e=>e.type==='magic_activated'&&e.magicId==='trick_gift');events.push(...drawEvents(added,player,action.type==='end'?320:cast?cast.delay+650:0));
+    if(action.type==='magic'&&events.some(e=>e.magicId==='magicians_hat'&&e.type==='magic_activated'))continue;const cast=events.find(e=>e.type==='magic_activated'&&e.magicId==='trick_gift');const unlocked=events.find(e=>e.type==='card_unlocked'&&e.player===player);events.push(...drawEvents(added,player,action.type==='end'?320:cast?cast.delay+650:0,after).map(e=>unlocked&&player===0&&e.type==='magic_received'?{...e,sourceRef:unlocked.sourceRef,delay:1550,duration:magicAnimations[e.cards[0]?.spell||'']?.intensity==='legendary'?2800:1800}:e));
   }
   return events;
 }

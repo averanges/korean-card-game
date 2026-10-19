@@ -1,29 +1,21 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,drawToSix} from './engine';
-import {magicDropChance,magicDropSettings,rollMagicDrop} from './magicDrops';
+import {magicDropSettings,awardMagic} from './magicDrops';
 import {animationEvents} from './animationModel';
-test('initial deal has no magic; refill can award more than three unique extras without replacing normals',()=>{
- const g=createGame();assert.equal(g.magicPool?.length,11);assert.ok([...g.deck,...g.hands.flat()].every(c=>!c.spell));
- g.hands[0]=[];drawToSix(g,0,()=>0);
- assert.equal(g.hands[0].filter(c=>!c.spell).length,6);assert.equal(g.hands[0].filter(c=>c.spell).length,6);
- assert.equal(g.magicPool?.length,5);assert.equal(new Set(g.hands[0].map(c=>c.id)).size,12);
+import {sealedCards,reduceLearning} from './learning';
+test('refill never awards random magic; locks occupy the ordinary cards drawn',()=>{
+ const g=createGame();assert.equal(g.magicPool?.length,11);assert.equal(sealedCards(g,0).length,0);g.discard.push(...g.hands[0]);g.hands[0]=[];drawToSix(g,0,()=>0);
+ assert.equal(g.hands[0].length,6);assert.equal(sealedCards(g,0).length,6);assert.equal(g.magicPool?.length,11);
 });
-test('repeat penalty persists in current and next round, is mild, player-specific and then expires',()=>{
- const g=createGame();const base=magicDropChance(g,0);rollMagicDrop(g,0,()=>0);
- assert.equal(magicDropChance(g,0),base*.8);assert.equal(magicDropChance(g,1),base);
- g.round=1;assert.equal(magicDropChance(g,0),base*.8);
- g.round=2;assert.equal(magicDropChance(g,0),base);
- g.magicDropHistory=[[2,2,2,2],[]];assert.equal(magicDropChance(g,0),base*magicDropSettings.minimumMultiplier);
+test('learning awards can exceed three, without replacing normal cards or exceeding finite pool',()=>{
+ let g=createGame();g.discard.push(...g.hands[0]);g.hands[0]=[];drawToSix(g,0,()=>0);
+ for(const seal of sealedCards(g,0)){g=reduceLearning(g,{type:'unlock_begin',player:0,ref:seal.ref},()=>0);const q=g.learning!.attempts[0]!;g=reduceLearning(g,{type:'unlock_answer',player:0,challengeId:q.id,option:q.quiz.options.indexOf(q.quiz.correct)},()=>0);}
+ assert.equal(g.hands[0].filter(c=>!c.spell).length,6);assert.equal(g.hands[0].filter(c=>c.spell).length,6);assert.equal(g.magicPool?.length,5);
 });
-test('legendary instance occupies less weighted range; pool awards are animated after refill',()=>{
- const g=createGame();const normal=g.hands[0][0];g.hands[0]=[];
- g.magicPool=[{...normal,id:'legend',spell:'mirror'},{...normal,id:'major',spell:'ghost_thief'}];
- const randoms=[0,.3];rollMagicDrop(g,0,()=>randoms.shift()??0);
- assert.equal(g.hands[0][0].id,'major'); // .3 is outside legendary's .35/1.35 share.
- const before=createGame();before.attacker=0;before.hands[0]=[];
- before.table=[{attack:normal,defense:{...normal,id:'cover'}}];
- const after=structuredClone(before);drawToSix(after,0,()=>0);after.table=[];
- const events=animationEvents(before,after,{type:'end',player:0});
- assert.ok(events.some(e=>e.type==='magic_received'));assert.ok(events.filter(e=>e.type==='magic_received').every(e=>e.delay>=320));
+test('legendary rewards retain their lower weight, and reward animations originate at unlocked card',()=>{
+ const g=createGame(),normal=g.hands[0][0];g.magicPool=[{...normal,id:'legend',spell:'mirror'},{...normal,id:'major',spell:'ghost_thief'}];
+ assert.ok(magicDropSettings.legendaryWeight<magicDropSettings.majorWeight);awardMagic(g,0,()=>.3);assert.equal(g.hands[0].at(-1)!.id,'major');
+ let before=createGame();before.discard.push(...before.hands[0]);before.hands[0]=[];drawToSix(before,0,()=>0);const ref=sealedCards(before,0)[0].ref;before=reduceLearning(before,{type:'unlock_begin',player:0,ref},()=>0);const q=before.learning!.attempts[0]!,action={type:'unlock_answer' as const,player:0 as const,challengeId:q.id,option:q.quiz.options.indexOf(q.quiz.correct)};const after=reduceLearning(before,action,()=>0);const events=animationEvents(before,after,action);
+ assert.ok(events.some(e=>e.type==='card_unlocked'&&e.sourceRef===ref));assert.ok(events.some(e=>e.type==='magic_received'&&e.sourceRef===ref&&e.duration>=1800));
 });

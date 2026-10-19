@@ -1,23 +1,29 @@
+import {learningSettings,readingQuiz} from '../learning';
 import {gameDictionary,reduceGame,type Game,type Player,type Action} from '../engine';
 import {magicUnavailable,hatTargets} from '../trickRules';
-import {makeMagicQuiz,type MagicQuiz} from '../magicQuiz';
+import {quizWordKey,type MagicQuiz} from '../magicQuiz';
 
-export interface PublicQuiz {challengeId:string;direction:MagicQuiz['direction'];prompt:string;options:string[]}
-export interface MagicChallenge {id:string;player:Player;cardId:string;magicKind?:string;quiz:MagicQuiz;phase:'question'|'target'|'resolved'|'cancelled';outcome?:'correct'|'wrong'|'unavailable'}
-export interface ChallengeBook {attempts:[MagicChallenge|undefined,MagicChallenge|undefined];usedIds:string[]}
+export interface PublicQuiz {challengeId:string;direction:MagicQuiz['direction'];prompt:string;options:string[];mode?:'listening';audioText?:string}
+export interface MagicChallenge {id:string;player:Player;cardId:string;magicKind?:string;quiz:MagicQuiz;phase:'question'|'target'|'resolved'|'cancelled'|'paused';outcome?:'correct'|'wrong'|'unavailable';errors?:number;lastWrong?:string;listening?:boolean}
+export interface ChallengeBook {attempts:[MagicChallenge|undefined,MagicChallenge|undefined];usedIds:string[];sessions?:Record<string,MagicChallenge>}
 export const createChallengeBook=():ChallengeBook=>({attempts:[undefined,undefined],usedIds:[]});
 const validPlayer=(p:Player)=>p===0||p===1;
-export function publicQuiz(c:MagicChallenge):PublicQuiz{return {challengeId:c.id,direction:c.quiz.direction,prompt:c.quiz.prompt,options:[...c.quiz.options]};}
+export function publicQuiz(c:MagicChallenge):PublicQuiz{return {challengeId:c.id,direction:c.quiz.direction,prompt:c.listening?'':c.quiz.prompt,options:[...c.quiz.options],...(c.listening?{mode:'listening' as const,audioText:c.quiz.prompt}:{})};}
 export function beginMagicChallenge(g:Game,book:ChallengeBook,p:Player,cardId:string,id:string,recent:string[]=[],random=Math.random):ChallengeBook {
  if(!validPlayer(p)||!id||book.usedIds.includes(id))return book;
  const pending=book.attempts[p],c=g.hands[p].find(c=>c.id===cardId);
  if(pending&&['question','target'].includes(pending.phase)||!c?.spell||magicUnavailable(g,p,c.spell))return book;
- const quiz=makeMagicQuiz(gameDictionary(g),recent,random);if(!quiz)return book;
- const next=structuredClone(book);next.usedIds.push(id);next.attempts[p]={id,player:p,cardId,magicKind:c.spell,quiz,phase:'question'};return next;
+ const saved=book.sessions?.[cardId];if(saved&&(saved.errors||saved.phase==='target')&&saved.outcome!=='wrong'){
+  const next=structuredClone(book),attempt=structuredClone(saved);attempt.phase=attempt.phase==='target'?'target':'question';delete attempt.outcome;next.attempts[p]=attempt;return next;
+ }
+ const dictionary=gameDictionary(g),valid=dictionary.map((word,index)=>({word,index})).filter(x=>readingQuiz(dictionary,{id:'quiz',rank:0,suit:0,word:x.word},()=>.5));
+ const fresh=valid.filter(x=>!recent.includes(quizWordKey(x.word))),pool=fresh.length?fresh:valid;if(!pool.length)return book;
+ const candidate=pool[Math.floor(random()*pool.length)],quiz=readingQuiz(dictionary,{id:'quiz',rank:0,suit:0,word:candidate.word},random);if(!quiz)return book;
+ const next=structuredClone(book);next.usedIds.push(id);next.attempts[p]={id,player:p,cardId,magicKind:c.spell,quiz,phase:'question',errors:0,listening:true};remember(next,p);return next;
 }
 export function cancelMagicChallenge(book:ChallengeBook,p:Player,id:string):ChallengeBook {
  if(!validPlayer(p))return book;const c=book.attempts[p];if(!c||c.id!==id||c.phase!=='question')return book;
- const next=structuredClone(book);next.attempts[p]!.phase='cancelled';return next;
+ const next=structuredClone(book);next.attempts[p]!.phase=c.errors?'paused':'cancelled';remember(next,p);return next;
 }
 export interface ChallengeTransition {game:Game;book:ChallengeBook;action?:Action}
 /** Pure transition: the caller owns and persists the current book; no room-wide pause. */
@@ -28,11 +34,12 @@ export function answerMagicChallenge(g:Game,book:ChallengeBook,p:Player,id:strin
  // Another player's legal move may have invalidated the opportunity meanwhile.
  if(!card?.spell||magicUnavailable(g,p,card.spell)){attempt.phase='resolved';attempt.outcome='unavailable';return {game:g,book:next};}
  const answer=c.quiz.options[option],correct=answer===c.quiz.correct;
+ if(!correct&&c.listening){attempt.errors=(attempt.errors||0)+1;attempt.lastWrong=answer;if(attempt.errors<learningSettings.LISTENING_ATTEMPTS){delete attempt.outcome;remember(next,p);return {game:g,book:next};}}
  attempt.outcome=correct?'correct':'wrong';
- if(correct&&['fate','magicians_hat'].includes(card.spell)){attempt.phase='target';return {game:g,book:next};}
+ if(correct&&['fate','magicians_hat'].includes(card.spell)){attempt.phase='target';remember(next,p);return {game:g,book:next};}
  const action:Action={type:'magic',player:p,id:c.cardId,question:c.quiz.index,direction:c.quiz.direction,answer};
  const game=reduceGame(g,action,random);attempt.phase='resolved';if(game===g)attempt.outcome='unavailable';
- return {game,book:next,action:game===g?undefined:action};
+ remember(next,p);return {game,book:next,action:game===g?undefined:action};
 }
 export function chooseMagicTarget(g:Game,book:ChallengeBook,p:Player,id:string,target:{trump?:number;cardId?:string},random=Math.random):ChallengeTransition {
  const unchanged={game:g,book};if(!validPlayer(p))return unchanged;
@@ -42,5 +49,7 @@ export function chooseMagicTarget(g:Game,book:ChallengeBook,p:Player,id:string,t
  if(card.spell==='magicians_hat'&&!hatTargets(g,p).some(c=>c.id===target.cardId))return unchanged;
  const action:Action={type:'magic',player:p,id:c.cardId,question:c.quiz.index,direction:c.quiz.direction,answer:c.quiz.correct,trump:target.trump,targetId:target.cardId};
  const game=reduceGame(g,action,random);if(game===g)return unchanged;
- attempt.phase='resolved';return {game,book:next,action};
+ attempt.phase='resolved';remember(next,p);return {game,book:next,action};
 }
+
+function remember(book:ChallengeBook,p:Player){const c=book.attempts[p];if(c){book.sessions??={};book.sessions[c.cardId]=structuredClone(c);}}

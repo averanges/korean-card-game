@@ -3,7 +3,7 @@ import {projectGameForPlayer} from './projection';
 import type {DomainEvent} from './types';
 
 // Server chooses the random source. The ordinary deal and all rules remain in engine.ts.
-export function createOrdinaryGame(random:()=>number):Game {const g=createGame(random);g.magicPool=[];return g;}
+export function createOrdinaryGame(random:()=>number):Game {const g=createGame(random);g.magicPool=[];delete g.learning;return g;}
 export function ordinaryView(g:Game,p:Player,revision:number) {
  const hand=g.hands[p],live=!g.winner;
  return {revision,view:projectGameForPlayer(g,p),allowed:{

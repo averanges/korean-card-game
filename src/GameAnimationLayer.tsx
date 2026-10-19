@@ -1,3 +1,5 @@
+import {SealedCard} from './SealedCard';
+import {spellNames} from './spells';
 import {MagicBurn} from './MagicBurn';
 import {TrickAnimation} from './TrickAnimation';
 import {useLayoutEffect,useState} from 'react';
@@ -15,23 +17,25 @@ function Flight({entry}:{entry:AnimationEntry}){
   const [position,setPosition]=useState<CSSProperties>();
   useLayoutEffect(()=>{
     const frame=requestAnimationFrame(()=>{
+      const sealed=entry.sealed?.[0];
       const candidates=Array.from(document.querySelectorAll<HTMLElement>(card?.spell?'[data-magic-card-id]':'[data-card-id]'));
-      let target=card?candidates.find(el=>(card?.spell?el.dataset.magicCardId:el.dataset.cardId)===card?.id&&el.offsetWidth>0):undefined;
+      let target=sealed?Array.from(document.querySelectorAll<HTMLElement>('[data-sealed-ref]')).find(el=>el.dataset.sealedRef===sealed.ref):card?candidates.find(el=>(card?.spell?el.dataset.magicCardId:el.dataset.cardId)===card?.id&&el.offsetWidth>0):undefined;
+      if(!target&&sealed)target=document.querySelector<HTMLElement>('.ux-large-stack')||undefined;
       target??=document.querySelector<HTMLElement>(entry.player===1?'.bot-hand,.mobile-opponent':card?.spell?'.magic-stack':'.normal-hand-viewport,.ux-fan')||undefined;
       if(!target)return;
       let rect=target.getBoundingClientRect();
       if(rect.width===0)rect=(document.querySelector<HTMLElement>('.magic-hand')||target).getBoundingClientRect();
       const viewport=target.closest('.normal-hand-viewport')?.getBoundingClientRect();
       const x=Math.max(viewport?.left||8,Math.min(rect.x,(viewport?.right||innerWidth-8)-rect.width));
-      const startX=Math.max(14,innerWidth*.025),startY=innerHeight-Math.min(160,innerHeight*.2);
+      const origin=entry.source|| (entry.sourceRef?{x:rect.x,y:rect.y}:undefined);const startX=origin?.x??Math.max(14,innerWidth*.025),startY=origin?.y??(innerHeight-Math.min(160,innerHeight*.2));
       const centralWidth=Math.min(210,innerWidth*.32,innerHeight*.32);
       const centralScale=centralWidth/72;
       const centerX=innerWidth/2-36*centralScale,centerY=innerHeight*.44-53.5*centralScale;
-      setPosition({'--center-dx':(centerX-startX)+'px','--center-dy':(centerY-startY)+'px','--center-scale':centralScale,'--accent':magicAnimations[card?.spell||'']?.accentColor||'#d9b8ff',left:startX,top:startY,'--dx':`${x-startX}px`,'--dy':`${rect.y-startY}px`,'--landing-scale':Math.min(4,Math.max(.3,(card?rect.width:72)/72)),'--duration':`${entry.duration}ms`,'--delay':`${entry.delay}ms`} as CSSProperties);
+      setPosition({'--center-dx':(centerX-startX)+'px','--center-dy':(centerY-startY)+'px','--center-scale':centralScale,'--accent':magicAnimations[card?.spell||'']?.accentColor||'#d9b8ff',left:startX,top:startY,'--dx':`${x-startX}px`,'--dy':`${rect.y-startY}px`,'--landing-scale':Math.min(4,Math.max(.3,(card||sealed?rect.width:72)/72)),'--duration':`${entry.duration}ms`,'--delay':`${entry.delay}ms`} as CSSProperties);
     });
     return()=>cancelAnimationFrame(frame);
   },[card?.id,card?.spell,entry.player,entry.duration,entry.delay]);
-  return position?<div className={'draw-flight '+(card?.spell&&!entry.compact?(magicAnimations[card.spell]?.intensity==='legendary'?'magic-flight legendary-receipt':'magic-flight major-receipt'):'')} style={position}><div className="flight-flip"><div className="flight-back"/><div className="flight-front"><AnimationCard card={card}/></div></div></div>:null;
+  return position?<div className={'draw-flight '+(card?.spell&&!entry.compact?(magicAnimations[card.spell]?.intensity==='legendary'?'magic-flight legendary-receipt':'magic-flight major-receipt'):'')} style={position}><div className="flight-flip"><div className="flight-back"/><div className="flight-front"><>{entry.sealed?.[0]?<SealedCard ko={entry.sealed[0].ko}/>:<AnimationCard card={card}/>}</></div></div>{card?.spell&&entry.sourceRef&&<span className="reward-name">{spellNames[card.spell]}</span>}</div>:null;
 }
 function MagicBurst({entry}:{entry:AnimationEntry}){
   const config=magicAnimations[entry.magicId!]||{intensity:'minor',animationId:'spark',accentColor:'#d9b8ff'};
@@ -51,6 +55,7 @@ export function GameAnimationLayer({entries,simple,suppressFailure=false,network
     {entries.map(entry=>{
       if(entry.type==='cards_drawn'||entry.type==='magic_received')return (entry.player===0||network)&&!simple?<Flight key={entry.id} entry={entry}/>:null;
       if(entry.type==='round_defended'||entry.type==='cards_taken')return <div key={entry.id} className={'round-ghosts '+entry.type} style={{'--duration':`${simple?100:entry.duration}ms`} as CSSProperties}>{entry.positions?.map((p,i)=>{const center=entry.positions!.reduce((sum,p)=>sum+p.x,0)/entry.positions!.length;return <div className="round-ghost" key={p.card.id} style={{left:p.x,top:p.y,width:p.width,height:p.height,'--gdx':`${(center-p.x)*.12}px`,'--rotation':`${p.rotation}deg`,'--stagger':`${Math.min(i*12,70)}ms`} as CSSProperties}><AnimationCard card={p.card}/></div>;})}</div>;
+      if(entry.type==='card_unlocked'){const source=entry.source;if(entry.player!==0||!entry.cards[0]||!source||simple)return null;return <div key={entry.id} className="unseal-effect" style={{left:source.x,top:source.y,width:source.width,height:source.height,'--duration':entry.duration+'ms','--delay':entry.delay+'ms'} as CSSProperties}><AnimationCard card={entry.cards[0]}/><div className="unseal-cover"><SealedCard ko={entry.cards[0].word.ko}/></div></div>;}
       if(entry.type==='magic_expired')return simple?null:<TrickAnimation key={entry.id} entry={entry}/>;
       if(entry.type==='magic_activated')return simple?<div key={entry.id} className="simple-magic-flash"/>:<MagicBurst key={entry.id} entry={entry}/>;
       if(entry.type==='magic_failed')return suppressFailure&&(!network||entry.player===0)?null:<div key={entry.id} className="failed-magic" style={{'--duration':`${simple?120:entry.duration}ms`,'--delay':entry.delay+'ms','--burn-duration':`${simple?120:entry.duration}ms`,'--burn-delay':entry.delay+'ms'} as CSSProperties}><div className="burn-face"><AnimationCard card={entry.cards[0]} magicId={entry.magicId}/></div><MagicBurn delay={entry.delay} duration={simple?120:entry.duration}/></div>;

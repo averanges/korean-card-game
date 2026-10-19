@@ -1,3 +1,6 @@
+import {createLearningState,readingQuiz} from '../../src/learning';
+import {gameDictionary} from '../../src/engine';
+import {learningSettings} from '../../src/learning';
 import {createProjectionContext,projectGameForPlayer,type ProjectionContext} from '../../src/game-core/projection';
 import {createChallengeBook,publicQuiz} from '../../src/game-core/challenges';
 import {availableCards,blindAttack,hatTargets,magicUnavailable} from '../../src/trickRules';
@@ -25,7 +28,10 @@ export function refreshBlind(room:StoredRoom,random:()=>number) {
  state.references=[Array.from(context.references[0]),Array.from(context.references[1])];state.rounds=context.rounds;
 }
 export function migrateRoom(room:StoredRoom,random:()=>number):boolean {
- if(room.schemaVersion===3)return false;
+ let changed=false;
+ if(room.gameMode==='magic'&&room.game&&!room.game.learning){room.game.learning=createLearningState();changed=true;}
+ if(room.game)for(const c of room.challenges?.attempts||[]){if(c&&!c.listening){const dictionary=gameDictionary(room.game),word=dictionary[c.quiz.index];const quiz=word?readingQuiz(dictionary,{id:'migration',rank:0,suit:0,word},random):undefined;if(quiz){c.quiz=quiz;c.listening=true;c.errors??=0;room.challenges!.sessions??={};room.challenges!.sessions[c.cardId]=structuredClone(c);changed=true;}}}
+ if(room.schemaVersion===3)return changed;
  room.gameMode??=room.game?'ordinary':'magic';room.challenges??=createChallengeBook();room.recentQuestions??=[[],[]];room.schemaVersion=3;refreshBlind(room,random);return true;
 }
 export const pendingChallenge=(room:StoredRoom,p:Player)=>{const c=room.challenges?.attempts[p];return c&&['question','target'].includes(c.phase)?c:undefined;};
@@ -34,7 +40,9 @@ export function publicChallenge(room:StoredRoom,p:Player):PublicChallenge|undefi
  const c=room.challenges?.attempts[p];if(!c)return;
  const magicKind=c.magicKind??room.game?.hands[p].find(card=>card.id===c.cardId)?.spell;
  const result:PublicChallenge={challengeId:c.id,magicRef:c.cardId,...(magicKind?{magicKind}:{}),phase:c.phase,...(c.outcome?{outcome:c.outcome}:{})};
+ result.attemptsLeft=Math.max(0,learningSettings.LISTENING_ATTEMPTS-(c.errors||0));if(c.lastWrong!==undefined)result.lastWrong=c.lastWrong;
  if(c.phase==='question')result.quiz=publicQuiz(c);
+ if(c.phase==='resolved'&&c.outcome==='wrong')result.solution={ko:c.quiz.prompt,ru:c.quiz.correct};
  if(c.phase==='target'&&room.game){const spell=room.game.hands[p].find(card=>card.id===c.cardId)?.spell;
   if(spell==='fate')result.target={kind:'trump',suits:[0,1,2,3].filter(s=>s!==room.game!.trump)};
   if(spell==='magicians_hat')result.target={kind:'hat',cardRefs:hatTargets(room.game,p).map(c=>c.id)};

@@ -1,7 +1,9 @@
+import {isStudyLocked} from './learning';
 import type {Card,Game,Player} from './engine';
 import {spellNames} from './spells';
 
-export const isLocked=(g:Game,c:Card)=>g.effects.some(e=>e.kind==='ghost_thief'&&e.lockedCardId===c.id);
+export const isGhostLocked=(g:Game,c:Card)=>g.effects.some(e=>e.kind==='ghost_thief'&&e.lockedCardId===c.id);
+export const isLocked=(g:Game,c:Card)=>isStudyLocked(g,c)||isGhostLocked(g,c);
 export const availableCards=(g:Game,p:Player)=>g.hands[p].filter(c=>!c.spell&&!isLocked(g,c));
 export const blindAttack=(g:Game,p:Player)=>g.attacker===p&&!g.table.length&&g.effects.some(e=>e.kind==='monkey_prank'&&e.target===p&&e.status==='pending');
 export const singleAttack=(g:Game,p:Player)=>g.effects.some(e=>e.kind==='monkey_prank'&&e.target===p&&(e.status==='active'||blindAttack(g,p)));

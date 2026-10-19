@@ -44,7 +44,7 @@ export function useGameAnimations(simple:boolean){
   function start(g:Game){if(initial.current===g)return;initial.current=g;epoch.current++;seen.current.clear();setEntries([]);enqueue(initialDrawEvents(g),'initial-'+epoch.current);}
   function transition(before:Game,after:Game,action:Action,positions:CardPosition[],eventId?:string){
     setEntries(old=>old.filter(e=>!['cards_drawn','magic_received'].includes(e.type)||e.cards.some(c=>after.hands[e.player].some(current=>current.id===c.id))));
-    const events=animationEvents(before,after,action).map(e=>e.type==='round_defended'||e.type==='cards_taken'?{...e,positions}:e);
+    const events=animationEvents(before,after,action).map(e=>{if(e.sourceRef){const node=Array.from(document.querySelectorAll<HTMLElement>('[data-sealed-ref]')).reverse().find(el=>el.dataset.sealedRef===e.sourceRef&&el.getBoundingClientRect().width);const b=(node||document.querySelector<HTMLElement>('.ux-fan,.normal-hand-viewport'))?.getBoundingClientRect();if(b)return {...e,source:{x:b.x,y:b.y,width:Math.min(b.width,120),height:Math.min(b.height,180)}};}return e;}).map(e=>e.type==='round_defended'||e.type==='cards_taken'?{...e,positions}:e);
     enqueue(events,eventId);
   }
   useEffect(()=>{
@@ -56,6 +56,6 @@ export function useGameAnimations(simple:boolean){
     return()=>{clearTimeout(timer);document.removeEventListener('visibilitychange',visibility);};
   },[entries]);
   useEffect(()=>{if(simple)setEntries([]);},[simple]);
-  useEffect(()=>{let width=innerWidth,frame=0;const resize=()=>{if(width===innerWidth)return;width=innerWidth;cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>setEntries([]));};window.addEventListener('resize',resize);return()=>{cancelAnimationFrame(frame);window.removeEventListener('resize',resize);};},[]);
+  useEffect(()=>{let width=innerWidth,height=innerHeight,frame=0;const resize=()=>{if(width===innerWidth&&height===innerHeight)return;width=innerWidth;height=innerHeight;cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>setEntries([]));};window.addEventListener('resize',resize);return()=>{cancelAnimationFrame(frame);window.removeEventListener('resize',resize);};},[]);
   return {entries,start,transition,enqueue};
 }
