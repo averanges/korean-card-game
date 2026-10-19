@@ -1,0 +1,1862 @@
+{
+  "reports": [
+    {
+      "label": "initial-320",
+      "width": 320,
+      "height": 700,
+      "page": 320,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 311,
+        "bottom": 73,
+        "width": 302,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 445,
+        "right": 311,
+        "bottom": 499,
+        "width": 302,
+        "height": 54
+      },
+      "hand": {
+        "x": 9,
+        "y": 503,
+        "right": 311,
+        "bottom": 671,
+        "width": 302,
+        "height": 168
+      },
+      "status": {
+        "x": 9,
+        "y": 675,
+        "right": 311,
+        "bottom": 693,
+        "width": 302,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 311,
+        "bottom": 437,
+        "width": 302,
+        "height": 360
+      },
+      "hits": [
+        {
+          "x": 17.78125,
+          "y": 571,
+          "width": 44,
+          "height": 96,
+          "right": 61.78125,
+          "bottom": 667
+        },
+        {
+          "x": 61.78125,
+          "y": 567.796875,
+          "width": 44,
+          "height": 96,
+          "right": 105.78125,
+          "bottom": 663.796875
+        },
+        {
+          "x": 105.78125,
+          "y": 566.1875,
+          "width": 44,
+          "height": 96,
+          "right": 149.78125,
+          "bottom": 662.1875
+        },
+        {
+          "x": 149.78125,
+          "y": 566.1875,
+          "width": 44,
+          "height": 96,
+          "right": 193.78125,
+          "bottom": 662.1875
+        },
+        {
+          "x": 193.78125,
+          "y": 567.796875,
+          "width": 44,
+          "height": 96,
+          "right": 237.78125,
+          "bottom": 663.796875
+        },
+        {
+          "x": 237.78125,
+          "y": 571,
+          "width": 64.421875,
+          "height": 96,
+          "right": 302.203125,
+          "bottom": 667
+        }
+      ]
+    },
+    {
+      "label": "selected-320",
+      "width": 320,
+      "height": 700,
+      "page": 320,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 311,
+        "bottom": 73,
+        "width": 302,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 445,
+        "right": 311,
+        "bottom": 499,
+        "width": 302,
+        "height": 54
+      },
+      "hand": {
+        "x": 9,
+        "y": 503,
+        "right": 311,
+        "bottom": 671,
+        "width": 302,
+        "height": 168
+      },
+      "status": {
+        "x": 9,
+        "y": 675,
+        "right": 311,
+        "bottom": 693,
+        "width": 302,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 311,
+        "bottom": 302.328125,
+        "width": 302,
+        "height": 225.328125
+      },
+      "hits": [
+        {
+          "x": 17.78125,
+          "y": 571,
+          "width": 44,
+          "height": 96,
+          "right": 61.78125,
+          "bottom": 667
+        },
+        {
+          "x": 61.78125,
+          "y": 567.796875,
+          "width": 44,
+          "height": 96,
+          "right": 105.78125,
+          "bottom": 663.796875
+        },
+        {
+          "x": 105.78125,
+          "y": 566.1875,
+          "width": 44,
+          "height": 96,
+          "right": 149.78125,
+          "bottom": 662.1875
+        },
+        {
+          "x": 149.78125,
+          "y": 566.1875,
+          "width": 44,
+          "height": 96,
+          "right": 193.78125,
+          "bottom": 662.1875
+        },
+        {
+          "x": 193.78125,
+          "y": 567.796875,
+          "width": 44,
+          "height": 96,
+          "right": 237.78125,
+          "bottom": 663.796875
+        },
+        {
+          "x": 237.78125,
+          "y": 571,
+          "width": 64.421875,
+          "height": 96,
+          "right": 302.203125,
+          "bottom": 667
+        }
+      ]
+    },
+    {
+      "label": "six-pairs-320",
+      "width": 320,
+      "height": 700,
+      "page": 320,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 311,
+        "bottom": 73,
+        "width": 302,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 445,
+        "right": 311,
+        "bottom": 499,
+        "width": 302,
+        "height": 54
+      },
+      "hand": {
+        "x": 9,
+        "y": 503,
+        "right": 311,
+        "bottom": 671,
+        "width": 302,
+        "height": 168
+      },
+      "status": {
+        "x": 9,
+        "y": 675,
+        "right": 311,
+        "bottom": 693,
+        "width": 302,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 311,
+        "bottom": 437,
+        "width": 302,
+        "height": 360
+      },
+      "hits": [
+        {
+          "x": 17.78125,
+          "y": 571,
+          "width": 44,
+          "height": 96,
+          "right": 61.78125,
+          "bottom": 667
+        },
+        {
+          "x": 61.78125,
+          "y": 567.796875,
+          "width": 44,
+          "height": 96,
+          "right": 105.78125,
+          "bottom": 663.796875
+        },
+        {
+          "x": 105.78125,
+          "y": 566.1875,
+          "width": 44,
+          "height": 96,
+          "right": 149.78125,
+          "bottom": 662.1875
+        },
+        {
+          "x": 149.78125,
+          "y": 566.1875,
+          "width": 44,
+          "height": 96,
+          "right": 193.78125,
+          "bottom": 662.1875
+        },
+        {
+          "x": 193.78125,
+          "y": 567.796875,
+          "width": 44,
+          "height": 96,
+          "right": 237.78125,
+          "bottom": 663.796875
+        },
+        {
+          "x": 237.78125,
+          "y": 571,
+          "width": 64.421875,
+          "height": 96,
+          "right": 302.203125,
+          "bottom": 667
+        }
+      ]
+    },
+    {
+      "label": "twenty-selected-320",
+      "width": 320,
+      "height": 700,
+      "page": 320,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 311,
+        "bottom": 73,
+        "width": 302,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 445,
+        "right": 311,
+        "bottom": 499,
+        "width": 302,
+        "height": 54
+      },
+      "hand": {
+        "x": 9,
+        "y": 503,
+        "right": 311,
+        "bottom": 671,
+        "width": 302,
+        "height": 168
+      },
+      "status": {
+        "x": 9,
+        "y": 675,
+        "right": 311,
+        "bottom": 693,
+        "width": 302,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 311,
+        "bottom": 302.328125,
+        "width": 302,
+        "height": 225.328125
+      },
+      "hits": []
+    },
+    {
+      "label": "initial-360",
+      "width": 360,
+      "height": 780,
+      "page": 360,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 351,
+        "bottom": 73,
+        "width": 342,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 501,
+        "right": 351,
+        "bottom": 557,
+        "width": 342,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 561,
+        "right": 351,
+        "bottom": 751,
+        "width": 342,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 755,
+        "right": 351,
+        "bottom": 773,
+        "width": 342,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 351,
+        "bottom": 493,
+        "width": 342,
+        "height": 416
+      },
+      "hits": [
+        {
+          "x": 17,
+          "y": 629,
+          "width": 49.359375,
+          "height": 118,
+          "right": 66.359375,
+          "bottom": 747
+        },
+        {
+          "x": 66.359375,
+          "y": 625.796875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 115.71875,
+          "bottom": 743.796875
+        },
+        {
+          "x": 115.71875,
+          "y": 624.1875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 165.078125,
+          "bottom": 742.1875
+        },
+        {
+          "x": 165.078125,
+          "y": 624.1875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 214.4375,
+          "bottom": 742.1875
+        },
+        {
+          "x": 214.4375,
+          "y": 625.796875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 263.796875,
+          "bottom": 743.796875
+        },
+        {
+          "x": 263.796875,
+          "y": 629,
+          "width": 79.1875,
+          "height": 118,
+          "right": 342.984375,
+          "bottom": 747
+        }
+      ]
+    },
+    {
+      "label": "selected-360",
+      "width": 360,
+      "height": 780,
+      "page": 360,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 351,
+        "bottom": 73,
+        "width": 342,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 501,
+        "right": 351,
+        "bottom": 557,
+        "width": 342,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 561,
+        "right": 351,
+        "bottom": 751,
+        "width": 342,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 755,
+        "right": 351,
+        "bottom": 773,
+        "width": 342,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 351,
+        "bottom": 343,
+        "width": 342,
+        "height": 266
+      },
+      "hits": [
+        {
+          "x": 17,
+          "y": 629,
+          "width": 49.359375,
+          "height": 118,
+          "right": 66.359375,
+          "bottom": 747
+        },
+        {
+          "x": 66.359375,
+          "y": 625.796875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 115.71875,
+          "bottom": 743.796875
+        },
+        {
+          "x": 115.71875,
+          "y": 624.1875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 165.078125,
+          "bottom": 742.1875
+        },
+        {
+          "x": 165.078125,
+          "y": 624.1875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 214.4375,
+          "bottom": 742.1875
+        },
+        {
+          "x": 214.4375,
+          "y": 625.796875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 263.796875,
+          "bottom": 743.796875
+        },
+        {
+          "x": 263.796875,
+          "y": 629,
+          "width": 79.1875,
+          "height": 118,
+          "right": 342.984375,
+          "bottom": 747
+        }
+      ]
+    },
+    {
+      "label": "six-pairs-360",
+      "width": 360,
+      "height": 780,
+      "page": 360,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 351,
+        "bottom": 73,
+        "width": 342,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 501,
+        "right": 351,
+        "bottom": 557,
+        "width": 342,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 561,
+        "right": 351,
+        "bottom": 751,
+        "width": 342,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 755,
+        "right": 351,
+        "bottom": 773,
+        "width": 342,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 351,
+        "bottom": 493,
+        "width": 342,
+        "height": 416
+      },
+      "hits": [
+        {
+          "x": 17,
+          "y": 629,
+          "width": 49.359375,
+          "height": 118,
+          "right": 66.359375,
+          "bottom": 747
+        },
+        {
+          "x": 66.359375,
+          "y": 625.796875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 115.71875,
+          "bottom": 743.796875
+        },
+        {
+          "x": 115.71875,
+          "y": 624.1875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 165.078125,
+          "bottom": 742.1875
+        },
+        {
+          "x": 165.078125,
+          "y": 624.1875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 214.4375,
+          "bottom": 742.1875
+        },
+        {
+          "x": 214.4375,
+          "y": 625.796875,
+          "width": 49.359375,
+          "height": 118,
+          "right": 263.796875,
+          "bottom": 743.796875
+        },
+        {
+          "x": 263.796875,
+          "y": 629,
+          "width": 79.1875,
+          "height": 118,
+          "right": 342.984375,
+          "bottom": 747
+        }
+      ]
+    },
+    {
+      "label": "twenty-selected-360",
+      "width": 360,
+      "height": 780,
+      "page": 360,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 351,
+        "bottom": 73,
+        "width": 342,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 501,
+        "right": 351,
+        "bottom": 557,
+        "width": 342,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 561,
+        "right": 351,
+        "bottom": 751,
+        "width": 342,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 755,
+        "right": 351,
+        "bottom": 773,
+        "width": 342,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 351,
+        "bottom": 343,
+        "width": 342,
+        "height": 266
+      },
+      "hits": []
+    },
+    {
+      "label": "initial-390",
+      "width": 390,
+      "height": 844,
+      "page": 390,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 381,
+        "bottom": 73,
+        "width": 372,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 565,
+        "right": 381,
+        "bottom": 621,
+        "width": 372,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 625,
+        "right": 381,
+        "bottom": 815,
+        "width": 372,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 819,
+        "right": 381,
+        "bottom": 837,
+        "width": 372,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 381,
+        "bottom": 557,
+        "width": 372,
+        "height": 480
+      },
+      "hits": [
+        {
+          "x": 24.71875,
+          "y": 693,
+          "width": 52.265625,
+          "height": 118,
+          "right": 76.984375,
+          "bottom": 811
+        },
+        {
+          "x": 77,
+          "y": 689.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 129.265625,
+          "bottom": 807.796875
+        },
+        {
+          "x": 129.265625,
+          "y": 688.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 181.53125,
+          "bottom": 806.1875
+        },
+        {
+          "x": 181.53125,
+          "y": 688.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 233.796875,
+          "bottom": 806.1875
+        },
+        {
+          "x": 233.796875,
+          "y": 689.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 286.0625,
+          "bottom": 807.796875
+        },
+        {
+          "x": 286.0625,
+          "y": 693,
+          "width": 79.1875,
+          "height": 118,
+          "right": 365.25,
+          "bottom": 811
+        }
+      ]
+    },
+    {
+      "label": "selected-390",
+      "width": 390,
+      "height": 844,
+      "page": 390,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 381,
+        "bottom": 73,
+        "width": 372,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 565,
+        "right": 381,
+        "bottom": 621,
+        "width": 372,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 625,
+        "right": 381,
+        "bottom": 815,
+        "width": 372,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 819,
+        "right": 381,
+        "bottom": 837,
+        "width": 372,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 381,
+        "bottom": 407,
+        "width": 372,
+        "height": 330
+      },
+      "hits": [
+        {
+          "x": 24.71875,
+          "y": 693,
+          "width": 52.265625,
+          "height": 118,
+          "right": 76.984375,
+          "bottom": 811
+        },
+        {
+          "x": 77,
+          "y": 689.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 129.265625,
+          "bottom": 807.796875
+        },
+        {
+          "x": 129.265625,
+          "y": 688.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 181.53125,
+          "bottom": 806.1875
+        },
+        {
+          "x": 181.53125,
+          "y": 688.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 233.796875,
+          "bottom": 806.1875
+        },
+        {
+          "x": 233.796875,
+          "y": 689.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 286.0625,
+          "bottom": 807.796875
+        },
+        {
+          "x": 286.0625,
+          "y": 693,
+          "width": 79.1875,
+          "height": 118,
+          "right": 365.25,
+          "bottom": 811
+        }
+      ]
+    },
+    {
+      "label": "six-pairs-390",
+      "width": 390,
+      "height": 844,
+      "page": 390,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 381,
+        "bottom": 73,
+        "width": 372,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 565,
+        "right": 381,
+        "bottom": 621,
+        "width": 372,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 625,
+        "right": 381,
+        "bottom": 815,
+        "width": 372,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 819,
+        "right": 381,
+        "bottom": 837,
+        "width": 372,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 381,
+        "bottom": 557,
+        "width": 372,
+        "height": 480
+      },
+      "hits": [
+        {
+          "x": 24.71875,
+          "y": 693,
+          "width": 52.265625,
+          "height": 118,
+          "right": 76.984375,
+          "bottom": 811
+        },
+        {
+          "x": 77,
+          "y": 689.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 129.265625,
+          "bottom": 807.796875
+        },
+        {
+          "x": 129.265625,
+          "y": 688.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 181.53125,
+          "bottom": 806.1875
+        },
+        {
+          "x": 181.53125,
+          "y": 688.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 233.796875,
+          "bottom": 806.1875
+        },
+        {
+          "x": 233.796875,
+          "y": 689.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 286.0625,
+          "bottom": 807.796875
+        },
+        {
+          "x": 286.0625,
+          "y": 693,
+          "width": 79.1875,
+          "height": 118,
+          "right": 365.25,
+          "bottom": 811
+        }
+      ]
+    },
+    {
+      "label": "twenty-selected-390",
+      "width": 390,
+      "height": 844,
+      "page": 390,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 381,
+        "bottom": 73,
+        "width": 372,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 565,
+        "right": 381,
+        "bottom": 621,
+        "width": 372,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 625,
+        "right": 381,
+        "bottom": 815,
+        "width": 372,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 819,
+        "right": 381,
+        "bottom": 837,
+        "width": 372,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 381,
+        "bottom": 407,
+        "width": 372,
+        "height": 330
+      },
+      "hits": []
+    },
+    {
+      "label": "initial-430",
+      "width": 430,
+      "height": 932,
+      "page": 430,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 421,
+        "bottom": 73,
+        "width": 412,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 653,
+        "right": 421,
+        "bottom": 709,
+        "width": 412,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 713,
+        "right": 421,
+        "bottom": 903,
+        "width": 412,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 907,
+        "right": 421,
+        "bottom": 925,
+        "width": 412,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 421,
+        "bottom": 645,
+        "width": 412,
+        "height": 568
+      },
+      "hits": [
+        {
+          "x": 44.71875,
+          "y": 781,
+          "width": 52.265625,
+          "height": 118,
+          "right": 96.984375,
+          "bottom": 899
+        },
+        {
+          "x": 97,
+          "y": 777.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 149.265625,
+          "bottom": 895.796875
+        },
+        {
+          "x": 149.265625,
+          "y": 776.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 201.53125,
+          "bottom": 894.1875
+        },
+        {
+          "x": 201.53125,
+          "y": 776.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 253.796875,
+          "bottom": 894.1875
+        },
+        {
+          "x": 253.796875,
+          "y": 777.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 306.0625,
+          "bottom": 895.796875
+        },
+        {
+          "x": 306.0625,
+          "y": 781,
+          "width": 79.1875,
+          "height": 118,
+          "right": 385.25,
+          "bottom": 899
+        }
+      ]
+    },
+    {
+      "label": "selected-430",
+      "width": 430,
+      "height": 932,
+      "page": 430,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 421,
+        "bottom": 73,
+        "width": 412,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 653,
+        "right": 421,
+        "bottom": 709,
+        "width": 412,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 713,
+        "right": 421,
+        "bottom": 903,
+        "width": 412,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 907,
+        "right": 421,
+        "bottom": 925,
+        "width": 412,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 421,
+        "bottom": 495,
+        "width": 412,
+        "height": 418
+      },
+      "hits": [
+        {
+          "x": 44.71875,
+          "y": 781,
+          "width": 52.265625,
+          "height": 118,
+          "right": 96.984375,
+          "bottom": 899
+        },
+        {
+          "x": 97,
+          "y": 777.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 149.265625,
+          "bottom": 895.796875
+        },
+        {
+          "x": 149.265625,
+          "y": 776.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 201.53125,
+          "bottom": 894.1875
+        },
+        {
+          "x": 201.53125,
+          "y": 776.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 253.796875,
+          "bottom": 894.1875
+        },
+        {
+          "x": 253.796875,
+          "y": 777.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 306.0625,
+          "bottom": 895.796875
+        },
+        {
+          "x": 306.0625,
+          "y": 781,
+          "width": 79.1875,
+          "height": 118,
+          "right": 385.25,
+          "bottom": 899
+        }
+      ]
+    },
+    {
+      "label": "six-pairs-430",
+      "width": 430,
+      "height": 932,
+      "page": 430,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 421,
+        "bottom": 73,
+        "width": 412,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 653,
+        "right": 421,
+        "bottom": 709,
+        "width": 412,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 713,
+        "right": 421,
+        "bottom": 903,
+        "width": 412,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 907,
+        "right": 421,
+        "bottom": 925,
+        "width": 412,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 421,
+        "bottom": 645,
+        "width": 412,
+        "height": 568
+      },
+      "hits": [
+        {
+          "x": 44.71875,
+          "y": 781,
+          "width": 52.265625,
+          "height": 118,
+          "right": 96.984375,
+          "bottom": 899
+        },
+        {
+          "x": 97,
+          "y": 777.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 149.265625,
+          "bottom": 895.796875
+        },
+        {
+          "x": 149.265625,
+          "y": 776.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 201.53125,
+          "bottom": 894.1875
+        },
+        {
+          "x": 201.53125,
+          "y": 776.1875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 253.796875,
+          "bottom": 894.1875
+        },
+        {
+          "x": 253.796875,
+          "y": 777.796875,
+          "width": 52.265625,
+          "height": 118,
+          "right": 306.0625,
+          "bottom": 895.796875
+        },
+        {
+          "x": 306.0625,
+          "y": 781,
+          "width": 79.1875,
+          "height": 118,
+          "right": 385.25,
+          "bottom": 899
+        }
+      ]
+    },
+    {
+      "label": "twenty-selected-430",
+      "width": 430,
+      "height": 932,
+      "page": 430,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 421,
+        "bottom": 73,
+        "width": 412,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 653,
+        "right": 421,
+        "bottom": 709,
+        "width": 412,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 713,
+        "right": 421,
+        "bottom": 903,
+        "width": 412,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 907,
+        "right": 421,
+        "bottom": 925,
+        "width": 412,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 421,
+        "bottom": 495,
+        "width": 412,
+        "height": 418
+      },
+      "hits": []
+    },
+    {
+      "label": "initial-844",
+      "width": 844,
+      "height": 390,
+      "page": 844,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 835,
+        "bottom": 65,
+        "width": 826,
+        "height": 56
+      },
+      "actions": {
+        "x": 428,
+        "y": 71,
+        "right": 835,
+        "bottom": 127,
+        "width": 407,
+        "height": 56
+      },
+      "hand": {
+        "x": 428,
+        "y": 130,
+        "right": 835,
+        "bottom": 364,
+        "width": 407,
+        "height": 234
+      },
+      "status": {
+        "x": 9,
+        "y": 367,
+        "right": 835,
+        "bottom": 383,
+        "width": 826,
+        "height": 16
+      },
+      "table": {
+        "x": 9,
+        "y": 68,
+        "right": 416,
+        "bottom": 364,
+        "width": 407,
+        "height": 296
+      },
+      "hits": [
+        {
+          "x": 436,
+          "y": 198,
+          "width": 58.1875,
+          "height": 149,
+          "right": 494.1875,
+          "bottom": 347
+        },
+        {
+          "x": 494.1875,
+          "y": 194.796875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 552.375,
+          "bottom": 343.796875
+        },
+        {
+          "x": 552.390625,
+          "y": 193.1875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 610.578125,
+          "bottom": 342.1875
+        },
+        {
+          "x": 610.59375,
+          "y": 193.1875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 668.78125,
+          "bottom": 342.1875
+        },
+        {
+          "x": 668.796875,
+          "y": 194.796875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 726.984375,
+          "bottom": 343.796875
+        },
+        {
+          "x": 727,
+          "y": 198,
+          "width": 100,
+          "height": 149,
+          "right": 827,
+          "bottom": 347
+        }
+      ]
+    },
+    {
+      "label": "selected-844",
+      "width": 844,
+      "height": 390,
+      "page": 844,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 835,
+        "bottom": 65,
+        "width": 826,
+        "height": 56
+      },
+      "actions": {
+        "x": 428,
+        "y": 174,
+        "right": 835,
+        "bottom": 230,
+        "width": 407,
+        "height": 56
+      },
+      "hand": {
+        "x": 428,
+        "y": 233,
+        "right": 835,
+        "bottom": 364,
+        "width": 407,
+        "height": 131
+      },
+      "status": {
+        "x": 9,
+        "y": 367,
+        "right": 835,
+        "bottom": 383,
+        "width": 826,
+        "height": 16
+      },
+      "table": {
+        "x": 9,
+        "y": 68,
+        "right": 416,
+        "bottom": 364,
+        "width": 407,
+        "height": 296
+      },
+      "hits": [
+        {
+          "x": 501.6875,
+          "y": 292,
+          "width": 44,
+          "height": 59,
+          "right": 545.6875,
+          "bottom": 351
+        },
+        {
+          "x": 545.6875,
+          "y": 288.796875,
+          "width": 44,
+          "height": 59,
+          "right": 589.6875,
+          "bottom": 347.796875
+        },
+        {
+          "x": 589.6875,
+          "y": 287.1875,
+          "width": 44,
+          "height": 59,
+          "right": 633.6875,
+          "bottom": 346.1875
+        },
+        {
+          "x": 633.6875,
+          "y": 287.1875,
+          "width": 44,
+          "height": 59,
+          "right": 677.6875,
+          "bottom": 346.1875
+        },
+        {
+          "x": 677.6875,
+          "y": 288.796875,
+          "width": 44,
+          "height": 59,
+          "right": 721.6875,
+          "bottom": 347.796875
+        },
+        {
+          "x": 721.6875,
+          "y": 292,
+          "width": 44,
+          "height": 59,
+          "right": 765.6875,
+          "bottom": 351
+        }
+      ]
+    },
+    {
+      "label": "six-pairs-844",
+      "width": 844,
+      "height": 390,
+      "page": 844,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 835,
+        "bottom": 65,
+        "width": 826,
+        "height": 56
+      },
+      "actions": {
+        "x": 428,
+        "y": 71,
+        "right": 835,
+        "bottom": 127,
+        "width": 407,
+        "height": 56
+      },
+      "hand": {
+        "x": 428,
+        "y": 130,
+        "right": 835,
+        "bottom": 364,
+        "width": 407,
+        "height": 234
+      },
+      "status": {
+        "x": 9,
+        "y": 367,
+        "right": 835,
+        "bottom": 383,
+        "width": 826,
+        "height": 16
+      },
+      "table": {
+        "x": 9,
+        "y": 68,
+        "right": 416,
+        "bottom": 364,
+        "width": 407,
+        "height": 296
+      },
+      "hits": [
+        {
+          "x": 436,
+          "y": 198,
+          "width": 58.1875,
+          "height": 149,
+          "right": 494.1875,
+          "bottom": 347
+        },
+        {
+          "x": 494.1875,
+          "y": 194.796875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 552.375,
+          "bottom": 343.796875
+        },
+        {
+          "x": 552.390625,
+          "y": 193.1875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 610.578125,
+          "bottom": 342.1875
+        },
+        {
+          "x": 610.59375,
+          "y": 193.1875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 668.78125,
+          "bottom": 342.1875
+        },
+        {
+          "x": 668.796875,
+          "y": 194.796875,
+          "width": 58.1875,
+          "height": 149,
+          "right": 726.984375,
+          "bottom": 343.796875
+        },
+        {
+          "x": 727,
+          "y": 198,
+          "width": 100,
+          "height": 149,
+          "right": 827,
+          "bottom": 347
+        }
+      ]
+    },
+    {
+      "label": "twenty-selected-844",
+      "width": 844,
+      "height": 390,
+      "page": 844,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 835,
+        "bottom": 65,
+        "width": 826,
+        "height": 56
+      },
+      "actions": {
+        "x": 428,
+        "y": 174,
+        "right": 835,
+        "bottom": 230,
+        "width": 407,
+        "height": 56
+      },
+      "hand": {
+        "x": 428,
+        "y": 233,
+        "right": 835,
+        "bottom": 364,
+        "width": 407,
+        "height": 131
+      },
+      "status": {
+        "x": 9,
+        "y": 367,
+        "right": 835,
+        "bottom": 383,
+        "width": 826,
+        "height": 16
+      },
+      "table": {
+        "x": 9,
+        "y": 68,
+        "right": 416,
+        "bottom": 364,
+        "width": 407,
+        "height": 296
+      },
+      "hits": []
+    },
+    {
+      "label": "rotated-with-selection",
+      "width": 844,
+      "height": 390,
+      "page": 844,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 835,
+        "bottom": 65,
+        "width": 826,
+        "height": 56
+      },
+      "actions": {
+        "x": 428,
+        "y": 157,
+        "right": 835,
+        "bottom": 213,
+        "width": 407,
+        "height": 56
+      },
+      "hand": {
+        "x": 428,
+        "y": 216,
+        "right": 835,
+        "bottom": 364,
+        "width": 407,
+        "height": 148
+      },
+      "status": {
+        "x": 9,
+        "y": 367,
+        "right": 835,
+        "bottom": 383,
+        "width": 826,
+        "height": 16
+      },
+      "table": {
+        "x": 9,
+        "y": 68,
+        "right": 416,
+        "bottom": 364,
+        "width": 407,
+        "height": 296
+      },
+      "hits": [
+        {
+          "x": 517.984375,
+          "y": 275,
+          "width": 44,
+          "height": 76,
+          "right": 561.984375,
+          "bottom": 351
+        },
+        {
+          "x": 561.984375,
+          "y": 271.25,
+          "width": 44,
+          "height": 76,
+          "right": 605.984375,
+          "bottom": 347.25
+        },
+        {
+          "x": 605.984375,
+          "y": 270,
+          "width": 44,
+          "height": 76,
+          "right": 649.984375,
+          "bottom": 346
+        },
+        {
+          "x": 649.984375,
+          "y": 271.25,
+          "width": 44,
+          "height": 76,
+          "right": 693.984375,
+          "bottom": 347.25
+        },
+        {
+          "x": 693.984375,
+          "y": 275,
+          "width": 51,
+          "height": 76,
+          "right": 744.984375,
+          "bottom": 351
+        }
+      ]
+    },
+    {
+      "label": "returned-to-portrait",
+      "width": 390,
+      "height": 844,
+      "page": 390,
+      "hud": {
+        "x": 9,
+        "y": 9,
+        "right": 381,
+        "bottom": 73,
+        "width": 372,
+        "height": 64
+      },
+      "actions": {
+        "x": 9,
+        "y": 565,
+        "right": 381,
+        "bottom": 621,
+        "width": 372,
+        "height": 56
+      },
+      "hand": {
+        "x": 9,
+        "y": 625,
+        "right": 381,
+        "bottom": 815,
+        "width": 372,
+        "height": 190
+      },
+      "status": {
+        "x": 9,
+        "y": 819,
+        "right": 381,
+        "bottom": 837,
+        "width": 372,
+        "height": 18
+      },
+      "table": {
+        "x": 9,
+        "y": 77,
+        "right": 381,
+        "bottom": 407,
+        "width": 372,
+        "height": 330
+      },
+      "hits": [
+        {
+          "x": 50.859375,
+          "y": 693,
+          "width": 52.265625,
+          "height": 118,
+          "right": 103.125,
+          "bottom": 811
+        },
+        {
+          "x": 103.125,
+          "y": 689.25,
+          "width": 52.265625,
+          "height": 118,
+          "right": 155.390625,
+          "bottom": 807.25
+        },
+        {
+          "x": 155.390625,
+          "y": 688,
+          "width": 52.265625,
+          "height": 118,
+          "right": 207.65625,
+          "bottom": 806
+        },
+        {
+          "x": 207.65625,
+          "y": 689.25,
+          "width": 52.265625,
+          "height": 118,
+          "right": 259.921875,
+          "bottom": 807.25
+        },
+        {
+          "x": 259.9375,
+          "y": 693,
+          "width": 79.1875,
+          "height": 118,
+          "right": 339.125,
+          "bottom": 811
+        }
+      ]
+    },
+    {
+      "gestures": "fan swipe and native vertical overview swipe select/play nothing",
+      "tts": "existing speech module called once on selection; not on deselection; browser output stubbed",
+      "translations": "setting hides preview translation",
+      "network": "no game API requests"
+    }
+  ],
+  "errors": []
+}

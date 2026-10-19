@@ -1,0 +1,18 @@
+{
+  "defend": true,
+  "throw": true,
+  "take": true,
+  "end": true,
+  "six": true,
+  "large12": true,
+  "large20": true,
+  "magic": [
+    "monkey_prank",
+    "trick_gift",
+    "monkey_prank",
+    "ghost_thief"
+  ],
+  "blind": true,
+  "recovery": true,
+  "quizRecovery": true
+}

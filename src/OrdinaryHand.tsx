@@ -1,3 +1,4 @@
+import {MobileHand} from './MobileHand';
 import {useCompactViewport} from './useCompactViewport';
 import {useAnimationEntries} from './useGameAnimations';
 import {useLayoutEffect,useMemo,useState} from 'react';
@@ -7,8 +8,8 @@ import {ranks,suits,type Card} from './engine';
 import {handLayout,sortOrdinaryCards} from './handModel';
 import {useHandScroll} from './useHandScroll';
 
-interface Props {cards:readonly Card[];selected:readonly string[];translations:boolean;onSelect:(card:Card)=>void;onSpeak:(card:Card)=>void;blind?:boolean;eligibleIds?:readonly string[];lockedIds?:readonly string[]}
-export function OrdinaryHand({cards,selected,translations,onSelect,onSpeak,blind=false,eligibleIds,lockedIds=[]}:Props){
+interface Props {cards:readonly Card[];selected:readonly string[];translations:boolean;onSelect:(card:Card)=>void;onSpeak:(card:Card)=>void;blind?:boolean;eligibleIds?:readonly string[];lockedIds?:readonly string[];onClear?:()=>void;onPanelChange?:(open:boolean)=>void}
+export function OrdinaryHand({cards,selected,translations,onSelect,onSpeak,blind=false,eligibleIds,lockedIds=[],onClear,onPanelChange}:Props){
   const compact=useCompactViewport();
   const entries=useAnimationEntries();
   const [detail,setDetail]=useState<Card>();
@@ -22,7 +23,8 @@ export function OrdinaryHand({cards,selected,translations,onSelect,onSpeak,blind
     const measure=()=>{const card=el.querySelector<HTMLElement>('.card');const next={width:el.clientWidth,cardWidth:card?.offsetWidth||115,cardHeight:card?.offsetHeight||171};setSize(old=>old.width===next.width&&old.cardWidth===next.cardWidth&&old.cardHeight===next.cardHeight?old:next);};
     measure();const observer=new ResizeObserver(measure);observer.observe(el);window.addEventListener('resize',measure);
     return()=>{observer.disconnect();window.removeEventListener('resize',measure);};
-  },[sorted.length,viewport]);
+  },[sorted.length,viewport,compact]);
+  if(compact)return <MobileHand entries={(blind?cards:sorted).map(c=>({id:c.id,...(!blind?{card:c}:{}),locked:lockedIds.includes(c.id)||!!eligibleIds&&!eligibleIds.includes(c.id)}))} selected={selected} translations={translations} onSelect={id=>{const c=cards.find(c=>c.id===id);if(c)onSelect(c);}} onSpeak={onSpeak} onClear={()=>onClear?.()} onPanelChange={onPanelChange}/>;
   return <><section className={'normal-hand '+(blind?'blind-hand ':'')+(eligibleIds?'hat-picking':'')} aria-label={blind?'Атака вслепую: выберите одну закрытую карту':`Ваша рука: ${sorted.length} обычных карт`}>
     {compact&&<span className="hand-caption">Ваша рука · {sorted.length}</span>}<div className="normal-hand-viewport" ref={viewport} {...handlers} tabIndex={layout.scroll?0:undefined} aria-label={layout.scroll?'Рука: прокрутите влево или вправо':undefined} data-mode={layout.mode} data-scroll={layout.scroll}>
       <div className="normal-hand-track" style={{width:layout.width,height:layout.height}}>

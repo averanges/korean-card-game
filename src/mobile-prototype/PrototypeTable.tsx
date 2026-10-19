@@ -1,0 +1,6 @@
+import type {Pair} from '../engine';
+import {ranks,suits} from '../engine';
+import {CardFace} from './CardFace';
+export function PrototypeTable({pairs,allowed,target,onPair}:{pairs:Pair[];allowed:number[];target?:number;onPair:(index:number)=>void}){
+ return <section className="ux-table" aria-label="Демонстрационный игровой стол"><div className="ux-table-layout" data-pairs={pairs.length}>{!pairs.length?<div className="ux-empty"><span>✧</span><strong>Ваш следующий ход</strong><p>Коснитесь карты в руке.<br/>Затем подтвердите атаку.</p></div>:pairs.map((pair,index)=><button key={pair.attack.id} className={'ux-pair '+(allowed.includes(index)?'can-block ':'')+(target===index?'is-target':'')} data-demo-pair={index} aria-label={`Атака ${ranks[pair.attack.rank]} ${suits[pair.attack.suit]} · ${pair.defense?'отбита':allowed.includes(index)?'можно побить':'посмотреть'}`} aria-pressed={target===index} onClick={()=>onPair(index)}><div className="ux-attack"><CardFace card={pair.attack}/></div>{pair.defense&&<div className="ux-defense"><CardFace card={pair.defense}/></div>}<span className="ux-pair-caption">{target===index?'Выбрана цель':allowed.includes(index)?'Побить здесь':pair.defense?'Отбито':'Атака'}</span></button>)}</div></section>;
+}

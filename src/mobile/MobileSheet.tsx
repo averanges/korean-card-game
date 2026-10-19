@@ -1,0 +1,7 @@
+import {useEffect,useRef,type ReactNode} from 'react';
+
+export function MobileSheet({title,onClose,children,footer}:{title:string;onClose:()=>void;children:ReactNode;footer?:ReactNode}){
+ const root=useRef<HTMLElement>(null),close=useRef(onClose);close.current=onClose;
+ useEffect(()=>{const before=document.activeElement as HTMLElement;root.current?.querySelector<HTMLButtonElement>('button')?.focus();const key=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();close.current();}if(event.key==='Tab'){const nodes=Array.from(root.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input,select,[tabindex="0"]')||[]).filter(n=>n.getClientRects().length),first=nodes[0],last=nodes.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}}};window.addEventListener('keydown',key);return()=>{window.removeEventListener('keydown',key);if(before?.isConnected)before.focus();};},[]);
+ return <div className="ux-sheet-layer" onClick={e=>{if(e.target===e.currentTarget)onClose();}}><section ref={root} className="ux-sheet" role="dialog" aria-modal="true" aria-label={title}><header><h2>{title}</h2><button className="ux-icon" onClick={onClose} aria-label="Закрыть окно">×</button></header><div className="ux-sheet-body">{children}</div>{footer&&<footer>{footer}</footer>}</section></div>;
+}
