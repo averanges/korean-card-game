@@ -26,3 +26,9 @@ test('successful POST keeps wire options, omits cookies and clears its timeout',
  t.mock.method(globalThis,'fetch',async(_url:unknown,init:RequestInit)=>{options=init;return Response.json({ok:true});});
  const result=await postRoom(url,{name:'Гость'});assert.deepEqual(result.value,{ok:true});assert.equal(options!.method,'POST');assert.equal(options!.credentials,'omit');assert.deepEqual(options!.headers,{'Content-Type':'application/json'});assert.equal(options!.body,JSON.stringify({name:'Гость'}));t.mock.timers.tick(ROOM_REQUEST_TIMEOUT_MS);assert.equal(options!.signal!.aborted,false);
 });
+
+test('leaving a pending form cancels its HTTP request rather than timing out or creating another room',async t=>{
+ const controller=new AbortController();let began!:()=>void;const started=new Promise<void>(r=>began=r);let calls=0;
+ t.mock.method(globalThis,'fetch',async(_u:unknown,o:RequestInit)=>{calls++;began();return new Promise((_,reject)=>o.signal!.addEventListener('abort',()=>reject(Error('aborted')),{once:true}));});
+ const pending=assert.rejects(postRoom(url,{},controller.signal),e=>e instanceof DOMException&&e.name==='AbortError');await started;controller.abort();await pending;assert.equal(calls,1);
+});

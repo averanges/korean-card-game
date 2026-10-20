@@ -25,8 +25,10 @@ export function RoomLobby() {
  const [positions,setPositions]=useState<CardPosition[]>([]);
  const [roomFull,setRoomFull]=useState(false),[showRecovery,setShowRecovery]=useState(false);
  const connection=useRef<ReturnType<typeof connectRoom>>(),pendingCommand=useRef<NetworkCommand>();
+ const entryAbort=useRef<AbortController>();
+ useEffect(()=>()=>entryAbort.current?.abort(),[]);
  const clearPending=()=>{pendingCommand.current=undefined;setPending(false);};
- const commandErrors:Record<string,string>={stale_revision:'Стол обновился. Выберите ход снова.',illegal_move:'Этот ход сейчас недопустим.',host_only:'Начать игру может создатель комнаты.',players_not_ready:'Оба игрока должны быть подключены.',storage_error:'Не удалось подтвердить сохранение. Переподключитесь для проверки состояния.',game_finished:'Партия завершена.',already_started:'Партия уже началась.',magic_unavailable:'Магия сейчас недоступна.',challenge_pending:'Завершите открытое задание.',invalid_challenge:'Эта попытка уже завершена или устарела.',invalid_target:'Недопустимая цель. Выберите другую.',answer_committed:'Ответ уже принят. Завершите выбор цели.',invalid_blind_reference:'Закрытые карты обновились. Выберите снова.'};
+ const commandErrors:Record<string,string>={room_capacity:'Комната достигла лимита команд тестового сервера. Создайте новую комнату.',stale_revision:'Стол обновился. Выберите ход снова.',illegal_move:'Этот ход сейчас недопустим.',host_only:'Начать игру может создатель комнаты.',players_not_ready:'Оба игрока должны быть подключены.',storage_error:'Не удалось подтвердить сохранение. Переподключитесь для проверки состояния.',game_finished:'Партия завершена.',already_started:'Партия уже началась.',magic_unavailable:'Магия сейчас недоступна.',challenge_pending:'Завершите открытое задание.',invalid_challenge:'Эта попытка уже завершена или устарела.',invalid_target:'Недопустимая цель. Выберите другую.',answer_committed:'Ответ уже принят. Завершите выбор цели.',invalid_blind_reference:'Закрытые карты обновились. Выберите снова.'};
  useEffect(()=>{
   if(!credential)return;
   const close=connectRoom(credential,setRoom,text=>{setStatus(text);if(text!=='Связь установлена')clearPending();},(next,events)=>{
@@ -46,10 +48,10 @@ export function RoomLobby() {
   if(!connection.current?.sendCommand(value)){clearPending();setError('Нет соединения. Подключитесь снова.');}
  }
  async function submit(event:React.FormEvent) {
-  event.preventDefault();if(busy)return;setBusy(true);setError('');
-  try{update(p=>({...p,name}));const result=await enterRoom(name,pathId,creationDeck);history.replaceState(null,'',withBase(`/room/${result.roomId}`));setCredential(result);}catch(error){if(error instanceof RoomAccessError&&error.code==='room_full')setRoomFull(true);setError(error instanceof Error?error.message:'Не удалось подключиться.');}finally{setBusy(false);}
+  event.preventDefault();if(busy)return;setBusy(true);setError('');const controller=new AbortController();entryAbort.current=controller;
+  try{update(p=>({...p,name}));const result=await enterRoom(name,pathId,creationDeck,text=>{if(!controller.signal.aborted)setStatus(text);},controller.signal);if(controller.signal.aborted)return;history.replaceState(null,'',withBase(`/room/${result.roomId}`));setCredential(result);}catch(error){if(controller.signal.aborted)return;if(error instanceof RoomAccessError&&error.code==='room_full')setRoomFull(true);setError(error instanceof Error?error.message:'Не удалось подключиться.');}finally{if(!controller.signal.aborted)setBusy(false);}
  }
- if(game&&room)return <><NetworkTable snapshot={game} events={events} positions={positions} room={room} connected={status==='Связь установлена'} busy={pending} error={error} onCommand={command} onReconnect={()=>{clearPending();setError('');setRetry(x=>x+1);}} onRecovery={()=>setShowRecovery(true)}/>{credential&&showRecovery&&<RecoveryDialog credential={credential} onClose={()=>setShowRecovery(false)}/>}</>;
+ if(game&&room)return <><NetworkTable snapshot={game} events={events} positions={positions} room={room} connected={status==='Связь установлена'} connectionStatus={status} busy={pending} error={error} onCommand={command} onReconnect={()=>{clearPending();setError('');setRetry(x=>x+1);}} onRecovery={()=>setShowRecovery(true)}/>{credential&&showRecovery&&<RecoveryDialog credential={credential} onClose={()=>setShowRecovery(false)}/>}</>;
  return <main className="room-lobby"><section className="room-panel" aria-labelledby="room-heading">
   <a className="room-back" href={withBase('/')} onClick={e=>{e.preventDefault();navigate('/');}}>← Главное меню</a><div className="room-star" aria-hidden="true">✧</div>
   <h1 id="room-heading">{credential?'Приватная комната':pathId?'Приглашение в комнату':'Комната по ссылке'}</h1>
@@ -59,7 +61,7 @@ export function RoomLobby() {
    {issue&&<p role="alert">{issue}</p>}
    {!endpoint&&<p role="status">Сервер комнат ещё не настроен. Одиночная игра доступна как обычно.</p>}
    {roomFull?<p>Оба места сохранены за участниками. Для возвращения используйте свой персональный код ниже либо откройте ссылку в браузере, где уже играли.</p>:<form onSubmit={submit}><label htmlFor="room-name">Ваше имя</label><input id="room-name" value={name} onChange={e=>setName(e.target.value)} maxLength={32} required autoComplete="nickname" disabled={busy}/><button disabled={!endpoint||busy||!name.trim()}>{busy?'Подождите…':pathId?'Присоединиться':'Создать комнату'}</button></form>}
-   {error&&<p role="alert">{error}</p>}
+   {busy&&<p role="status">{status}</p>}{error&&<p role="alert">{error}</p>}
    {pathId&&<RecoveryAccess roomId={pathId} onRestore={value=>{setError('');setRoomFull(false);setCredential(value);}}/>}
   </>:<>
    {room?.deck&&<p className="room-deck-info">Колода: <strong>{room.deck.name}</strong> · {room.deck.wordCount} слов в партии{room.deck.sourceCount>36?` из ${room.deck.sourceCount}`:''}</p>}

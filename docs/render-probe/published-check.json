@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-10-20T12:47:53.768Z",
+  "probeLocation": "Codex environment; country not independently verified",
+  "healthStatus": 200,
+  "diagnosticsStatus": 200,
+  "result": {
+    "checkedAt": "2026-10-20T12:47:21.983Z",
+    "server": "https://korean-card-game.onrender.com",
+    "region": "Не указано",
+    "network": "Не указано",
+    "pageMode": "web",
+    "timeoutMs": 90000,
+    "http": {
+      "status": 200,
+      "bytes": 133,
+      "ok": true,
+      "instanceId": "2cecbc8b-37b9-463b-a1d4-13b51b8672bd",
+      "uptimeSeconds": 126,
+      "elapsedMs": 763
+    },
+    "websocket": {
+      "ok": true,
+      "rttMs": [
+        246,
+        245,
+        249,
+        245
+      ],
+      "connectMs": 762,
+      "instanceId": "2cecbc8b-37b9-463b-a1d4-13b51b8672bd",
+      "readyMs": 763,
+      "observedMs": 30246,
+      "totalMs": 31009
+    }
+  },
+  "pageErrors": []
+}

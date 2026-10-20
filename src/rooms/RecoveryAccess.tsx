@@ -5,6 +5,7 @@ import {recoverRoom} from './connection';
 
 export function RecoveryAccess({roomId,credential,onRestore}:{roomId:string;credential?:RoomCredential;onRestore:(value:RoomCredential)=>void}){
  const [code,setCode]=useState(''),[visible,setVisible]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ const recoveryAbort=useRef<AbortController>();useEffect(()=>()=>recoveryAbort.current?.abort(),[]);
  if(credential)return <div className="recovery-access">
   <h2>Ваш персональный код</h2>
   <p>Сохраните код, чтобы вернуть своё место в этой комнате в другом браузере или на другом устройстве. Он даёт доступ к вашей руке. Сопернику отправляйте только ссылку-приглашение.</p>
@@ -13,7 +14,7 @@ export function RecoveryAccess({roomId,credential,onRestore}:{roomId:string;cred
   <p role="status">{message}</p>
  </div>;
  return <div className="recovery-access"><h2>Вернуться в игру</h2><p>Уже играли в этой комнате? Введите свой персональный код. Имя и ссылка-приглашение не восстанавливают занятое место.</p>
-  <form onSubmit={async e=>{e.preventDefault();if(busy)return;setBusy(true);setMessage('Проверяем код на сервере…');try{const value=await recoverRoom(code,roomId);setCode('');onRestore(value);}catch(error){setMessage(error instanceof Error?error.message:'Не удалось проверить код.');}finally{setBusy(false);}}}>
+  <form onSubmit={async e=>{e.preventDefault();if(busy)return;setBusy(true);setMessage('Проверяем код на сервере…');const controller=new AbortController();recoveryAbort.current=controller;try{const value=await recoverRoom(code,roomId,text=>{if(!controller.signal.aborted)setMessage(text);},controller.signal);if(controller.signal.aborted)return;setCode('');onRestore(value);}catch(error){if(!controller.signal.aborted)setMessage(error instanceof Error?error.message:'Не удалось проверить код.');}finally{if(!controller.signal.aborted)setBusy(false);}}}>
    <label htmlFor="recovery-code">Персональный код</label><input id="recovery-code" type="password" value={code} onChange={e=>setCode(e.target.value)} maxLength={120} required autoComplete="off" spellCheck={false} disabled={busy}/><button disabled={busy||!code.trim()}>{busy?'Проверяем…':'Восстановить своё место'}</button>
   </form><p role="status">{message}</p>
  </div>;

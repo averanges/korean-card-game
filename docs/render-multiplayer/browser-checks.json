@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-10-20T13:48:45.954Z",
+  "target": "production client + real Node room API",
+  "reports": [
+    {
+      "case": "real browser two-player room, mobile move, direct Pages fallback, refresh and round end",
+      "ok": true,
+      "entryStatus": 404,
+      "roomDirectStatus": 404,
+      "defended": true,
+      "dealAttempts": 1,
+      "viewports": [
+        390,
+        360
+      ]
+    },
+    {
+      "case": "automatic WebSocket reconnect without reload",
+      "ok": true
+    },
+    {
+      "case": "offline/online + reload restores revision",
+      "ok": true
+    },
+    {
+      "case": "singleplayer still renders",
+      "ok": true
+    }
+  ],
+  "errors": []
+}

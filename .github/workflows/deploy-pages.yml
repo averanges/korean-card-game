@@ -36,7 +36,8 @@ jobs:
         run: npm run build
         env:
           DEPLOY_TARGET: github-pages
-          VITE_ROOM_API_BASE: https://hangul-durak-rooms.nick-belichenko.workers.dev
+          VITE_ROOM_API_BASE: ${{ vars.VITE_ROOM_API_BASE || 'https://hangul-durak-rooms.nick-belichenko.workers.dev' }}
+          VITE_ROOM_HEALTHCHECK: ${{ vars.VITE_ROOM_HEALTHCHECK || '0' }}
       - name: Verify Pages build
         run: node scripts/check-pages-build.mjs
       - name: Upload Pages artifact

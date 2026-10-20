@@ -37,4 +37,5 @@ Thumbs.db
 .idea/
 .vscode/
 /work/
+/server/.test-build/
 /preview*.png

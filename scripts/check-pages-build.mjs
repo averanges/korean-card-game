@@ -7,7 +7,8 @@ assert.equal(meta.base,base);assert.ok(meta.entry.startsWith(base+'assets/')&&me
 assert.equal(await readFile(root+'/404.html','utf8'),html);assert.ok(html.includes(`href="${base}diagnostics.html"`));
 assert.ok(!html.includes('href="/assets/')&&!html.includes('src="/assets/'));await stat(root+'/health.html');await stat(root+'/diagnostics.html');
 const js=await readFile(root+'/'+meta.entry.slice(base.length),'utf8'),css=await readFile(root+'/'+meta.css.slice(base.length),'utf8');
-assert.ok(js.includes('https://hangul-durak-rooms.nick-belichenko.workers.dev'));assert.ok(!js.includes('http://127.0.0.1:8787'));
+const expectedApi=(process.env.VITE_ROOM_API_BASE||'https://hangul-durak-rooms.nick-belichenko.workers.dev').replace(/\/$/,'');
+assert.ok(js.includes(expectedApi),'Pages bundle does not contain configured room API');assert.ok(!js.includes('http://127.0.0.1:8787'));
 for(const match of css.matchAll(/url\(["']?([^\s)"']+)/g)){const path=match[1].split('#')[0];if(!path||path.startsWith('data:'))continue;assert.ok(path.startsWith(base),'Asset escaped project base: '+path);await stat(root+'/'+path.slice(base.length));}
 async function files(dir){const result=[];for(const entry of await readdir(root+'/'+dir,{withFileTypes:true})){const path=dir+'/'+entry.name;result.push(...entry.isDirectory()?await files(path):[path]);}return result;}
 const assets=(await files('assets')).filter(p=>/\.(?:js|css|webp|svg)$/.test(p));

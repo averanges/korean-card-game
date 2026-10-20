@@ -1,4 +1,6 @@
-# Independent connectivity experiment. Creating a Blueprint itself starts its first deploy.
+# Prepared in-memory rooms prototype. Do not sync/deploy without approval.
+# For the existing korean-card-game.onrender.com service, update its settings manually;
+# confirm the actual dashboard service name before using Blueprint sync.
 services:
   - type: web
     name: hangul-durak-connectivity-probe
@@ -6,11 +8,15 @@ services:
     plan: free
     region: frankfurt
     branch: multiplayer
-    rootDir: render-probe
-    buildCommand: npm ci --omit=dev
-    startCommand: npm start
+    rootDir: .
+    buildCommand: npm ci --prefix server --include=dev && npm run check --prefix server && npm run build --prefix server
+    startCommand: npm start --prefix server
     healthCheckPath: /health
     autoDeployTrigger: off
     envVars:
       - key: NODE_VERSION
         value: "22"
+      - key: FRONTEND_URL
+        value: https://averanges.github.io/korean-card-game
+      - key: ALLOWED_ORIGINS
+        value: https://averanges.github.io,https://hangul-durak.netlify.app,https://korean-card-game-multiplayer.pages.dev,http://localhost:5173,http://127.0.0.1:5173

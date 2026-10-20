@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-20T13:48:54.951Z",
+  "note": "Only health delays/errors simulated; successful create uses real Node server",
+  "results": [
+    {
+      "case": "delayed real health shows elapsed seconds then creates real room",
+      "ok": true
+    },
+    {
+      "case": "90s health timeout is readable, retry available, no room POST",
+      "ok": true
+    },
+    {
+      "case": "leaving wake form cancels request without late POST/navigation",
+      "ok": true
+    },
+    {
+      "case": "HTTP refusal differs from WebSocket failures",
+      "ok": true
+    }
+  ]
+}

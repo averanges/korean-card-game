@@ -26,7 +26,7 @@ import {BlindHand} from './BlindHand';
 import {NetworkMagicDialog} from './NetworkMagicDialog';
 import {networkAnimations,networkEffects,magicNotices,visibleNetworkAnimations} from './networkPresentation';
 export type Intent=NetworkCommand extends infer C?C extends NetworkCommand?Omit<C,'requestId'|'expectedRevision'>:never:never;
-export function NetworkTable({snapshot,events,positions,room,connected,busy,error,onCommand,onReconnect,onRecovery}:{snapshot:GameSnapshot;events:PlayerEvent[];positions:CardPosition[];room:PublicRoom;connected:boolean;busy:boolean;error:string;onCommand:(intent:Intent)=>void;onReconnect:()=>void;onRecovery?:()=>void}) {
+export function NetworkTable({snapshot,events,positions,room,connected,connectionStatus,busy,error,onCommand,onReconnect,onRecovery}:{snapshot:GameSnapshot;events:PlayerEvent[];positions:CardPosition[];room:PublicRoom;connected:boolean;connectionStatus?:string;busy:boolean;error:string;onCommand:(intent:Intent)=>void;onReconnect:()=>void;onRecovery?:()=>void}) {
  const compact=useCompactViewport();
  const [target,setTarget]=useState<number>();
  const {profile}=useProfile(); const translations=profile.settings.translations;
@@ -72,6 +72,6 @@ export function NetworkTable({snapshot,events,positions,room,connected,busy,erro
   <NetworkMagicDialog challenge={challenge} disabled={disabled} busy={busy} simple={simple} onCommand={onCommand}/>
   {challenge?.phase==='target'&&challenge.target?.kind==='trump'&&<TrumpChoice key={challenge.challengeId} current={view.trump} allowed={challenge.target.suits} pending={disabled} resetKey={snapshot.revision} cancellable={false} onCancel={()=>{}} onChoose={trump=>onCommand({type:'choose_trump',challengeId:challenge.challengeId,trump})}/>}
   {!!notices.length&&<div className="network-magic-notice" role="status">{notices.join(' ')}</div>}
-  <div className="network-notice" role="status">{room.status==='expired'?'Время жизни комнаты истекло. Создайте новую комнату.':error||(!connected?'Связь потеряна. Ваше место и партия сохранены.':!room.players[opponent]?.connected?'Соперник отключился. Ожидаем возвращения.':busy?'Ожидаем подтверждения хода…':'')}{!connected&&room.status!=='expired'&&<button onClick={onReconnect}>Подключиться снова</button>}</div><span className="sr-only" role="status">{tts}</span><GameAnimationLayer network entries={visibleNetworkAnimations(motion.entries,snapshot)} simple={simple} suppressFailure={challenge?.phase==='resolved'&&challenge.outcome==='wrong'}/>
+  <div className="network-notice" role="status">{room.status==='expired'?'Время жизни комнаты истекло. Создайте новую комнату.':error||(!connected?(connectionStatus||'WebSocket: связь потеряна. Подключитесь снова.'):!room.players[opponent]?.connected?'Соперник отключился. Ожидаем возвращения.':busy?'Ожидаем подтверждения хода…':'')}{!connected&&room.status!=='expired'&&<button onClick={onReconnect}>Подключиться снова</button>}</div><span className="sr-only" role="status">{tts}</span><GameAnimationLayer network entries={visibleNetworkAnimations(motion.entries,snapshot)} simple={simple} suppressFailure={challenge?.phase==='resolved'&&challenge.outcome==='wrong'}/>
  </main></AnimationContext.Provider>;
 }
