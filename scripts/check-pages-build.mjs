@@ -2,13 +2,15 @@ import assert from 'node:assert/strict';
 import {readFile,readdir,stat,mkdir,writeFile} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import {resolve,extname,sep} from 'node:path';
+import {roomBuildConfig,checkRoomBundle,readProductionJs} from './room-build-config.mjs';
 const base='/korean-card-game/',root=resolve('dist'),html=await readFile(root+'/index.html','utf8'),meta=JSON.parse(await readFile(root+'/build-info.json','utf8'));
 assert.equal(meta.base,base);assert.ok(meta.entry.startsWith(base+'assets/')&&meta.css.startsWith(base+'assets/'));
 assert.equal(await readFile(root+'/404.html','utf8'),html);assert.ok(html.includes(`href="${base}diagnostics.html"`));
 assert.ok(!html.includes('href="/assets/')&&!html.includes('src="/assets/'));await stat(root+'/health.html');await stat(root+'/diagnostics.html');
 const js=await readFile(root+'/'+meta.entry.slice(base.length),'utf8'),css=await readFile(root+'/'+meta.css.slice(base.length),'utf8');
-const expectedApi=(process.env.VITE_ROOM_API_BASE||'https://hangul-durak-rooms.nick-belichenko.workers.dev').replace(/\/$/,'');
-assert.ok(js.includes(expectedApi),'Pages bundle does not contain configured room API');assert.ok(!js.includes('http://127.0.0.1:8787'));
+const expectedRooms=roomBuildConfig(process.env);
+assert.deepEqual(meta.rooms,expectedRooms,'Build provenance does not match the configured room API/healthcheck');
+checkRoomBundle(await readProductionJs(root+'/assets'),expectedRooms);assert.ok(!js.includes('http://127.0.0.1:8787'));
 for(const match of css.matchAll(/url\(["']?([^\s)"']+)/g)){const path=match[1].split('#')[0];if(!path||path.startsWith('data:'))continue;assert.ok(path.startsWith(base),'Asset escaped project base: '+path);await stat(root+'/'+path.slice(base.length));}
 async function files(dir){const result=[];for(const entry of await readdir(root+'/'+dir,{withFileTypes:true})){const path=dir+'/'+entry.name;result.push(...entry.isDirectory()?await files(path):[path]);}return result;}
 const assets=(await files('assets')).filter(p=>/\.(?:js|css|webp|svg)$/.test(p));
