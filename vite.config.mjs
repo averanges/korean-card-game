@@ -1,6 +1,6 @@
-// Static hosting at the root of a Cloudflare Pages domain.
+// Root hosting stays unchanged unless the dedicated GitHub Pages build opts in.
 export default {
-  base: '/',
+  base: process.env.DEPLOY_TARGET==='github-pages'?'/korean-card-game/':'/',
   publicDir: 'public',
   resolve: {
     // Also permits building from managed/symlinked local workspaces.

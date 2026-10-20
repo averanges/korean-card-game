@@ -1,0 +1,20 @@
+{
+  "base": "/korean-card-game/",
+  "entry": "/korean-card-game/assets/index-DxVsbKIX.js",
+  "css": "/korean-card-game/assets/index-DAi_Z7jS.css",
+  "assets": 17,
+  "passed": [
+    "All 17 asset files return 200 and correct MIME/size",
+    "Project root menu",
+    "Real solo engine action after navigation",
+    "Direct singleplayer reload through HTTP 404 fallback",
+    "Multiplayer navigation and reload",
+    "Direct room ID and refresh preserved without redirect/query encoding",
+    "Diagnostics and iframe launch stay inside project prefix",
+    "Health HTML works with JavaScript disabled"
+  ],
+  "errors": [],
+  "badAssets": [],
+  "outside": [],
+  "sockets": []
+}

@@ -1,0 +1,16 @@
+{
+  "passed": [
+    "diagnostics independent of React, dynamic hashed paths, ordered downloads, explicit app start, no Worker",
+    "missing JS reports HTTP and fallback instead of blank root",
+    "HTML masquerading as CSS is rejected",
+    "each stalled resource reaches its own 12 second timeout",
+    "image failure does not block React menu",
+    "runtime failure emits only safe code",
+    "React render error is caught without disclosing exception",
+    "unhandled rejection before mount emits no private error text",
+    "HTML remains visible with JavaScript disabled"
+  ],
+  "entry": "/assets/index-M3pEyeKB.js",
+  "css": "/assets/index-BM6tbt8P.css",
+  "buildId": "00eaf1a0f908c03f"
+}

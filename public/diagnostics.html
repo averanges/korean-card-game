@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Диагностика Hangul Durak</title>
+  <style>body{font:16px/1.5 system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;color:#20202b;background:#faf9fc}h1{font-size:26px}button,a{margin-right:12px}button{font:inherit;padding:10px;margin-bottom:12px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #aaa;padding:8px;text-align:left;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:#eceaf1}.ok{color:#166036}.bad{color:#a01832}iframe{display:block;width:100%;height:520px;border:1px solid #888}small{display:block}noscript{color:#a01832}</style>
+</head>
+<body>
+  <h1>Диагностика запущена</h1>
+  <p>Эта страница работает без React, внешних библиотек и сервера комнат. Файлы проверяются без исполнения основного JavaScript.</p>
+  <noscript>JavaScript отключён. HTML доступен, но автоматические проверки и игра не могут запуститься. Разрешите JavaScript для этого сайта.</noscript>
+  <p id="state" role="status">Подготовка проверок…</p>
+  <button id="retry" type="button">Повторить проверки</button>
+  <button id="launch" type="button">Проверить запуск приложения</button>
+  <a href="health.html">Простой HTML</a>
+  <table><thead><tr><th>Ресурс</th><th>Результат</th><th>HTTP</th><th>Байт тела</th><th>Время, мс</th></tr></thead><tbody id="results"></tbody></table>
+  <h2>Сборка и возможности браузера</h2>
+  <pre id="details"></pre>
+  <h2>Проверка запуска</h2>
+  <p id="app-state" role="status">Приложение ещё не запускалось. Проверка откроет только главное меню внутри этой страницы.</p>
+  <div id="preview"></div>
+  <h2>Что прислать</h2>
+  <p>Пришлите снимок таблицы, сведения о сборке и браузере, результат кнопки запуска, страну/оператора и наличие VPN. Не присылайте персональные коды, ссылки комнат, токены или содержимое хранилища браузера.</p>
+  <script>
+  (function () {
+    'use strict';
+    var rows=document.getElementById('results'),details=document.getElementById('details'),state=document.getElementById('state'),retry=document.getElementById('retry'),launch=document.getElementById('launch'),appState=document.getElementById('app-state'),preview=document.getElementById('preview');
+    var info=[],busy=false,frame=null,appTimer,base=location.pathname.slice(0,location.pathname.lastIndexOf('/')+1);
+    function note(s){info.push(s);details.textContent=info.join('\n');}
+    function safePath(value){var a=document.createElement('a');a.href=value;if(a.protocol!==location.protocol||a.host!==location.host||a.search||a.hash)throw Error('Недопустимый адрес ресурса');return a.pathname;}
+    function request(path,kind,done){
+      var row=document.createElement('tr'),cells=[],i,start=Date.now(),finished=false,xhr=new XMLHttpRequest();
+      for(i=0;i<5;i++){cells[i]=document.createElement('td');row.appendChild(cells[i]);}cells[0].textContent=path;cells[1].textContent='Загрузка…';rows.appendChild(row);
+      function finish(reason){if(finished)return;finished=true;var status=0,size=0,text='',type='';try{status=xhr.status;type=xhr.getResponseHeader('Content-Type')||'';if(kind==='image')size=xhr.response?xhr.response.byteLength:0;else{text=xhr.responseText||'';size=new Blob([text]).size;}}catch(ignore){}
+        var ok=!reason&&status>=200&&status<300&&size>0;
+        if(ok&&kind==='js'&&!/(?:java|ecma)script/i.test(type)){ok=false;reason='Неверный MIME (ожидался JavaScript)';}
+        if(ok&&kind==='css'&&!/text\/css/i.test(type)){ok=false;reason='Неверный MIME (ожидался CSS)';}
+        if(ok&&(kind==='js'||kind==='css')&&/^\s*(?:<!doctype|<html)/i.test(text)){ok=false;reason='Вместо ресурса пришёл HTML';}
+        if(ok&&kind==='image'&&!/^image\//i.test(type)){ok=false;reason='Ответ не является изображением';}
+        if(ok&&kind==='json'){try{JSON.parse(text);}catch(ignore){ok=false;reason='Вместо метаданных получен не JSON';}}
+        cells[1].textContent=ok?'Успешно':reason||'Ошибка HTTP / пустой ответ';cells[1].className=ok?'ok':'bad';cells[2].textContent=String(status);cells[3].textContent=String(size);cells[4].textContent=String(Date.now()-start);
+        done(ok,text);
+      }
+      try{xhr.open('GET',path+(path.indexOf('?')<0?'?':'&')+'hd-check='+Date.now(),true);xhr.timeout=12000;if(kind==='image')xhr.responseType='arraybuffer';xhr.onload=function(){finish('');};xhr.onerror=function(){finish('Сетевая ошибка (HTTP 0)');};xhr.ontimeout=function(){finish('Тайм-аут 12 с');};xhr.onabort=function(){finish('Запрос отменён');};xhr.send();}catch(ignore){finish('Браузер не смог отправить запрос');}
+    }
+    function run(){
+      if(busy)return;busy=true;retry.disabled=true;rows.textContent='';info=[];state.textContent='Проверяем файлы последовательно. Каждый запрос: максимум 12 секунд.';
+      note('Браузер: '+navigator.userAgent);note('Размер указан после HTTP-декодирования, это не размер сетевого трафика.');
+      var moduleScript=document.createElement('script');note('ES modules: '+('noModule' in moduleScript)+'; randomUUID: '+!!(window.crypto&&window.crypto.randomUUID)+'; structuredClone: '+!!window.structuredClone+'; ResizeObserver: '+!!window.ResizeObserver+'; Array.at: '+!!Array.prototype.at);
+      function end(){busy=false;retry.disabled=false;state.textContent='Проверки файлов завершены. Успешная загрузка JS ещё не означает, что браузер смог его исполнить. Нажмите «Проверить запуск приложения».';}
+      request(base+'index.html','html',function(ok,html){
+        if(!ok){note('Не удалось прочитать index.html; имена ресурсов не угадываются.');end();return;}
+        var js,css;
+        try{var doc=new DOMParser().parseFromString(html,'text/html'),entry=doc.querySelector('script[type="module"][src]'),sheet=doc.querySelector('link[rel="stylesheet"][href]');if(!entry||!sheet)throw Error();js=safePath(entry.getAttribute('src'));css=safePath(sheet.getAttribute('href'));}catch(ignore){note('В index.html нет ожидаемых production JS/CSS либо адреса небезопасны.');end();return;}
+        note('JS из опубликованного index.html: '+js);note('CSS из опубликованного index.html: '+css);
+        request(js,'js',function(){request(css,'css',function(cssOK,cssText){
+          var background;
+          try{var match=cssOK&&cssText.match(/--table-art\s*:\s*url\(["']?([^\s)"']+)/);if(!match)throw Error();background=safePath(match[1]);}catch(ignore){note('Фон не определён: CSS недоступен или переменная --table-art отсутствует.');}
+          function buildInfo(){request(base+'build-info.json','json',function(found,text){
+            if(found){try{var b=JSON.parse(text);if(b.version!==1)throw Error();note('Сборка: '+String(b.buildId).replace(/[^a-zA-Z0-9-]/g,'').slice(0,40));note('Ветка: '+String(b.branch).replace(/[^\w./-]/g,'').slice(0,100)+'; commit: '+String(b.commit).replace(/[^a-f0-9]/g,'').slice(0,40));note('Источник метаданных: '+(b.source==='netlify'?'переменные сборки Netlify':b.source==='github-actions'?'GitHub Actions':'локальный Git')+'; незакоммиченные изменения: '+(b.dirty===true?'есть':b.dirty===false?'нет':'неизвестно'));note('Манифест соответствует index.html: '+!!(b.entry===js&&b.css===css));}catch(ignore){note('build-info.json не содержит корректных метаданных. Возможно, опубликована старая сборка.');}}
+            else note('Метаданные сборки недоступны. Точную ветку нужно проверить в панели Netlify.');end();
+          });}
+          if(background)request(background,'image',function(){buildInfo();});else buildInfo();
+        });});
+      });
+    }
+    launch.onclick=function(){
+      clearTimeout(appTimer);preview.textContent='';frame=document.createElement('iframe');frame.title='Проверка главного меню Hangul Durak';appState.textContent='Запускаем главное меню. Максимум 15 секунд…';
+      frame.src=base;preview.appendChild(frame);launch.disabled=true;
+      appTimer=setTimeout(function(){launch.disabled=false;appState.textContent='За 15 секунд подтверждение запуска не получено. Сравните результаты загрузки файлов; проверьте видимое сообщение в окне приложения.';},15000);
+    };
+    window.addEventListener('message',function(event){
+      if(!frame||event.origin!==location.origin||event.source!==frame.contentWindow)return;var d=event.data;if(!d||d.type!=='hangul-startup'||['ready','failed','timeout'].indexOf(d.status)<0)return;
+      clearTimeout(appTimer);launch.disabled=false;var codes={'ok':'главное меню отрисовано','script-resource':'ошибка загрузки основного скрипта','runtime-error':'ошибка выполнения JavaScript','unhandled-rejection':'необработанная асинхронная ошибка','react-render':'ошибка отрисовки React','startup-timeout':'истёк срок ожидания запуска'};
+      appState.textContent=(d.status==='ready'?'Успешно: ':'Не запустилось: ')+(codes[d.code]||'неизвестная ошибка запуска');
+    });
+    retry.onclick=run;run();
+  }());
+  </script>
+</body>
+</html>

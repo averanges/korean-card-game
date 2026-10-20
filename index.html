@@ -1,1 +1,40 @@
-<!doctype html><html lang="ru"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><link rel="preload" as="image" href="/assets/table-mobile.webp" media="(max-width:600px), (max-width:1000px) and (max-height:500px)" fetchpriority="high"/><link rel="preload" as="image" href="/assets/table.webp" media="(min-width:601px) and (min-height:501px), (min-width:1001px)" fetchpriority="high"/><title>Хангыль · Карточная практика</title></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <link rel="preload" as="image" href="/assets/table-mobile.webp" media="(max-width:600px), (max-width:1000px) and (max-height:500px)" fetchpriority="high"/>
+  <link rel="preload" as="image" href="/assets/table.webp" media="(min-width:601px) and (min-height:501px), (min-width:1001px)" fetchpriority="high"/>
+  <title>Хангыль · Карточная практика</title>
+  <style>#startup-status{position:fixed;inset:24px;max-width:600px;height:max-content;margin:auto;padding:24px;border:1px solid #bba6d2;border-radius:16px;background:#171b32;color:#fff2dc;font:17px/1.6 system-ui,sans-serif;z-index:9999}#startup-status[hidden]{display:none!important}#startup-status a{color:#ded1ff}</style>
+  <script>
+  (function(){
+    'use strict';
+    var ready=false,timer;
+    function report(status,code){
+      document.documentElement.setAttribute('data-app-status',status);
+      document.documentElement.setAttribute('data-startup-code',code);
+      var panel=document.getElementById('startup-status'),text=document.getElementById('startup-text');
+      if(panel)panel.hidden=status==='ready';
+      if(text&&status!=='ready')text.textContent=status==='timeout'?'Приложение пока не запустилось. Возможно, JavaScript загружается слишком долго.':'Приложение не смогло запуститься. Код: '+code+'. Откройте диагностику подключения.';
+      if(window.parent!==window)window.parent.postMessage({type:'hangul-startup',status:status,code:code},location.origin);
+    }
+    window.HangulStartup={ready:function(){ready=true;clearTimeout(timer);report('ready','ok');},fail:function(code){clearTimeout(timer);report('failed',['script-resource','runtime-error','unhandled-rejection','react-render'].indexOf(code)>=0?code:'runtime-error');}};
+    document.documentElement.setAttribute('data-app-status','pending');
+    window.addEventListener('error',function(event){if(ready)return;var target=event.target;if(target&&target.tagName==='SCRIPT'&&target.type==='module')window.HangulStartup.fail('script-resource');else if(event.message)window.HangulStartup.fail('runtime-error');},true);
+    window.addEventListener('unhandledrejection',function(){if(!ready)window.HangulStartup.fail('unhandled-rejection');});
+    timer=setTimeout(function(){if(!ready)report('timeout','startup-timeout');},12000);
+  }());
+  </script>
+</head>
+<body>
+  <section id="startup-status" role="status" aria-live="polite">
+    <strong>Hangul Durak</strong>
+    <p id="startup-text">Загрузка приложения… Если меню не появляется, проверьте подключение.</p>
+    <a href="%BASE_URL%diagnostics.html">Открыть диагностику</a>
+    <noscript><p>JavaScript отключён. Для запуска игры разрешите его в настройках браузера.</p></noscript>
+  </section>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

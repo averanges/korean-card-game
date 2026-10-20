@@ -1,4 +1,5 @@
 import {readSoloSession,writeSoloSession,type SoloSession} from './soloSession';
+import {StartupBoundary} from './StartupBoundary';
 import {UnlockDialog} from './UnlockDialog';
 import {AudioQuestion} from './AudioQuestion';
 import {sealedCards,unlockView,isStudyLocked} from './learning';
@@ -119,4 +120,4 @@ function App({active:screenActive=true}:{active?:boolean}){
  </main></AnimationContext.Provider>;
 }
 
-createRoot(document.getElementById('root')!).render(<React.StrictMode><AppShell Solo={App}/></React.StrictMode>);
+createRoot(document.getElementById('root')!).render(<React.StrictMode><StartupBoundary><AppShell Solo={App}/></StartupBoundary></React.StrictMode>);

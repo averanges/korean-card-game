@@ -1,0 +1,62 @@
+{
+  "checkedAt": "2026-10-19T19:30:43.101Z",
+  "origin": "https://hangul-durak.netlify.app",
+  "resources": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 1256,
+      "type": "text/html; charset=UTF-8"
+    },
+    {
+      "path": "/assets/index-63JaFxZF.js",
+      "status": 200,
+      "bytes": 321235,
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "path": "/assets/index-BM6tbt8P.css",
+      "status": 200,
+      "bytes": 157684,
+      "type": "text/css; charset=UTF-8"
+    },
+    {
+      "path": "/assets/table.webp",
+      "status": 200,
+      "bytes": 166364,
+      "type": "image/webp"
+    },
+    {
+      "path": "/assets/table-mobile.webp",
+      "status": 200,
+      "bytes": 59012,
+      "type": "image/webp"
+    },
+    {
+      "path": "/assets/card-back.webp",
+      "status": 200,
+      "bytes": 162488,
+      "type": "image/webp"
+    },
+    {
+      "path": "/health.html",
+      "status": 200,
+      "bytes": 803,
+      "type": "text/html; charset=UTF-8"
+    },
+    {
+      "path": "/diagnostics.html",
+      "status": 404,
+      "bytes": 3984,
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/build-info.json",
+      "status": 404,
+      "bytes": 3984,
+      "type": "text/html; charset=utf-8"
+    }
+  ],
+  "branchConfiguration": "Not accessible from public site",
+  "mainBundleEquivalentExceptPublicRoomEndpoint": true
+}
