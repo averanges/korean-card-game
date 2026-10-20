@@ -6,6 +6,23 @@ export {loadCredential,storageKey} from './credentials';
 
 export const endpoint=(import.meta.env?.VITE_ROOM_API_BASE as string|undefined)?.replace(/\/$/,'');
 export class RoomAccessError extends Error {constructor(public code:string,operation?:'create'|'join'){super(code==='invalid_body'&&operation==='create'?'Сервер не принял формат создания комнаты. Возможно, сайт и сервер комнат разных версий. Обновите Cloudflare Worker вместе с сайтом: текущая версия передаёт выбранную колоду.':errors[code]||'Сервер отклонил запрос.');}}
+export const ROOM_REQUEST_TIMEOUT_MS=12000;
+export class RoomTransportError extends Error {
+ constructor(public code:'request_timeout'|'network_unreachable'|'invalid_response'){
+  super(code==='request_timeout'?'Сервер комнат не ответил за 12 секунд. Проверьте подключение и повторите попытку.':code==='invalid_response'?'Сервер комнат вернул некорректный ответ. Повторите попытку позже.':'Не удалось связаться с сервером комнат. Проверьте подключение; возможны ограничения сети или настройка доступа (CORS).');
+ }
+}
+/** Bounded POST shared by create/join/recovery. Never echoes exception text or payloads. */
+export async function postRoom(url:string,payload:unknown):Promise<{response:Response;value:unknown}>{
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ROOM_REQUEST_TIMEOUT_MS);
+ try{
+  let response:Response;
+  try{response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal,credentials:'omit'});}
+  catch{throw new RoomTransportError(controller.signal.aborted?'request_timeout':'network_unreachable');}
+  try{return {response,value:await response.json()};}
+  catch(error){throw new RoomTransportError(controller.signal.aborted?'request_timeout':error instanceof SyntaxError?'invalid_response':'network_unreachable');}
+ }finally{clearTimeout(timer);}
+}
 export const errors:Record<string,string>={invalid_body:'Сервер не принял формат запроса. Проверьте совместимость версии сайта и сервера комнат.',body_too_large:'Данные колоды превышают допустимый размер запроса.',json_required:'Сервер ожидает запрос в формате JSON.',invalid_deck:'Проверьте колоду: от 9 до 200 уникальных слов и переводов, название до 60 символов.',room_full:'Оба места уже заняты.',room_not_found:'Комната не найдена.',room_expired:'Время жизни комнаты истекло.',invalid_name:'Введите имя от 1 до 32 символов.',origin_forbidden:'Этот адрес сайта не разрешён в настройках сервера.',unauthorized:'Не удалось восстановить место. Секрет сессии недействителен.'};
 export function roomEntryPayload(name:string,joinKey:string,roomId?:string,deck?:DeckSnapshot){
  // Send only the wire schema, even if the selected local deck also has IDs, dates or UI fields.
@@ -14,28 +31,20 @@ export function roomEntryPayload(name:string,joinKey:string,roomId?:string,deck?
 export async function enterRoom(name:string,roomId?:string,deck?:DeckSnapshot):Promise<RoomCredential&{inviteUrl?:string}> {
  if(!endpoint)throw new Error('Адрес сервера комнат ещё не настроен.');
  const payload=roomEntryPayload(name,getJoinKey(roomId),roomId,deck);
- const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
- try {
-  const response=await fetch(`${endpoint}/api/rooms${roomId?`/${roomId}/join`:''}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal,credentials:'omit'});
-  const value:unknown=await response.json();
-  if(!response.ok)throw new RoomAccessError(record(value)&&typeof value.error==='string'?value.error:'unknown',roomId?'join':'create');
-  if(!record(value)||typeof value.roomId!=='string'||!ROOM_ID.test(value.roomId)||(value.seat!==0&&value.seat!==1)||typeof value.recoverySecret!=='string'||!ROOM_ID.test(value.recoverySecret))throw new Error('Некорректный ответ сервера.');
-  // Verify storage before navigation, so a refresh can restore this seat.
-  saveCredential(value as unknown as RoomCredential);
-  return value as unknown as RoomCredential&{inviteUrl?:string};
- } finally {clearTimeout(timeout);}
+ const {response,value}=await postRoom(`${endpoint}/api/rooms${roomId?`/${roomId}/join`:''}`,payload);
+ if(!response.ok)throw new RoomAccessError(record(value)&&typeof value.error==='string'?value.error:'unknown',roomId?'join':'create');
+ if(!record(value)||typeof value.roomId!=='string'||!ROOM_ID.test(value.roomId)||(value.seat!==0&&value.seat!==1)||typeof value.recoverySecret!=='string'||!ROOM_ID.test(value.recoverySecret))throw new Error('Некорректный ответ сервера.');
+ // Verify storage before navigation, so a refresh can restore this seat.
+ saveCredential(value as unknown as RoomCredential);
+ return value as unknown as RoomCredential&{inviteUrl?:string};
 }
 export async function recoverRoom(code:string,roomId:string):Promise<RoomCredential>{
  const proof=parseRecoveryCode(code);if(!proof||proof.roomId!==roomId)throw Error('Введите персональный код именно этой комнаты.');
  if(!endpoint)throw Error('Адрес сервера комнат ещё не настроен.');
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
- try{
-  const response=await fetch(`${endpoint}/api/rooms/${roomId}/recover`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:proof.secret}),credentials:'omit',signal:controller.signal});
-  const value:unknown=await response.json();
-  if(!response.ok)throw new RoomAccessError(record(value)&&typeof value.error==='string'?value.error:'unknown');
-  const safe=validCredential(value,roomId);if(!safe||safe.recoverySecret!==proof.secret)throw Error('Некорректный ответ сервера.');
-  saveCredential(safe);return safe;
- }finally{clearTimeout(timer);}
+ const {response,value}=await postRoom(`${endpoint}/api/rooms/${roomId}/recover`,{secret:proof.secret});
+ if(!response.ok)throw new RoomAccessError(record(value)&&typeof value.error==='string'?value.error:'unknown');
+ const safe=validCredential(value,roomId);if(!safe||safe.recoverySecret!==proof.secret)throw Error('Некорректный ответ сервера.');
+ saveCredential(safe);return safe;
 }
 export function readSnapshot(value:unknown,roomId:string):{room:PublicRoom;self:0|1}|undefined {
  if(!record(value)||value.v!==1||!['room_snapshot','player_joined','player_left','player_reconnected','room_ready'].includes(String(value.type))||(value.self!==0&&value.self!==1)||!record(value.room))return;

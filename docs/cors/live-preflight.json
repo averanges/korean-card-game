@@ -1,0 +1,41 @@
+{
+  "checkedAt": "2026-10-20T10:16:36.235Z",
+  "method": "OPTIONS",
+  "results": [
+    {
+      "origin": "https://averanges.github.io",
+      "status": 403,
+      "allowOrigin": null,
+      "allowMethods": null,
+      "allowHeaders": null
+    },
+    {
+      "origin": "https://hangul-durak.netlify.app",
+      "status": 403,
+      "allowOrigin": null,
+      "allowMethods": null,
+      "allowHeaders": null
+    },
+    {
+      "origin": "https://korean-card-game-multiplayer.pages.dev",
+      "status": 204,
+      "allowOrigin": "https://korean-card-game-multiplayer.pages.dev",
+      "allowMethods": "POST, GET, OPTIONS",
+      "allowHeaders": "Content-Type"
+    },
+    {
+      "origin": "http://localhost:5173",
+      "status": 204,
+      "allowOrigin": "http://localhost:5173",
+      "allowMethods": "POST, GET, OPTIONS",
+      "allowHeaders": "Content-Type"
+    },
+    {
+      "origin": "https://not-allowed.example",
+      "status": 403,
+      "allowOrigin": null,
+      "allowMethods": null,
+      "allowHeaders": null
+    }
+  ]
+}

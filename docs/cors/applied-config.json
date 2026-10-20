@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-10-20T10:43:54.524Z",
+  "oldOrigins": [
+    "https://korean-card-game-multiplayer.pages.dev",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+  ],
+  "addedOrigins": [
+    "https://averanges.github.io",
+    "https://hangul-durak.netlify.app"
+  ],
+  "origins": [
+    "https://korean-card-game-multiplayer.pages.dev",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://averanges.github.io",
+    "https://hangul-durak.netlify.app"
+  ],
+  "otherSettingsPreserved": true,
+  "codeUnchanged": false,
+  "codeHash": "b52d7720fee612c7b45694aec09cc77dcb8f2dfc6718b5915035916ef203021a",
+  "frontendOriginUnchanged": true,
+  "durableObjectsUnchanged": true,
+  "updateMethod": "PATCH Worker settings; no script upload",
+  "previousVersion": "4f258128-1a89-431d-9e32-08797263f86f",
+  "appliedVersion": "b4f7889d-3970-4cf7-bfb2-2d73a5a32542",
+  "contentComparisonNote": "Downloaded content checksums differed after settings PATCH. Byte-for-byte identity was not confirmed. No source content was submitted; only the remote settings were sent. All comparable settings except ALLOWED_ORIGINS match; platform-generated annotations excluded."
+}

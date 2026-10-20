@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-10-20T10:45:55.858Z",
+  "method": "OPTIONS",
+  "results": [
+    {
+      "origin": "https://korean-card-game-multiplayer.pages.dev",
+      "status": 204,
+      "allowOrigin": "https://korean-card-game-multiplayer.pages.dev",
+      "allowMethods": "POST, GET, OPTIONS",
+      "allowHeaders": "Content-Type",
+      "vary": "Origin"
+    },
+    {
+      "origin": "http://localhost:5173",
+      "status": 204,
+      "allowOrigin": "http://localhost:5173",
+      "allowMethods": "POST, GET, OPTIONS",
+      "allowHeaders": "Content-Type",
+      "vary": "Origin"
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "status": 204,
+      "allowOrigin": "http://127.0.0.1:5173",
+      "allowMethods": "POST, GET, OPTIONS",
+      "allowHeaders": "Content-Type",
+      "vary": "Origin"
+    },
+    {
+      "origin": "https://averanges.github.io",
+      "status": 204,
+      "allowOrigin": "https://averanges.github.io",
+      "allowMethods": "POST, GET, OPTIONS",
+      "allowHeaders": "Content-Type",
+      "vary": "Origin"
+    },
+    {
+      "origin": "https://hangul-durak.netlify.app",
+      "status": 204,
+      "allowOrigin": "https://hangul-durak.netlify.app",
+      "allowMethods": "POST, GET, OPTIONS",
+      "allowHeaders": "Content-Type",
+      "vary": "Origin"
+    },
+    {
+      "origin": "https://not-allowed.example",
+      "status": 403,
+      "allowOrigin": null,
+      "allowMethods": null,
+      "allowHeaders": null,
+      "vary": null
+    }
+  ]
+}
