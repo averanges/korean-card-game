@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hangul Durak — проверка Render</title>
+  <style>
+    body{font:16px/1.5 system-ui,sans-serif;max-width:760px;margin:28px auto;padding:0 16px;background:#14182b;color:#f4f0ff}
+    input,select,button,textarea{box-sizing:border-box;font:inherit;padding:10px;border-radius:6px;border:1px solid #8782a8;background:#252a45;color:inherit}
+    input,textarea{width:100%}label{display:block;margin:14px 0}button{cursor:pointer;margin:8px 8px 8px 0}button:disabled{opacity:.5}
+    #log{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #666;padding:12px;min-height:80px}textarea{height:230px}small{color:#c9c4dd}
+  </style>
+  <script src="./diagnostics.js" defer></script>
+</head>
+<body>
+  <h1>Проверка подключения Render</h1>
+  <p>Диагностика загружена. Игра и сервер Cloudflare не используются.</p>
+  <label>Адрес тестового сервера <input id="base" type="url" placeholder="https://имя-сервиса.onrender.com" autocomplete="off"></label>
+  <label>Откуда проверяете <select id="region"><option>Не указано</option><option>Россия</option><option>Корея</option><option>Другая страна</option></select></label>
+  <label>Сеть <select id="network"><option>Не указано</option><option>Wi-Fi, без VPN</option><option>Мобильная сеть, без VPN</option><option>С VPN</option></select></label>
+  <button id="run">Проверить HTTP и WebSocket</button><button id="download" disabled>Скачать отчёт</button>
+  <p><small>До 90 секунд на HTTP и отдельно на WebSocket: бесплатный сервер может просыпаться около минуты. Затем 30 секунд проверяется связь. Проверка запускается только кнопкой; открытые страницы не поддерживают сервер активным автоматически.</small></p>
+  <div id="log" role="status" aria-live="polite">Проверка ещё не запущена.</div>
+  <label>Отчёт для отправки <textarea id="report" readonly></textarea></label>
+  <p>Если эта страница на Render вообще не открывается, используйте локальную копию обоих файлов diagnostics.html и diagnostics.js в одной папке. Откройте HTML и введите адрес Render. Не вводите ссылки комнат, персональные коды или токены.</p>
+</body>
+</html>

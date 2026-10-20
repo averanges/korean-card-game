@@ -1,0 +1,16 @@
+# Independent connectivity experiment. Creating a Blueprint itself starts its first deploy.
+services:
+  - type: web
+    name: hangul-durak-connectivity-probe
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: multiplayer
+    rootDir: render-probe
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
