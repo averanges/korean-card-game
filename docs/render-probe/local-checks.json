@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-10-20T12:27:42.433Z",
+  "runtime": "v24.19.0",
+  "results": [
+    {
+      "case": "real HTTP + WebSocket 30 seconds",
+      "ok": true,
+      "report": {
+        "checkedAt": "2026-10-20T12:26:41.104Z",
+        "server": "http://127.0.0.1:10008",
+        "region": "Корея",
+        "network": "Не указано",
+        "pageMode": "web",
+        "timeoutMs": 90000,
+        "http": {
+          "status": 200,
+          "bytes": 133,
+          "ok": true,
+          "instanceId": "0486b5ee-0839-456a-89a6-89fcc024c336",
+          "uptimeSeconds": 362,
+          "elapsedMs": 10
+        },
+        "websocket": {
+          "ok": true,
+          "rttMs": [
+            1,
+            2,
+            2,
+            2
+          ],
+          "connectMs": 5,
+          "instanceId": "0486b5ee-0839-456a-89a6-89fcc024c336",
+          "readyMs": 5,
+          "observedMs": 30017,
+          "totalMs": 30022
+        }
+      }
+    },
+    {
+      "case": "HTML instead of health + WebSocket malformed reply",
+      "ok": true
+    },
+    {
+      "case": "room URL rejected",
+      "ok": true
+    },
+    {
+      "case": "file HTML + JS to real server (cross-origin)",
+      "ok": true
+    }
+  ]
+}
